@@ -13,20 +13,20 @@ import 'screens/screens.dart';
 void backgroundFetchLibretto(String taskId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var nuoviVoti = prefs.getInt("totEsamiSuperati") ?? 99;
-
   Provider.getLibretto().then((libretto) {
-    if (libretto == null) return;
-    prefs.setInt("totEsamiSuperati", libretto["superati"]);
-    if (libretto["superati"] > nuoviVoti) {
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            color: kMainColor_darker,
-            backgroundColor: Colors.white,
-            id: 1,
-            channelKey: 'libretto',
-            title: 'Nuovo voto registrato!',
-            body: "Potrebbero aver registrato un nuovo voto nel libretto, dai un'occhiata."),
-      );
+    if (libretto != null && libretto["success"]) {
+      prefs.setInt("totEsamiSuperati", libretto["superati"]);
+      if (libretto["superati"] > nuoviVoti) {
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              color: kMainColor_darker,
+              backgroundColor: Colors.white,
+              id: 1,
+              channelKey: 'libretto',
+              title: 'Nuovo voto registrato!',
+              body: "Potrebbero aver registrato un nuovo voto nel libretto, dai un'occhiata."),
+        );
+      }
     }
   });
   BackgroundFetch.finish(taskId);
@@ -36,19 +36,21 @@ void backgroundFetchTasse(String taskId) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var tasseDaPagare = prefs.getInt("tasseDaPagare") ?? 0;
   Provider.getTasse().then((tasse) {
-    if (tasse == null) return;
-    prefs.setInt("tasseDaPagare", tasse["da_pagare"]);
-    if (tasse["da_pagare"] > tasseDaPagare) {
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            color: kMainColor_darker,
-            backgroundColor: Colors.white,
-            id: 1,
-            channelKey: 'tasse',
-            title: 'Nuove tasse!',
-            body: "Potrebbero esserci nuove tasse da pagare, dai un'occhiata"),
-      );
+    if (tasse != null && tasse["success"]) {
+      prefs.setInt("tasseDaPagare", tasse["da_pagare"]);
+      if (tasse["da_pagare"] > tasseDaPagare) {
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              color: kMainColor_darker,
+              backgroundColor: Colors.white,
+              id: 1,
+              channelKey: 'tasse',
+              title: 'Nuove tasse!',
+              body: "Potrebbero esserci nuove tasse da pagare, dai un'occhiata"),
+        );
+      }
     }
+
   });
   BackgroundFetch.finish(taskId);
 }
@@ -110,7 +112,7 @@ class _MyAppState extends State<MyApp> {
           minimumFetchInterval: 1440,
           stopOnTerminate: false,
           enableHeadless: true,
-          requiresBatteryNotLow: false,
+          requiresBatteryNotLow: true,
           requiresCharging: false,
           requiresStorageNotLow: false,
           requiresDeviceIdle: false,
