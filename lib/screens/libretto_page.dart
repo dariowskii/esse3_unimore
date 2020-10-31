@@ -19,7 +19,7 @@ class _LibrettoPageState extends State<LibrettoPage> {
   void _calcMedie(){
     for (int i = 0; i < widget.libretto["totali"]; i++) {
       if (widget.libretto["voti"][i] != "") {
-        if( widget.libretto["voti"][i] != "IDONEO"){
+        if( widget.libretto["voti"][i] != "IDONEO" && widget.libretto["voti"][i] != "APPR"){
           if (widget.libretto["voti"][i] == "30 LODE"){
             _mediaPondDouble += (double.parse(widget.libretto["crediti"][i]) * 30);
             _mediaAritDouble += 30;
@@ -201,34 +201,36 @@ class _LibrettoPageState extends State<LibrettoPage> {
                       childCount: widget.libretto["totali"],
                     ),
                   )
-                : Container(
-                    height: heightScreen * 0.6,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Image(
-                          width: 200,
-                          image: AssetImage('assets/img/nolibretto.png'),
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          "Mmmm...",
-                          style: const TextStyle(color: Colors.black87, fontSize: 25, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Sembra tu non abbia esami nel libretto...",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 22,
+                : SliverToBoxAdapter(
+                  child: Container(
+                      height: heightScreen * 0.6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Image(
+                            width: 200,
+                            image: AssetImage('assets/img/nolibretto.png'),
                           ),
-                        )
-                      ],
+                          const SizedBox(height: 20),
+                          Text(
+                            "Mmmm...",
+                            style: const TextStyle(color: Colors.black87, fontSize: 25, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Sembra tu non abbia esami nel libretto...",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 22,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
+                ),
           ),
         ],
       ),

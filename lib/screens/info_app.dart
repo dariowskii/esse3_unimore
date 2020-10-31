@@ -6,6 +6,7 @@ class InfoApp extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Esse3"),
+        brightness: Brightness.light,
         centerTitle: true,
       ),
       body: Container(

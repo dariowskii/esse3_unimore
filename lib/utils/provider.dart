@@ -483,7 +483,11 @@ class Provider {
         if (map_libretto["voti"][i].toString().contains("ID", 0)) {
           map_libretto["voti"][i] = "IDONEO";
         } else if (map_libretto["voti"][i].toString().contains("30L", 0) ||
-            map_libretto["voti"][i].toString().contains("30 L", 0)) map_libretto["voti"][i] = "30 LODE";
+            map_libretto["voti"][i].toString().contains("30 L", 0)) {
+          map_libretto["voti"][i] = "30 LODE";
+        } else if (map_libretto["voti"][i].toString().contains("APP", 0)){
+          map_libretto["voti"][i] = "APPR";
+        }
       } else {
         map_libretto["data_esame"][i] = "";
       }

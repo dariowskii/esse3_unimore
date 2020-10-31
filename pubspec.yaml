@@ -11,7 +11,7 @@ description: Esse3 Unimore
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.4+14
+version: 1.0.4+16
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -31,7 +31,7 @@ dependencies:
   animated_splash: ^1.0.0
   bubble_tab_indicator: ^0.1.4
   url_launcher: ^5.7.5
-  background_fetch: ^0.5.1
+  background_fetch: '^0.5.1'
   awesome_notifications: ^0.0.4+1
 
   # The following adds the Cupertino Icons font to your application.

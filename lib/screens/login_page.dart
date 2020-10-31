@@ -18,6 +18,8 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isLoading = false;
 
+  FocusNode _passFocus = FocusNode();
+
   void clickBtn() {
     setState(() {
       isLoading = !isLoading;
@@ -227,6 +229,9 @@ class _LoginPageState extends State<LoginPage> {
                               TextField(
                                 enabled: !isLoading,
                                 maxLength: 8,
+                                onSubmitted: (value){
+                                  _passFocus.requestFocus();
+                                },
                                 cursorColor: kMainColor_darker,
                                 controller: _userController,
                                 decoration: InputDecoration(
@@ -235,6 +240,12 @@ class _LoginPageState extends State<LoginPage> {
                               SizedBox(height: 15),
                               TextField(
                                 enabled: !isLoading,
+                                focusNode: _passFocus,
+                                onSubmitted: (value){
+                                  if(!isLoading){
+                                    clickBtn();
+                                  }
+                                },
                                 obscureText: true,
                                 cursorColor: kMainColor_darker,
                                 controller: _passController,
@@ -262,7 +273,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               SizedBox(height: 20),
                               Center(
-                                child: Text("version: 1.0.4"),
+                                child: Text("version: 1.0.5"),
                               ),
                             ],
                           ),

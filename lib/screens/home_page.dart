@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
+          brightness: Brightness.light,
           elevation: 3,
           title: Text(
             "Esse3",
