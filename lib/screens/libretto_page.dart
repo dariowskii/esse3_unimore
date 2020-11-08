@@ -17,9 +17,10 @@ class _LibrettoPageState extends State<LibrettoPage> {
   double _votoLaureaDouble;
 
   void _calcMedie(){
-    for (int i = 0; i < widget.libretto["totali"]; i++) {
+    int totali = widget.libretto["totali"];
+    for (int i = 0; i < totali; i++) {
       if (widget.libretto["voti"][i] != "") {
-        if( widget.libretto["voti"][i] != "IDONEO" && widget.libretto["voti"][i] != "APPR"){
+        if( int.tryParse(widget.libretto["voti"][i]) != null || widget.libretto["voti"][i] == "30 LODE"){
           if (widget.libretto["voti"][i] == "30 LODE"){
             _mediaPondDouble += (double.parse(widget.libretto["crediti"][i]) * 30);
             _mediaAritDouble += 30;
@@ -33,11 +34,16 @@ class _LibrettoPageState extends State<LibrettoPage> {
         _cfuAccumulati += int.parse(widget.libretto["crediti"][i]);
       }
     }
-    _mediaPondDouble = double.parse((_mediaPondDouble / _cfuMediaPond).toStringAsPrecision(4));
-    _mediaAritDouble = double.parse((_mediaAritDouble / _esamiConCfu).toStringAsPrecision(4));
+    if(_mediaPondDouble > 0 && _mediaAritDouble > 0){
+      _mediaPondDouble = double.parse((_mediaPondDouble / _cfuMediaPond).toStringAsPrecision(4));
+      _mediaAritDouble = double.parse((_mediaAritDouble / _esamiConCfu).toStringAsPrecision(4));
+      _votoLaureaInt = ((_mediaPondDouble * 110) / 30).floor();
+      _votoLaureaDouble = (_mediaPondDouble * 110) / 30;
+    } else {
+      _votoLaureaInt = 0;
+      _votoLaureaDouble = 0;
+    }
 
-    _votoLaureaInt = ((_mediaPondDouble * 110) / 30).floor();
-    _votoLaureaDouble = (_mediaPondDouble * 110) / 30;
   }
 
   @override
@@ -155,8 +161,8 @@ class _LibrettoPageState extends State<LibrettoPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Media Ponderata: $_mediaPondDouble / 30", style: const TextStyle(fontSize: 16)),
-                            Text("Media Aritmetica: $_mediaAritDouble / 30", style: const TextStyle(fontSize: 16)),
+                            Text("Media Ponderata: $_mediaPondDouble / 30", style: TextStyle(fontSize: width >= 390 ? 16 : 14)),
+                            Text("Media Aritmetica: $_mediaAritDouble / 30", style: TextStyle(fontSize: width >= 390 ? 16 : 14)),
                           ],
                         ),
                         BollinoAndamento(
@@ -169,6 +175,7 @@ class _LibrettoPageState extends State<LibrettoPage> {
                               ? Colors.yellow[700]
                               : _mediaAritDouble >= 18 ? Colors.green[700] : Colors.yellow[700],
                           bordoOmbra: _mediaAritDouble >= 24,
+                          fontSize: 13,
                         ),
                       ],
                     ),

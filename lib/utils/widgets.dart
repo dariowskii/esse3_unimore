@@ -294,7 +294,10 @@ class ProssimiAppelli extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => AppelliPage(),
                   ),
-                );
+                ).then((value){
+                  //TODO: sistemare getAppelliPrenotati
+                  Provider.getAppelliPrenotati();
+                });
               },
               color: kMainColor,
               minWidth: double.infinity,
@@ -492,6 +495,7 @@ class BollinoAndamento extends StatelessWidget {
   final Color colore;
   final Color coloreSfondo;
   final bool bordoOmbra;
+  final double fontSize;
 
   const BollinoAndamento({
     Key key,
@@ -500,6 +504,7 @@ class BollinoAndamento extends StatelessWidget {
     this.colore = Colors.white,
     @required this.coloreSfondo,
     this.bordoOmbra = false,
+    this.fontSize = 16,
   }) : super(key: key);
 
   @override
@@ -529,7 +534,7 @@ class BollinoAndamento extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             testo.toUpperCase(),
-            style: TextStyle(color: colore),
+            style: TextStyle(color: colore, fontSize: fontSize),
           ),
         ],
       ),
@@ -552,14 +557,12 @@ class CardAppello extends StatefulWidget {
 }
 
 class _CardAppelloState extends State<CardAppello> {
-  Future _altreInfo;
+  Future<Map> _altreInfo;
   bool _isRequestedAltreInfo = false;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 400),
-      curve: Curves.easeInOut,
+    return Container(
       margin: EdgeInsets.only(bottom: 15),
       width: double.infinity,
       decoration: BoxDecoration(
@@ -620,24 +623,53 @@ class _CardAppelloState extends State<CardAppello> {
                           builder: (context, altreInfo) {
                             switch (altreInfo.connectionState) {
                               case ConnectionState.none:
-                                return Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.error,
-                                      color: Colors.redAccent,
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.error,
+                                          color: Colors.redAccent,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          "Errore nel recuperare i dati!",
+                                        ),
+                                        Expanded(child: Container()),
+                                        IconButton(
+                                            icon: Icon(Icons.refresh),
+                                            onPressed: () {
+                                              setState(() {
+                                                _altreInfo = Provider.getInfoAppello(widget.urlInfo);
+                                              });
+                                            })
+                                      ],
                                     ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "Errore nel recuperare i dati!",
-                                    ),
-                                    Expanded(child: Container()),
-                                    IconButton(
-                                        icon: Icon(Icons.refresh),
-                                        onPressed: () {
-                                          setState(() {
-                                            _altreInfo = Provider.getInfoAppello(widget.urlInfo);
-                                          });
-                                        })
+                                    MaterialButton(
+                                      padding: const EdgeInsets.all(0),
+                                      minWidth: double.infinity,
+                                      color: kMainColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Text("PROMEMORIA", style: TextStyle(color: Colors.white)),
+                                      onPressed: () {
+                                        var giorno = widget.dataAppello.substring(0, 2);
+                                        var mese = widget.dataAppello.substring(3, 5);
+                                        int anno = int.parse(widget.dataAppello.substring(6));
+
+                                        final Event event = Event(
+                                          title: widget.nomeMateria,
+                                          description: widget.desc,
+                                          location: 'Università di Modena e Reggio Emilia',
+                                          startDate: DateTime.parse("$anno-$mese-$giorno"),
+                                          endDate: DateTime.parse("$anno-$mese-$giorno"),
+                                          allDay: true,
+                                        );
+
+                                        Add2Calendar.addEvent2Cal(event);
+                                      },
+                                    )
                                   ],
                                 );
                               case ConnectionState.waiting:
@@ -654,15 +686,38 @@ class _CardAppelloState extends State<CardAppello> {
                                     SizedBox(
                                       height: 16,
                                     ),
+                                    MaterialButton(
+                                      padding: const EdgeInsets.all(0),
+                                      minWidth: double.infinity,
+                                      color: kMainColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Text("PROMEMORIA", style: TextStyle(color: Colors.white)),
+                                      onPressed: () {
+                                        var giorno = widget.dataAppello.substring(0, 2);
+                                        var mese = widget.dataAppello.substring(3, 5);
+                                        int anno = int.parse(widget.dataAppello.substring(6));
+
+                                        final Event event = Event(
+                                          title: widget.nomeMateria,
+                                          description: widget.desc,
+                                          location: 'Università di Modena e Reggio Emilia',
+                                          startDate: DateTime.parse("$anno-$mese-$giorno"),
+                                          endDate: DateTime.parse("$anno-$mese-$giorno"),
+                                          allDay: true,
+                                        );
+
+                                        Add2Calendar.addEvent2Cal(event);
+                                      },
+                                    )
                                   ],
                                 );
                               case ConnectionState.active:
                               case ConnectionState.done:
                                 if (altreInfo.data == null) return Text("Errore caricamento");
-                                String verbBreve = altreInfo.data["verbalizzazione"].toString().length >= 25
-                                    ? altreInfo.data["verbalizzazione"].toString().substring(0, 25) + "..."
-                                    : altreInfo.data["verbalizzazione"];
                                 return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
@@ -673,18 +728,8 @@ class _CardAppelloState extends State<CardAppello> {
                                         ),
                                       ],
                                     ),
-                                    Row(
-                                      children: [
-                                        Text("Verbalizzazione: "),
-                                        Text(verbBreve),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text("Aula: "),
-                                        Text(altreInfo.data["aula"]),
-                                      ],
-                                    ),
+                                    Text("Verbalizzazione: ${altreInfo.data["verbalizzazione"]}"),
+                                    Text("Aula: ${altreInfo.data["aula"]}"),
                                     Row(
                                       children: [
                                         Text("Numero iscritti: "),
@@ -697,15 +742,147 @@ class _CardAppelloState extends State<CardAppello> {
                                     SizedBox(
                                       height: 5,
                                     ),
-                                    Container(
-                                      child: Text(
-                                        "Docente: ${altreInfo.data["docente"]}",
-                                        style: TextStyle(fontWeight: FontWeight.w600),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      width: double.infinity,
+                                    Text(
+                                      "Docente: ${altreInfo.data["docente"]}",
+                                      style: TextStyle(fontWeight: FontWeight.w600),
+                                      textAlign: TextAlign.left,
                                     ),
-                                    SizedBox(height: 20)
+                                    SizedBox(height: 20),
+                                    Row(
+                                      children: [
+                                        altreInfo.data["tabellaHidden"] != null ?
+                                        Flexible(
+                                          child: MaterialButton(
+                                            padding: const EdgeInsets.all(0),
+                                            minWidth: double.infinity,
+                                            color: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(50),
+                                            ),
+                                            child: Text("PRENOTA", style: TextStyle(color: Colors.white)),
+                                            onLongPress: (){
+                                              showDialog(
+                                                context: context,
+                                                child: AlertDialog(
+                                                  title: Text("Prenotazione appello"),
+                                                  content: Text("Sei sicuro di volerti prenotare?"),
+                                                  actions: [
+                                                    FlatButton(
+                                                      child: Text("SI", style: TextStyle(color: Colors.black87),),
+                                                      onPressed: (){
+                                                        Navigator.of(context).pop();
+                                                        showDialog(
+                                                          context: context,
+                                                          child: WillPopScope(
+                                                            onWillPop: () async => null,
+                                                            child: AlertDialog(
+                                                              content: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                children: [
+                                                                  CircularProgressIndicator(),
+                                                                  const SizedBox(width: 10),
+                                                                  Text("Attendi un secondo..."),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                        Provider.prenotaAppello(altreInfo.data).then((value){
+                                                          if(value != null && value){
+                                                            Navigator.of(context).pop();
+                                                            showDialog(
+                                                              context: context,
+                                                              child: AlertDialog(
+                                                                content: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons.check,
+                                                                      color: Colors.green,
+                                                                    ),
+                                                                    const SizedBox(width: 10),
+                                                                    Text("Prenotazione effettuata!"),
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            );
+                                                            Future.delayed(Duration(seconds: 1), (){
+                                                              Navigator.of(context).pop();
+                                                              Navigator.of(context).pop();
+                                                            });
+                                                          }
+                                                          else {
+                                                            Navigator.of(context).pop();
+                                                            showDialog(
+                                                              context: context,
+                                                              child: WillPopScope(
+                                                                onWillPop: () async => null,
+                                                                child: AlertDialog(
+                                                                  content: Row(
+                                                                    children: [
+                                                                      Icon(Icons.error, color: Colors.redAccent,),
+                                                                      const SizedBox(width: 10),
+                                                                      Text("Prenotazione non effettuata"),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            );
+                                                            Future.delayed(Duration(seconds: 1), (){
+                                                              Navigator.of(context).pop();
+                                                            });
+                                                          }
+                                                        });
+                                                      },
+                                                    ),
+                                                    MaterialButton(
+                                                      color: Colors.redAccent,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(50),
+                                                      ),
+                                                      child: Text("NO"),
+                                                      onPressed: (){
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+
+                                            },
+                                          ),
+                                        ) : SizedBox.shrink(),
+                                        altreInfo.data["tabellaHidden"] != null ?
+                                        SizedBox(width: 10) : SizedBox.shrink(),
+                                        Flexible(
+                                          child: MaterialButton(
+                                            padding: const EdgeInsets.all(0),
+                                            minWidth: double.infinity,
+                                            color: kMainColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(50),
+                                            ),
+                                            child: Text("PROMEMORIA", style: TextStyle(color: Colors.white)),
+                                            onPressed: () {
+                                              var giorno = widget.dataAppello.substring(0, 2);
+                                              var mese = widget.dataAppello.substring(3, 5);
+                                              int anno = int.parse(widget.dataAppello.substring(6));
+
+                                              final Event event = Event(
+                                                title: widget.nomeMateria,
+                                                description: widget.desc,
+                                                location: 'Università di Modena e Reggio Emilia',
+                                                startDate: DateTime.parse("$anno-$mese-$giorno"),
+                                                endDate: DateTime.parse("$anno-$mese-$giorno"),
+                                                allDay: true,
+                                              );
+
+                                              Add2Calendar.addEvent2Cal(event);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 );
                               default:
@@ -726,33 +903,79 @@ class _CardAppelloState extends State<CardAppello> {
                                   _altreInfo = Provider.getInfoAppello(widget.urlInfo);
                                 });
                               }),
-                      MaterialButton(
-                        minWidth: double.infinity,
-                        color: kMainColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text("IMPOSTA PROMEMORIA", style: TextStyle(color: Colors.white)),
-                        ),
-                        onPressed: () {
-                          var giorno = widget.dataAppello.substring(0, 2);
-                          var mese = widget.dataAppello.substring(3, 5);
-                          int anno = int.parse(widget.dataAppello.substring(6));
+                      // Visibility(
+                      //   visible: _isRequestedAltreInfo,
+                      //   child: Flexible(
+                      //     child: MaterialButton(
+                      //       padding: const EdgeInsets.all(0),
+                      //       minWidth: double.infinity,
+                      //       color: Colors.green,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(50),
+                      //       ),
+                      //       child: Text("PRENOTA", style: TextStyle(color: Colors.white)),
+                      //       onLongPress: (){
+                      //         showDialog(
+                      //           context: context,
+                      //           child: AlertDialog(
+                      //             title: Text("Prenotazione appello"),
+                      //             content: Text("Sei sicuro di volerti prenotare?"),
+                      //             actions: [
+                      //               FlatButton(
+                      //                 child: Text("SI", style: TextStyle(color: Colors.black87),),
+                      //                 onPressed: (){
+                      //
+                      //                 },
+                      //               ),
+                      //               MaterialButton(
+                      //                 color: Colors.redAccent,
+                      //                 shape: RoundedRectangleBorder(
+                      //                   borderRadius: BorderRadius.circular(50),
+                      //                 ),
+                      //                 child: Text("NO"),
+                      //                 onPressed: (){
+                      //                   Navigator.of(context).pop();
+                      //                 },
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         );
+                      //
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
+                      // Visibility(
+                      //   visible: _isRequestedAltreInfo,
+                      //   child: const SizedBox(width: 10),
+                      // ),
+                      _isRequestedAltreInfo
+                          ? SizedBox.shrink()
+                          : MaterialButton(
+                            padding: const EdgeInsets.all(0),
+                            minWidth: double.infinity,
+                            color: kMainColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Text("PROMEMORIA", style: TextStyle(color: Colors.white)),
+                            onPressed: () {
+                              var giorno = widget.dataAppello.substring(0, 2);
+                              var mese = widget.dataAppello.substring(3, 5);
+                              int anno = int.parse(widget.dataAppello.substring(6));
 
-                          final Event event = Event(
-                            title: widget.nomeMateria,
-                            description: widget.desc,
-                            location: 'Università di Modena e Reggio Emilia',
-                            startDate: DateTime.parse("$anno-$mese-$giorno"),
-                            endDate: DateTime.parse("$anno-$mese-$giorno"),
-                            allDay: true,
-                          );
+                              final Event event = Event(
+                                title: widget.nomeMateria,
+                                description: widget.desc,
+                                location: 'Università di Modena e Reggio Emilia',
+                                startDate: DateTime.parse("$anno-$mese-$giorno"),
+                                endDate: DateTime.parse("$anno-$mese-$giorno"),
+                                allDay: true,
+                              );
 
-                          Add2Calendar.addEvent2Cal(event);
-                        },
-                      )
+                              Add2Calendar.addEvent2Cal(event);
+                            },
+                          )
                     ],
                   )
                 ],
@@ -952,7 +1175,7 @@ class ProiezioniConCFU extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Text(
-          votoLaureaDouble.toStringAsPrecision(4),
+          votoLaureaInt == 0 ? "NaN" : votoLaureaDouble.toStringAsPrecision(4),
           textAlign: TextAlign.end,
           style: TextStyle(
             fontSize: 25,
@@ -1174,6 +1397,7 @@ class _TabOrarioSettimanaleState extends State<TabOrarioSettimanale> {
       );
     }
     return ListView.builder(
+      physics: BouncingScrollPhysics(),
       itemCount: widget.listaOrario[widget.indiceGiorno - 1].length + 1,
       itemBuilder: (context, index) {
         if (index == widget.listaOrario[widget.indiceGiorno - 1].length) {
@@ -1274,87 +1498,97 @@ class _CardOrarioState extends State<CardOrario> {
               child: InkWell(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 onLongPress: () {
-                  print("long press");
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (builderContext) {
-                        return Container(
-                          color: Colors.transparent,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Modifica orario",
-                                          style: const TextStyle(
-                                              color: Colors.grey, fontSize: 25, fontWeight: FontWeight.w600),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                                          decoration: BoxDecoration(
-                                            color: Colors.redAccent,
-                                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.delete,
-                                                color: Colors.white,
-                                                size: 13,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                "Elimina",
-                                                style: const TextStyle(color: Colors.white),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Theme(
-                                      data: ThemeData(
-                                        primaryColor: kMainColor_extraDark,
-                                        fontFamily: 'Proxima Nova',
-                                      ),
-                                      child: TextField(
-                                        maxLength: 50,
-                                        decoration: InputDecoration(
-                                          labelText: "Nome corso",
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(),
-                                    ),
-                                    BottoneMaterialCustom(
-                                      onPressed: () {},
-                                      text: "Salva",
-                                      textColor: Colors.white,
-                                      backgroundColor: Colors.green,
-                                      fontWeight: FontWeight.normal,
-                                      height: 40,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      });
+                  //return ExpandableBottomSheet(expandableContent: Container(), background: Container());
+                  showBottomSheet(
+                    backgroundColor: Colors.white,
+                    elevation: 10,
+                    context: context,
+                    builder: (context){
+                      return Container(
+                        height: 300,
+                      );
+                    }
+                  );
+                  // showModalBottomSheet(
+                  //     context: context,
+                  //     builder: (builderContext) {
+                  //       return Container(
+                  //         color: Colors.transparent,
+                  //         child: Container(
+                  //           decoration: BoxDecoration(
+                  //             color: Colors.white,
+                  //             borderRadius:
+                  //                 BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                  //           ),
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.all(8.0),
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.all(12.0),
+                  //               child: Column(
+                  //                 crossAxisAlignment: CrossAxisAlignment.start,
+                  //                 children: [
+                  //                   Row(
+                  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //                     children: [
+                  //                       Text(
+                  //                         "Modifica orario",
+                  //                         style: const TextStyle(
+                  //                             color: Colors.grey, fontSize: 25, fontWeight: FontWeight.w600),
+                  //                       ),
+                  //                       Container(
+                  //                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  //                         decoration: BoxDecoration(
+                  //                           color: Colors.redAccent,
+                  //                           borderRadius: BorderRadius.all(Radius.circular(30)),
+                  //                         ),
+                  //                         child: Row(
+                  //                           children: [
+                  //                             Icon(
+                  //                               Icons.delete,
+                  //                               color: Colors.white,
+                  //                               size: 13,
+                  //                             ),
+                  //                             const SizedBox(width: 5),
+                  //                             Text(
+                  //                               "Elimina",
+                  //                               style: const TextStyle(color: Colors.white),
+                  //                             ),
+                  //                           ],
+                  //                         ),
+                  //                       )
+                  //                     ],
+                  //                   ),
+                  //                   const SizedBox(height: 20),
+                  //                   Theme(
+                  //                     data: ThemeData(
+                  //                       primaryColor: kMainColor_extraDark,
+                  //                       fontFamily: 'Proxima Nova',
+                  //                     ),
+                  //                     child: TextField(
+                  //                       maxLength: 50,
+                  //                       decoration: InputDecoration(
+                  //                         labelText: "Nome corso",
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                   Expanded(
+                  //                     child: Container(),
+                  //                   ),
+                  //                   BottoneMaterialCustom(
+                  //                     onPressed: () {},
+                  //                     text: "Salva",
+                  //                     textColor: Colors.white,
+                  //                     backgroundColor: Colors.green,
+                  //                     fontWeight: FontWeight.normal,
+                  //                     height: 40,
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       );
+                  //     });
                 },
                 child: Container(
                   width: double.infinity,
@@ -1436,3 +1670,268 @@ class _CardOrarioState extends State<CardOrario> {
     );
   }
 }
+
+class CardAppelloPrenotato extends StatelessWidget {
+  final String esame;
+  final String iscrizione;
+  final String giorno;
+  final String ora;
+  final String docente;
+  final Map formHiddens;
+  final int index;
+
+  const CardAppelloPrenotato({Key key, this.esame, this.iscrizione, this.giorno, this.ora, this.docente, this.formHiddens, this.index}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<String> _nomeEsame = esame.split(" - ");
+    String numIsc = iscrizione.replaceFirst("Numero Iscrizione: ", "");
+    Map internalHiddens = new Map();
+    formHiddens.forEach((key, value) {
+      if(key.toString().startsWith(index.toString())){
+        internalHiddens[key.toString().replaceFirst(index.toString() + "_", "")] = value;
+      }
+    });
+    return Container(
+      margin: EdgeInsets.only(bottom: 15),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              kMainColor_darker,
+              kMainColor_lighter
+            ]),
+        borderRadius:
+        BorderRadius.all(Radius.circular(10)),
+      ),
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment:
+            CrossAxisAlignment.start,
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  _nomeEsame[0],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Text(
+                _nomeEsame[1],
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            _nomeEsame[2],
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          RichText(
+            text: TextSpan(
+                text: "Giorno: ",
+                style: DefaultTextStyle.of(context).style.copyWith(color: Colors.white),
+                children: [
+                  TextSpan(
+                    text: giorno,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16,),
+                  )
+                ]
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+                text: "Ora: ",
+                style: DefaultTextStyle.of(context).style.copyWith(color: Colors.white),
+                children: [
+                  TextSpan(
+                    text: ora,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16,),
+                  )
+                ]
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+                text: "Numero iscrizione: ",
+                style: DefaultTextStyle.of(context).style.copyWith(color: Colors.white),
+                children: [
+                  TextSpan(
+                    text: numIsc,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16,),
+                  )
+                ]
+            ),
+          ),
+          const SizedBox(height: 10),
+          RichText(
+            text: TextSpan(
+                text: "Docente: ",
+                style: DefaultTextStyle.of(context).style.copyWith(color: Colors.white),
+                children: [
+                  TextSpan(
+                    text: docente,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold,),
+                  )
+                ]
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Flexible(
+                child: MaterialButton(
+                  elevation: 2,
+                  minWidth: double.infinity,
+                  color: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Text("CANCELLATI", style: const TextStyle(color: Colors.white)),
+                  onLongPress: () {
+                    showDialog(
+                      context: context,
+                      child: AlertDialog(
+                        title: Text("Annulla prenotazione"),
+                        content: Text("Sei sicuro di voler cancellare la prenotazione?"),
+                        actions: [
+                          FlatButton(
+                            child: Text("SI", style: const TextStyle(color: Colors.black87),),
+                            onPressed: (){
+                              Navigator.of(context).pop();
+                              showDialog(
+                                context: context,
+                                child: WillPopScope(
+                                  onWillPop: () async => null,
+                                  child: AlertDialog(
+                                    content: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text("Aspetta un secondo..."),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                              Provider.cancellaAppello(internalHiddens).then((value){
+                                if(value != null && value){
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    child: WillPopScope(
+                                      onWillPop: () async => null,
+                                      child: AlertDialog(
+                                        content: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Icon(Icons.check, color: Colors.green,),
+                                            const SizedBox(width: 10),
+                                            Text("Prenotazione cancellata!"),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  );
+                                  Future.delayed(Duration(seconds: 1), (){
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  });
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                    context: context,
+                                    child: WillPopScope(
+                                      onWillPop: () async => null,
+                                      child: AlertDialog(
+                                        content: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                          Icon(Icons.cancel, color: Colors.redAccent,),
+                                        const SizedBox(width: 10),
+                                        Text("Errore cancellazione!"),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                );
+                                  Future.delayed(Duration(seconds: 1), (){
+                                    Navigator.of(context).pop();
+                                  });
+                                }
+
+                              });
+                            },
+                          ),
+                          MaterialButton(
+                            elevation: 0,
+                            color: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Text("NO", style: TextStyle(color: Colors.white)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      )
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: MaterialButton(
+                  elevation: 3,
+                  minWidth: double.infinity,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Text("PROMEMORIA", style: TextStyle(color: kMainColor_darker)),
+                  onPressed: () {
+                    var giornoEv = giorno.substring(0, 2);
+                    var mese = giorno.substring(3, 5);
+                    int anno = int.parse(giorno.substring(6));
+
+                    final Event event = Event(
+                      title: _nomeEsame[0],
+                      description: _nomeEsame[2],
+                      location: 'Università di Modena e Reggio Emilia',
+                      startDate: DateTime.parse("$anno-$mese-$giornoEv"),
+                      endDate: DateTime.parse("$anno-$mese-$giornoEv"),
+                      allDay: true,
+                    );
+
+                    Add2Calendar.addEvent2Cal(event);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+

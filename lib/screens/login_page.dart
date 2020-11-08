@@ -187,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                                   "Unimore",
                                   style: TextStyle(
                                     height: 1.0,
-                                    fontSize: 54,
+                                    fontSize: width >= 390 ? 54 : 44,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -272,9 +272,6 @@ class _LoginPageState extends State<LoginPage> {
                                 disabledColor: Colors.grey[350],
                               ),
                               SizedBox(height: 20),
-                              Center(
-                                child: Text("version: 1.0.5"),
-                              ),
                             ],
                           ),
                         ),

@@ -29,12 +29,10 @@ class _ImpostazioniPageState extends State<ImpostazioniPage> {
       _enabled = prefs.getBool("enableNotifications") ?? true;
     });
     prefs.setBool("enableNotifications", _enabled);
-    print(_enabled);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _initEnabledNotifications();
   }

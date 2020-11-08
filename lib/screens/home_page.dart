@@ -249,6 +249,17 @@ class _HomePageState extends State<HomePage> {
               //   },
               // ),
               // Divider(),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    BottonePaginaDrawer(testoBottone: "Bacheca prenotazioni", onPressed: (){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => BachecaPrenotazioniPage()));
+                    }),
+                    Divider(),
+                  ],
+                ),
+              ),
               Spacer(),
               Padding(
                 padding: const EdgeInsets.all(16.0),

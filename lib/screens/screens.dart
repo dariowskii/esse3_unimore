@@ -6,3 +6,4 @@ export 'tasse_page.dart';
 export 'login_page.dart';
 export 'orario_lezioni_page.dart';
 export 'impostazioni_page.dart';
+export 'bacheca_prenotazioni_page.dart';

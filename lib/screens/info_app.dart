@@ -56,6 +56,10 @@ class InfoApp extends StatelessWidget {
                     Text("145622"),
                   ],
                 ),
+                //TODO: Aggiornare versione!
+                Center(
+                  child: Text("version: 1.1.1"),
+                ),
               ],
             ),
           ),

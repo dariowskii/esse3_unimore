@@ -23,106 +23,6 @@ class _TassePageState extends State<TassePage> {
     final heightScreen = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      // body: FutureBuilder(
-      //     future: _tasse,
-      //     builder: (context, tasse) {
-      //       switch (tasse.connectionState) {
-      //         case ConnectionState.none:
-      //           return Padding(
-      //             padding: EdgeInsets.all(32.0),
-      //             child: Center(
-      //               child: Column(
-      //                 crossAxisAlignment: CrossAxisAlignment.center,
-      //                 mainAxisAlignment: MainAxisAlignment.center,
-      //                 mainAxisSize: MainAxisSize.max,
-      //                 children: <Widget>[
-      //                   Image(
-      //                     width: 200,
-      //                     image: AssetImage('assets/img/conn_problem.png'),
-      //                   ),
-      //                   SizedBox(
-      //                     height: 20,
-      //                   ),
-      //                   Text(
-      //                     "Oops..",
-      //                     style: TextStyle(
-      //                         fontWeight: FontWeight.bold, fontSize: 32),
-      //                   ),
-      //                   SizedBox(height: 10),
-      //                   Text(
-      //                     "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
-      //                     softWrap: true,
-      //                     textAlign: TextAlign.center,
-      //                     style: TextStyle(
-      //                       fontWeight: FontWeight.w500,
-      //                       fontSize: 20,
-      //                     ),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //           );
-      //         case ConnectionState.waiting:
-      //           return Center(
-      //             child: CircularProgressIndicator(
-      //               valueColor:
-      //                   AlwaysStoppedAnimation<Color>(kMainColor_darker),
-      //             ),
-      //           );
-      //         case ConnectionState.active:
-      //         case ConnectionState.done:
-      //           if (tasse.data == null)
-      //             return Padding(
-      //               padding: EdgeInsets.all(32.0),
-      //               child: Center(
-      //                 child: Column(
-      //                   crossAxisAlignment: CrossAxisAlignment.center,
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   mainAxisSize: MainAxisSize.max,
-      //                   children: <Widget>[
-      //                     Image(
-      //                       width: 200,
-      //                       image: AssetImage('assets/img/conn_problem.png'),
-      //                     ),
-      //                     SizedBox(
-      //                       height: 20,
-      //                     ),
-      //                     Text(
-      //                       "Oops..",
-      //                       style: TextStyle(
-      //                           fontWeight: FontWeight.bold, fontSize: 32),
-      //                     ),
-      //                     SizedBox(height: 10),
-      //                     Text(
-      //                       "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
-      //                       softWrap: true,
-      //                       textAlign: TextAlign.center,
-      //                       style: TextStyle(
-      //                         fontWeight: FontWeight.w500,
-      //                         fontSize: 20,
-      //                       ),
-      //                     )
-      //                   ],
-      //                 ),
-      //               ),
-      //             );
-      //           _updateNumTasse(tasse.data["da_pagare"]);
-      //           return ListView.builder(
-      //             padding: EdgeInsets.all(24),
-      //             itemCount: tasse.data["totali"],
-      //             itemBuilder: (context, index) {
-      //               return CardTassa(
-      //                 desc: tasse.data["desc"][index],
-      //                 pagamento: tasse.data["stato_pagamento"][index],
-      //                 scadenza: tasse.data["scadenza"][index],
-      //                 euro: tasse.data["importi"][index],
-      //               );
-      //             },
-      //           );
-      //         default:
-      //           return Center(child: Text("Errore FutureBuilder tasse!"));
-      //       }
-      //     }),
       body: FutureBuilder(
           future: _tasse,
           builder: (context, tasse) {
@@ -236,40 +136,6 @@ class _TassePageState extends State<TassePage> {
                     )
                   ],
                 );
-              // return Padding(
-              //   padding: EdgeInsets.all(32.0),
-              //   child: Center(
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.center,
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       mainAxisSize: MainAxisSize.max,
-              //       children: <Widget>[
-              //         Image(
-              //           width: 200,
-              //           image: AssetImage('assets/img/conn_problem.png'),
-              //         ),
-              //         SizedBox(
-              //           height: 20,
-              //         ),
-              //         Text(
-              //           "Oops..",
-              //           style: TextStyle(
-              //               fontWeight: FontWeight.bold, fontSize: 32),
-              //         ),
-              //         SizedBox(height: 10),
-              //         Text(
-              //           "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
-              //           softWrap: true,
-              //           textAlign: TextAlign.center,
-              //           style: TextStyle(
-              //             fontWeight: FontWeight.w500,
-              //             fontSize: 20,
-              //           ),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // );
               case ConnectionState.waiting:
                 return CustomScrollView(
                   physics: ClampingScrollPhysics(),
@@ -366,23 +232,6 @@ class _TassePageState extends State<TassePage> {
                     )
                   ],
                 );
-              // return Center(
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       CircularProgressIndicator(
-              //         valueColor:
-              //             AlwaysStoppedAnimation<Color>(Colors.redAccent),
-              //       ),
-              //       const SizedBox(height: 15),
-              //       Text(
-              //         "Solo un secondo...",
-              //         style: const TextStyle(
-              //             color: Colors.redAccent, fontSize: 16),
-              //       )
-              //     ],
-              //   ),
-              // );
               case ConnectionState.active:
               case ConnectionState.done:
                 if (tasse.data["success"] && tasse.data["totali"] == 0)

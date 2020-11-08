@@ -10,15 +10,43 @@ class DBProvider {
   Future<Database> get database async {
     if (_database != null) return _database;
 
-    _database = await initDB();
+    _database = await _initDB();
     return _database;
   }
 
-  initDB() async {
-    return await openDatabase(
-        join(await getDatabasesPath(), 'esse3_unimore.db'),
-        onCreate: (db, version) async {
-      await db.execute('''
+  void _updateDB(Batch batch){
+    batch.execute('''
+        CREATE TABLE orario_settimanale(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          giorno INTEGER,
+          inizio TEXT,
+          fine TEXT,
+          titolo TEXT,
+          prof TEXT,
+          prof_gen INTEGER,
+          view_link INTEGER,
+          link TEXT,
+          colore TEXT
+        )
+      ''');
+  }
+
+  void _createDBver2(Batch batch){
+    batch.execute('''
+        CREATE TABLE orario_settimanale(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          giorno INTEGER,
+          inizio TEXT,
+          fine TEXT,
+          titolo TEXT,
+          prof TEXT,
+          prof_gen INTEGER,
+          view_link INTEGER,
+          link TEXT,
+          colore TEXT
+        )
+      ''');
+    batch.execute('''
         CREATE TABLE users(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           username TEXT,
@@ -33,7 +61,20 @@ class DBProvider {
           text_avatar TEXT
         )
       ''');
-    }, version: 1);
+  }
+
+  _initDB() async {
+    return await openDatabase(
+        join(await getDatabasesPath(), 'esse3_unimore.db'),
+        onCreate: (db, version) async {
+          var batch = db.batch();
+        _createDBver2(batch);
+        await batch.commit();
+    }, onUpgrade: (db, oldVersion, newVersion) async {
+      var batch = db.batch();
+      _updateDB(batch);
+      await batch.commit();
+    }, onDowngrade: onDatabaseDowngradeDelete, version: 2,);
   }
 
   newUser(Map newUser) async {

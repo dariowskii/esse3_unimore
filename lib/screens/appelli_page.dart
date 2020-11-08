@@ -4,132 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart';
 
-// class AppelliPage extends StatefulWidget {
-//   @override
-//   _AppelliPageState createState() => _AppelliPageState();
-// }
-//
-// class _AppelliPageState extends State<AppelliPage> {
-//   Future _appelli;
-//
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//
-//     _appelli = Provider.getAppelli();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: IconButton(
-//             icon: Icon(Icons.arrow_back),
-//             onPressed: () {
-//               Navigator.of(context).pop();
-//             }),
-//         title: Text("Prossimi appelli"),
-//       ),
-//       body: FutureBuilder(
-//         future: _appelli,
-//         builder: (context, appelli) {
-//           switch (appelli.connectionState) {
-//             case ConnectionState.none:
-//               return Padding(
-//                 padding: EdgeInsets.all(32.0),
-//                 child: Center(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.center,
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     mainAxisSize: MainAxisSize.max,
-//                     children: <Widget>[
-//                       Image(
-//                         width: 200,
-//                         image: AssetImage('assets/img/conn_problem.png'),
-//                       ),
-//                       SizedBox(
-//                         height: 20,
-//                       ),
-//                       Text(
-//                         "Oops..",
-//                         style: TextStyle(
-//                             fontWeight: FontWeight.bold, fontSize: 32),
-//                       ),
-//                       SizedBox(height: 10),
-//                       Text(
-//                         "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
-//                         softWrap: true,
-//                         textAlign: TextAlign.center,
-//                         style: TextStyle(
-//                           fontWeight: FontWeight.w500,
-//                           fontSize: 20,
-//                         ),
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             case ConnectionState.waiting:
-//               return Center(
-//                 child: CircularProgressIndicator(
-//                   valueColor: AlwaysStoppedAnimation<Color>(kMainColor_darker),
-//                 ),
-//               );
-//             case ConnectionState.active:
-//             case ConnectionState.done:
-//               if (appelli.data["success"] && appelli.data["totali"] == 0)
-//                 return Padding(
-//                   padding: EdgeInsets.all(32.0),
-//                   child: Center(
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.center,
-//                       mainAxisAlignment: MainAxisAlignment.center,
-//                       mainAxisSize: MainAxisSize.max,
-//                       children: <Widget>[
-//                         Image(
-//                           width: 200,
-//                           image: AssetImage('assets/img/no_results.png'),
-//                         ),
-//                         SizedBox(
-//                           height: 20,
-//                         ),
-//                         Text(
-//                           "Sembra non ci siano appelli al momento!",
-//                           softWrap: true,
-//                           textAlign: TextAlign.center,
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.w500,
-//                             fontSize: 25,
-//                           ),
-//                         )
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               return ListView.builder(
-//                 padding: EdgeInsets.all(24),
-//                 itemCount: appelli.data["totali"],
-//                 itemBuilder: (context, index) {
-//                   return CardAppello(
-//                     nomeMateria: appelli.data["materia"][index],
-//                     dataAppello: appelli.data["data_appello"][index],
-//                     desc: appelli.data["desc"][index],
-//                     periodoIscrizioni: appelli.data["periodo_iscrizione"]
-//                         [index],
-//                     sessione: appelli.data["sessione"][index],
-//                     urlInfo: appelli.data["link_info"][index],
-//                   );
-//                 },
-//               );
-//             default:
-//               return Text("Errore FutureBuilder appelli");
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
 class AppelliPage extends StatefulWidget {
   @override
   _AppelliPageState createState() => _AppelliPageState();
@@ -247,40 +121,6 @@ class _AppelliPageState extends State<AppelliPage> {
                     )
                   ],
                 );
-              // return Padding(
-              //   padding: EdgeInsets.all(32.0),
-              //   child: Center(
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.center,
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       mainAxisSize: MainAxisSize.max,
-              //       children: <Widget>[
-              //         Image(
-              //           width: 200,
-              //           image: AssetImage('assets/img/conn_problem.png'),
-              //         ),
-              //         SizedBox(
-              //           height: 20,
-              //         ),
-              //         Text(
-              //           "Oops..",
-              //           style: TextStyle(
-              //               fontWeight: FontWeight.bold, fontSize: 32),
-              //         ),
-              //         SizedBox(height: 10),
-              //         Text(
-              //           "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
-              //           softWrap: true,
-              //           textAlign: TextAlign.center,
-              //           style: TextStyle(
-              //             fontWeight: FontWeight.w500,
-              //             fontSize: 20,
-              //           ),
-              //         )
-              //       ],
-              //     ),
-              //   ),
-              // );
               case ConnectionState.waiting:
                 return CustomScrollView(
                   physics: ClampingScrollPhysics(),
@@ -360,23 +200,6 @@ class _AppelliPageState extends State<AppelliPage> {
                         ))
                   ],
                 );
-              // return Center(
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       CircularProgressIndicator(
-              //         valueColor:
-              //             AlwaysStoppedAnimation<Color>(kMainColor_darker),
-              //       ),
-              //       const SizedBox(height: 15),
-              //       Text(
-              //         "Solo un secondo...",
-              //         style: const TextStyle(
-              //             color: Color(0xffFF5800), fontSize: 16),
-              //       )
-              //     ],
-              //   ),
-              // );
               case ConnectionState.active:
               case ConnectionState.done:
                 if (appelli.data["success"] && appelli.data["totali"] == 0)

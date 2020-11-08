@@ -20,6 +20,7 @@ void backgroundFetchLibretto(String taskId) async {
         AwesomeNotifications().createNotification(
           content: NotificationContent(
               color: kMainColor_darker,
+              notificationLayout: NotificationLayout.BigText,
               backgroundColor: Colors.white,
               id: 1,
               channelKey: 'libretto',
@@ -41,12 +42,11 @@ void backgroundFetchTasse(String taskId) async {
       if (tasse["da_pagare"] > tasseDaPagare) {
         AwesomeNotifications().createNotification(
           content: NotificationContent(
-              color: kMainColor_darker,
-              backgroundColor: Colors.white,
-              id: 1,
+            notificationLayout: NotificationLayout.BigText,
+              id: 2,
               channelKey: 'tasse',
               title: 'Nuove tasse!',
-              body: "Potrebbero esserci nuove tasse da pagare, dai un'occhiata"),
+              body: "Potrebbero esserci nuove tasse da pagare, dai un'occhiata."),
         );
       }
     }
@@ -60,8 +60,6 @@ Future<void> main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var status = prefs.getBool('isLoggedIn') ?? false;
-  BackgroundFetch.registerHeadlessTask(backgroundFetchTasse);
-  BackgroundFetch.registerHeadlessTask(backgroundFetchLibretto);
   AwesomeNotifications().setChannel(NotificationChannel(
       importance: NotificationImportance.Max,
       channelKey: 'tasse',
@@ -109,9 +107,8 @@ class _MyAppState extends State<MyApp> {
     // Configure BackgroundFetch.
     BackgroundFetch.configure(
         BackgroundFetchConfig(
-          minimumFetchInterval: 1440,
-          stopOnTerminate: false,
-          enableHeadless: true,
+          startOnBoot: true,
+          minimumFetchInterval: 15,
           requiresBatteryNotLow: true,
           requiresCharging: false,
           requiresStorageNotLow: false,
