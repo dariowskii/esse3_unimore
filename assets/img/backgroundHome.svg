@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="375" height="320" viewBox="0 0 375 320">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rettangolo_2" data-name="Rettangolo 2" width="375" height="320" fill="#ff7a33"/>
+    </clipPath>
+  </defs>
+  <g id="backgroundHome" clip-path="url(#clip-path)">
+    <g id="Raggruppa_2" data-name="Raggruppa 2">
+      <path id="Tracciato_5" data-name="Tracciato 5" d="M95.119-72.387,76.51,46.639s49.895,52.34,75.345,12.575S231.7,46.639,231.7,46.639l48.524,4.855s14.269,40.182,46.7,19.024,53.332,9.458,53.332,9.458l11.753-28.482L376.837,6.172Z" fill="#ff8f53"/>
+      <path id="Tracciato_3" data-name="Tracciato 3" d="M-59.218,672.078S-89.557,644.6-4.489,734.586,156.5,726.819,156.5,726.819s44.8-72.388,110.39-15.968,80.44-70.492,113.561-40.967S408.374,624,408.374,624L-38.3,639.453Z" transform="matrix(0.978, 0.208, -0.208, 0.978, 114.466, -698.042)" fill="#ff7024"/>
+      <path id="Tracciato_4" data-name="Tracciato 4" d="M234.569,165.785s.07-19.881,18.4-16.426,19.024-13.508,19.024-13.508,1.439-17.777,22.92-12.169" transform="translate(-241 113)" fill="none" stroke="#ff7a33" stroke-width="6"/>
+      <circle id="Ellisse_2" data-name="Ellisse 2" cx="35" cy="35" r="35" transform="translate(340 153)" fill="#ff7a33"/>
+      <path id="Poligono_3" data-name="Poligono 3" d="M15,0,30,26H0Z" transform="translate(-11.54 120.707) rotate(-13)" fill="#ff7a33"/>
+    </g>
+  </g>
+</svg>

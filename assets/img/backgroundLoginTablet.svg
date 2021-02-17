@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="768" height="1024" viewBox="0 0 768 1024">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rettangolo_1" data-name="Rettangolo 1" width="768" height="1024" fill="none" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+    <linearGradient id="linear-gradient" x1="0.693" x2="0.249" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffb891"/>
+      <stop offset="1" stop-color="#ff7a33"/>
+    </linearGradient>
+  </defs>
+  <g id="Gruppo_di_maschere_1" data-name="Gruppo di maschere 1" clip-path="url(#clip-path)">
+    <g id="Raggruppa_1" data-name="Raggruppa 1" transform="translate(140 57)">
+      <path id="Poligono_2" data-name="Poligono 2" d="M86.183,0l86.183,149.281H0Z" transform="matrix(0.934, 0.358, -0.358, 0.934, -127.157, -9.145)" fill="#ff8f53"/>
+      <path id="Poligono_1" data-name="Poligono 1" d="M86.183,0l86.183,149.281H0Z" transform="matrix(0.934, 0.358, -0.358, 0.934, -147.164, -36.847)" fill="#ff7a33"/>
+      <circle id="Ellisse_1" data-name="Ellisse 1" cx="77.5" cy="77.5" r="77.5" transform="translate(490 379)" fill="url(#linear-gradient)"/>
+      <path id="Tracciato_1" data-name="Tracciato 1" d="M-59.218,942.758s-120.21,138.823,39.2-105.1,319.5-16.745,319.5-16.745,129.475,169.683,252.385,16.745,214.6,63.919,214.6,63.919l50.515,171.52-837-41.9Z" transform="translate(-140 34.569)" fill="#ff7a33"/>
+      <path id="Tracciato_2" data-name="Tracciato 2" d="M234.569,228.038s.171-48.533,44.917-40.1,46.44-32.975,46.44-32.975,3.513-43.4,55.951-29.706" transform="translate(208.035 -64)" fill="none" stroke="#ff7a33" stroke-width="12"/>
+      <path id="Tracciato_2-2" data-name="Tracciato 2" d="M234.569,228.038s.171-48.533,44.917-40.1,46.44-32.975,46.44-32.975,3.513-43.4,55.951-29.706" transform="translate(-97.656 225.86) rotate(68)" fill="none" stroke="#ff7a33" stroke-width="12"/>
+    </g>
+  </g>
+</svg>
