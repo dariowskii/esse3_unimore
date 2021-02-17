@@ -8,4 +8,4 @@ Esse3 Unimore (Client) è un progetto individuale sviluppato per gli studenti, p
 
 Made with ❤ and Flutter by dariowskii.
 
-Copyright &copy; 2020 Dario Varriale
+Copyright &copy; 2021 Dario Varriale

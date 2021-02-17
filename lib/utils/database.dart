@@ -2,11 +2,13 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 
+/// Questa classe si interfaccia come [Database].
 class DBProvider {
   DBProvider._();
   static final DBProvider db = DBProvider._();
   static Database _database;
 
+  /// Ritorna il [_database].
   Future<Database> get database async {
     if (_database != null) return _database;
 
@@ -14,38 +16,8 @@ class DBProvider {
     return _database;
   }
 
-  void _updateDB(Batch batch){
-    batch.execute('''
-        CREATE TABLE orario_settimanale(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          giorno INTEGER,
-          inizio TEXT,
-          fine TEXT,
-          titolo TEXT,
-          prof TEXT,
-          prof_gen INTEGER,
-          view_link INTEGER,
-          link TEXT,
-          colore TEXT
-        )
-      ''');
-  }
-
-  void _createDBver2(Batch batch){
-    batch.execute('''
-        CREATE TABLE orario_settimanale(
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          giorno INTEGER,
-          inizio TEXT,
-          fine TEXT,
-          titolo TEXT,
-          prof TEXT,
-          prof_gen INTEGER,
-          view_link INTEGER,
-          link TEXT,
-          colore TEXT
-        )
-      ''');
+  /// Crea il [_database] con le eventuali regole SQL [batch].
+  void _createDB(Batch batch) {
     batch.execute('''
         CREATE TABLE users(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,29 +30,31 @@ class DBProvider {
           anno_corso TEXT,
           data_imm TEXT,
           part_time TEXT,
-          text_avatar TEXT
+          text_avatar TEXT,
+          profile_pic TEXT
         )
       ''');
   }
 
-  _initDB() async {
+  /// Inizializza il [_database].
+  Future<Database> _initDB() async {
     return await openDatabase(
-        join(await getDatabasesPath(), 'esse3_unimore.db'),
-        onCreate: (db, version) async {
-          var batch = db.batch();
-        _createDBver2(batch);
+      join(await getDatabasesPath(), 'esse3_unimore.db'),
+      onCreate: (db, version) async {
+        Batch batch = db.batch();
+        _createDB(batch);
         await batch.commit();
-    }, onUpgrade: (db, oldVersion, newVersion) async {
-      var batch = db.batch();
-      _updateDB(batch);
-      await batch.commit();
-    }, onDowngrade: onDatabaseDowngradeDelete, version: 2,);
+      },
+      onDowngrade: onDatabaseDowngradeDelete,
+      version: 1,
+    );
   }
 
-  newUser(Map newUser) async {
+  /// Inserisce un nuovo utente nel [_database].
+  Future<int> newUser(Map newUser) async {
     final db = await database;
 
-    var res = await db.rawInsert('''
+    int res = await db.rawInsert('''
       INSERT INTO users (
         username, 
         nome_studente, 
@@ -91,8 +65,9 @@ class DBProvider {
         anno_corso,
         data_imm,
         part_time,
-        text_avatar
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        text_avatar,
+        profile_pic
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', [
       newUser["username"],
       newUser["nome"],
@@ -103,37 +78,18 @@ class DBProvider {
       newUser["anno_corso"],
       newUser["data_imm"],
       newUser["part_time"],
-      newUser["text_avatar"]
+      newUser["text_avatar"],
+      newUser["profile_pic"]
     ]);
-    print("new $res");
+
     return res;
   }
 
-  getUser(String username) async {
+  /// Aggiorna un utente nel [_database].
+  Future<int> updateUser(Map newUser) async {
     final db = await database;
-    List<dynamic> args = [username];
-    var res = await db.rawQuery(
-        'SELECT * FROM users WHERE username = ?', args);
 
-    if (res.isEmpty) return null;
-    else return res[0];
-  }
-
-  Future checkExistUser(String username) async{
-    final db = await database;
-    List<dynamic> args = [username];
-    var res = await db.rawQuery(
-        'SELECT username FROM users WHERE username = ?', args);
-
-    print("check $res");
-    if (res.isEmpty) return null;
-    else return res[0];
-  }
-  
-  updateUser(Map newUser, String username) async{
-    final db = await database;
-    
-    var res = db.rawUpdate('''
+    int res = await db.rawUpdate('''
       UPDATE users
       SET username = ?, 
         nome_studente = ?, 
@@ -144,7 +100,8 @@ class DBProvider {
         anno_corso = ?,
         data_imm = ?,
         part_time = ?,
-        text_avatar = ?
+        text_avatar = ?,
+        profile_pic = ?
         WHERE username = ?
     ''', [
       newUser["username"],
@@ -157,12 +114,34 @@ class DBProvider {
       newUser["data_imm"],
       newUser["part_time"],
       newUser["text_avatar"],
+      newUser["profile_pic"],
       newUser["username"],
     ]);
 
-    res.then((data){
-      print("update $data");
-      return data;
-    });
+    return res;
+  }
+
+  /// Ritorna un utente dal [_database].
+  Future<Map<String, dynamic>> getUser(String username) async {
+    final db = await database;
+    List<Map<String, dynamic>> res =
+        await db.rawQuery('SELECT * FROM "users" WHERE username = $username');
+
+    if (res.isEmpty)
+      return null;
+    else
+      return res[0];
+  }
+
+  /// Controlla se un utente esiste già nel [_database] grazie allo [username].
+  Future<Map<String, dynamic>> checkExistUser(String username) async {
+    final db = await database;
+    List<Map<String, dynamic>> res = await db
+        .rawQuery('SELECT username FROM "users" WHERE username = $username');
+
+    if (res.isEmpty)
+      return null;
+    else
+      return res[0];
   }
 }

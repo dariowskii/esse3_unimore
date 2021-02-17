@@ -1,652 +1,274 @@
+import 'dart:convert';
+
+import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
+import 'package:Esse3/screens/prossimi_appelli_screen.dart';
+import 'package:Esse3/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Questa classe effettua lo scraping su esse3.unimore.it
 class Provider {
-  static Future<Map> _isSceltaCarrieraAccess(var sceltaCarriera, var jsessionid,
-      var basicAuth64, var map_info, var username) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        String idStud = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        idStud = idStud
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "?&");
-        
-        //Salvo idStud
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool("isSceltaCarriera", true);
-        prefs.setString("idStud", idStud);
-
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do;jsessionid=" +
-                jsessionid +
-                idStud;
-        //TODO: verificare cosa succede nella request, da li risolvere
-        //Get the response
-        final response = await http.get(
-          newRequestUrl,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-        map_info["success"] = response.statusCode == 200 ? true : false;
-        if (!map_info["success"]) return map_info;
-
-        dom.Document documentTmp = parser.parse(response.body);
-
-        var scrapingNomeMatricola = documentTmp
-            .querySelector(".pagetitle_title")
-            .innerHtml
-            .replaceAll("Area Studente ", "")
-            .split(" - ");
-        var nomeStudente = scrapingNomeMatricola[0];
-        var matricolaStudente = scrapingNomeMatricola[1]
-            .replaceFirst("[MAT. ", "")
-            .replaceFirst("]", "");
-
-        var info = documentTmp.querySelector(".record-riga");
-        int lengthInfo = info.children.length;
-
-        //Save info home as map
-
-        map_info["nome"] = nomeStudente;
-        map_info["matricola"] = matricolaStudente;
-        List<String> prov = nomeStudente.split(" ");
-        map_info["text_avatar"] =
-            "${prov[0].substring(0, 1)}${prov[1].substring(0, 1)}";
-        map_info["username"] = username;
-
-        for (int i = 1; i < lengthInfo; i += 2) {
-          int index = info.children[i].innerHtml.indexOf("&");
-          String key = _getNomeInfo(i);
-          if (key == "part_time") {
-            map_info[key] = info.children[i].children[0].innerHtml.trim();
-          } else {
-            map_info[key] = info.children[i].innerHtml
-                .replaceRange(index, info.children[i].innerHtml.length - 1, "")
-                .trim();
-          }
-        }
-
-        return map_info;
-      }
+  /// Serve sostanzialmente ad estrarre l'`idStud` per mandare le
+  /// request in caso di [sceltaCarriera] iniziale.
+  static Future<Map> _isSceltaCarriera(dom.Element sceltaCarriera,
+      String jsessionid, String basicAuth64, Map mapInfo) async {
+    dom.Element tableScelta = sceltaCarriera.querySelector(".table-1-body");
+    if (tableScelta == null) {
+      mapInfo["error"] = "tableScelta not found";
+      mapInfo["success"] = false;
+      return mapInfo;
     }
-  }
 
-  static Future<Map> _isSceltaCarrieraLibretto(
-      var sceltaCarriera, var basicAuth64, var map_info) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
     int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
 
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Libretto/LibrettoHome.do;jsessionid=" +
-                jsessionid +
-                "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente" +
-                newUrl;
+    try {
+      for (int i = 0; i < lengthScelta; i++) {
+        if (tableScelta.children[i].children[3].text == "Attivo") {
+          String idStud = tableScelta.children[i].children[4].children[0]
+              .children[0].attributes["href"];
+          idStud = idStud
+              .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
+              .replaceAll("?", "?&");
 
-        //Get the response
-        final response = await http.get(
-          newRequestUrl,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-        map_info["success"] = response.statusCode == 200 ? true : false;
-        if (!map_info["success"]) return map_info;
+          //Salvo idStud
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setBool("isSceltaCarriera", true);
+          prefs.setString("idStud", idStud);
 
-        dom.Document documentTmp = parser.parse(response.body);
+          mapInfo["scelta_carriera"] = true;
+          mapInfo["id_scelta_carriera"] = idStud;
 
-        var tableLibretto = documentTmp.querySelector("#tableLibretto");
-        if (tableLibretto == null) return map_info;
-
-        tableLibretto = tableLibretto.querySelector(".table-1-body");
-        int lenghtLibretto = tableLibretto.children.length;
-        if (lenghtLibretto == null) lenghtLibretto = 0;
-
-        map_info["materie"] = new Map();
-        map_info["crediti"] = new Map();
-        map_info["voti"] = new Map();
-        map_info["data_esame"] = new Map();
-        map_info["cod_materia"] = new Map();
-        map_info["superati"] = 0;
-        map_info["totali"] = lenghtLibretto;
-
-        for (int i = 0; i < lenghtLibretto; i++) {
-          var materia = tableLibretto
-              .children[i].children[0].children[0].innerHtml
-              .split(" - ");
-          map_info["materie"][i] = materia[1];
-          map_info["cod_materia"][i] = materia[0];
-          map_info["crediti"][i] =
-              tableLibretto.children[i].children[2].innerHtml;
-          map_info["voti"][i] = tableLibretto.children[i].children[5].innerHtml;
-
-          String buff = map_info["voti"][i].toString();
-
-          if (buff != "") {
-            List<String> l = buff.split("&nbsp;-&nbsp;");
-            //print(l);
-            map_info["voti"][i] = l[0];
-            map_info["data_esame"][i] = l[1];
-            map_info["superati"]++;
-            if (map_info["voti"][i].toString().contains("ID", 0)) {
-              map_info["voti"][i] = "IDONEO";
-            } else if (map_info["voti"][i].toString().contains("30L", 0) ||
-                map_info["voti"][i].toString().contains("30 L", 0))
-              map_info["voti"][i] = "30 LODE";
-          } else {
-            map_info["data_esame"][i] = "";
-          }
-        }
-        print(map_info["superati"]);
-        return map_info;
-      }
-    }
-  }
-
-  static Future<Map> _isSceltaCarrieraProssimiAppelli(
-      var sceltaCarriera, var basicAuth64, var map_info) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Appelli/AppelliF.do;jsessionid=" +
-                jsessionid +
-                "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente" +
-                newUrl;
-
-        //Get the response
-        newUrl = newUrl.replaceAll("&stu_id=", "");
-        final response = await http.get(
-          newRequestUrl,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-
-        map_info["success"] = response.statusCode == 200 ? true : false;
-        if (!map_info["success"]) return map_info;
-
-        dom.Document document = parser.parse(response.body);
-        var tableAppelli = document.querySelector("tbody.table-1-body");
-
-        if (tableAppelli == null) {
-          map_info["totali"] = 0;
-          return map_info;
-        }
-
-        int lenghtAppelli = tableAppelli.children.length;
-        map_info["totali"] = lenghtAppelli;
-
-        map_info["materia"] = new Map();
-        map_info["data_appello"] = new Map();
-        map_info["periodo_iscrizione"] = new Map();
-        map_info["desc"] = new Map();
-        map_info["sessione"] = new Map();
-        map_info["link_info"] = new Map();
-
-        for (int i = 0; i < lenghtAppelli; i++) {
-          map_info["link_info"][i] = tableAppelli.children[i].children[0]
-              .children[0].children[0].attributes["href"];
-          map_info["materia"][i] = tableAppelli.children[i].children[1].text;
-          map_info["data_appello"][i] =
-              tableAppelli.children[i].children[2].text.substring(0, 10);
-          map_info["periodo_iscrizione"][i] = tableAppelli
-              .children[i].children[3].innerHtml
-              .replaceAll("<br>", " - ");
-          map_info["desc"][i] = tableAppelli.children[i].children[4].text;
-          map_info["sessione"][i] =
-              tableAppelli.children[i].children[5].innerHtml.substring(0, 9);
-        }
-
-        return map_info;
-      }
-    }
-  }
-
-  static Future<Map> _isSceltaCarrieraInfoAppello(
-      var sceltaCarriera, var basicAuth64, var map_info, var urlInfo) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Appelli/DatiPrenotazioneAppello.do;jsessionid=" +
-                jsessionid +
-                "?&" +
-                urlInfo +
-                "&menu_opened_cod=menu_link-navbox_studenti_Area_Studente" +
-                newUrl;
-
-        //Get the response
-        newUrl = newUrl.replaceAll("&stu_id=", "");
-        final response = await http.get(
-          newRequestUrl,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-        map_info["success"] = response.statusCode == 200 ? true : false;
-        if (!map_info["success"]) return map_info;
-
-        dom.Document document = parser.parse(response.body);
-        var tableAppello = document.querySelector("#app-box_dati_pren");
-        var tabellaTurni = document
-            .querySelector("#app-tabella_turni")
-            .querySelector(".table-1-body");
-
-        var map_info_appello = new Map();
-        map_info_appello["tipo_esame"] =
-            tableAppello.children[1].children[7].text.trim();
-        map_info_appello["verbalizzazione"] =
-            tableAppello.children[1].children[9].text.trim();
-        map_info_appello["docente"] = tableAppello
-            .children[1].children[11].innerHtml
-            .replaceAll("<br>", " ")
-            .replaceAll("&nbsp;", "")
-            .trim();
-        map_info_appello["num_iscritti"] =
-            tabellaTurni.children[0].children[2].text.trim();
-        map_info_appello["aula"] = tabellaTurni.children[0].children[1].text;
-
-        // debugPrint(response.body);
-        return map_info_appello;
-      }
-    }
-  }
-
-  static Future<Map> _isSceltaCarrieraTasse(
-      var sceltaCarriera, var basicAuth64, var map_info, var prefs) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Tasse/ListaFatture.do;jsessionid=" +
-                jsessionid +
-                "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente" +
-                newUrl;
-
-        //Get the response
-        newUrl = newUrl.replaceAll("&stu_id=", "");
-        final response = await http.get(
-          newRequestUrl,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-
-        map_info["success"] = response.statusCode == 200 ? true : false;
-        if (!map_info["success"]) return map_info;
-
-        dom.Document document = parser.parse(response.body);
-        var tableTasse = document.querySelector("#tasse-tableFatt");
-        if (tableTasse == null) return map_info;
-
-        tableTasse = tableTasse.querySelector(".table-1-body");
-        int lenghtTasse = tableTasse.children.length;
-
-        map_info["importi"] = new Map();
-        map_info["scadenza"] = new Map();
-        map_info["desc"] = new Map();
-        map_info["stato_pagamento"] = new Map();
-        map_info["totali"] = lenghtTasse;
-        map_info["da_pagare"] = 0;
-
-        for (int i = 0; i < lenghtTasse; i++) {
-          map_info["desc"][i] = tableTasse.children[i].children[3].children[0]
-              .children[0].children[1].innerHtml
-              .replaceAll("&nbsp;", "")
-              .substring(2);
-          map_info["scadenza"][i] =
-              tableTasse.children[i].children[4].innerHtml;
-          map_info["importi"][i] = tableTasse.children[i].children[5].innerHtml;
-          String buff = tableTasse.children[i].children[6].innerHtml;
-          if (buff.contains("non")) {
-            map_info["stato_pagamento"][i] = "NON PAGATO";
-            map_info["da_pagare"]++;
-          } else if (buff.contains("pagato"))
-            map_info["stato_pagamento"][i] = "PAGATO";
-          else if (buff.contains("pagamen"))
-            map_info["stato_pagamento"][i] = "IN ATTESA";
-        }
-        return map_info;
-      }
-    }
-  }
-
-  static Future<Map> _isSceltaCarrieraPrenotati(
-      var sceltaCarriera, var basicAuth64, var map_info) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Appelli/BachecaPrenotazioni.do;jsessionid=" +
-                jsessionid +
-                "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente" +
-                newUrl;
-
-        //Get the response
-        final response = await http.get(
-          newRequestUrl,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-
-        map_info["success"] = response.statusCode == 200 ? true : false;
-        if (!map_info["success"]) return map_info;
-
-        dom.Document document = parser.parse(response.body);
-
-        var divPrenotati = document.querySelector("#esse3old");
-        var arrayPrenotati = divPrenotati.querySelector('tbody');
-
-        if (arrayPrenotati == null) {
-          map_info["totali"] = 0;
-          return map_info;
-        }
-
-        int lengthPrenotati = arrayPrenotati.children.length;
-        map_info["totali"] = 0;
-        map_info["esame"] = new Map();
-        map_info["iscrizione"] = new Map();
-        map_info["tipo_esame"] = new Map();
-        map_info["giorno"] = new Map();
-        map_info["ora"] = new Map();
-        map_info["docente"] = new Map();
-
-        for (int i = 0; i < lengthPrenotati; i++) {
-          if (i == 0) continue;
-          if (i % 2 == 0) {
-            var tablePrenotazione =
-                arrayPrenotati.children[i].querySelector('tbody');
-            if (tablePrenotazione.children.length < 2) break;
-            map_info["esame"][map_info["totali"]] =
-                tablePrenotazione.children[0].children[0].text;
-            map_info["iscrizione"][map_info["totali"]] =
-                tablePrenotazione.children[2].children[0].text;
-            map_info["tipo_esame"][map_info["totali"]] =
-                tablePrenotazione.children[3].children[0].text;
-            map_info["giorno"][map_info["totali"]] =
-                tablePrenotazione.children[6].children[0].text;
-            map_info["ora"][map_info["totali"]] =
-                tablePrenotazione.children[6].children[1].text;
-            map_info["docente"][map_info["totali"]] =
-                tablePrenotazione.children[6].children[5].text;
-            map_info["totali"]++;
-          }
-        }
-
-        return map_info;
-      }
-    }
-  }
-
-  static Future<bool> _isSceltaCarrieraPrenotaAppello(
-      var sceltaCarriera, var basicAuth64, var infoAppello) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;jsessionid=" +
-                jsessionid +
-                "?TIPO_ATTIVITA=1" +
-                newUrl;
-        Map mapHiddens = new Map();
-        int lunghezzaHidden = infoAppello["lunghezzaHidden"];
-
-        for (int i = 0; i < lunghezzaHidden; i++) {
-          mapHiddens[infoAppello["hiddens_name"][i]] =
-          infoAppello["hiddens_value"][i];
-        }
-
-        final responseTmp = await http.post(
-          newRequestUrl,
-          body: mapHiddens,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          print("error: $e");
-          return null;
-        });
-        bool success;
-        if (responseTmp.statusCode == 302) {
-          String location = "https://www.esse3.unimore.it" +
-              responseTmp.headers.values.elementAt(2);
-          final responseAppello = await http.post(
-            location,
-            body: mapHiddens,
+          String newRequestUrl =
+              "https://www.esse3.unimore.it/auth/studente/AreaStudente.do;jsessionid=" +
+                  jsessionid +
+                  idStud;
+          //Get the response
+          http.Response response = await http.get(
+            newRequestUrl,
             headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
           ).catchError((e) {
-            print("error: $e");
-            return null;
+            mapInfo["error"] = e;
+            mapInfo["success"] = false;
+            return mapInfo;
           });
-          success = responseAppello.statusCode == 302 ? true : false;
-        }
 
-        return success;
+          mapInfo["success"] = response.statusCode == 200;
+          if (!mapInfo["success"]) {
+            mapInfo["error"] =
+                "response isSceltaCarriera => ${response.statusCode}: ${response.reasonPhrase}";
+            return mapInfo;
+          }
+
+          dom.Document documentTmp = parser.parse(response.body);
+          List<String> nomeMatricola = [];
+
+          try {
+            nomeMatricola = documentTmp
+                .querySelector(".pagetitle_title")
+                .innerHtml
+                .replaceAll("Area Studente ", "")
+                .split(" - ");
+          } catch (e) {
+            mapInfo["error"] = ".pagetitle_title (isSceltaCarriera) not found";
+            mapInfo["success"] = false;
+            return mapInfo;
+          }
+
+          String nomeStudente = nomeMatricola[0];
+          String matricolaStudente =
+              nomeMatricola[1].replaceFirst("[MAT. ", "").replaceFirst("]", "");
+
+          dom.Element info = documentTmp.querySelector(".record-riga");
+          if (info == null) {
+            mapInfo["error"] = ".record-riga (isSceltaCarriera) not found";
+            mapInfo["success"] = false;
+            return mapInfo;
+          }
+
+          int lengthInfo = info.children.length;
+
+          mapInfo["nome"] = nomeStudente;
+          String _nomeCompletoCamel = "";
+          mapInfo["nome"].split(" ").forEach((str) {
+            _nomeCompletoCamel +=
+                "${str.toString()[0]}${str.toString().substring(1).toLowerCase()} ";
+          });
+          mapInfo["nome"] =
+              _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
+          mapInfo["matricola"] = matricolaStudente;
+          List<String> bufferNome = nomeStudente.split(" ");
+          mapInfo["text_avatar"] =
+              "${bufferNome[0].substring(0, 1)}${bufferNome[1].substring(0, 1)}";
+
+          for (int i = 1; i < lengthInfo; i += 2) {
+            int index = info.children[i].innerHtml.indexOf("&");
+            String key = _getNomeInfo(i);
+            if (key == "part_time") {
+              mapInfo[key] = info.children[i].children[0].innerHtml.trim();
+            } else {
+              mapInfo[key] = info.children[i].innerHtml
+                  .replaceRange(
+                      index, info.children[i].innerHtml.length - 1, "")
+                  .trim();
+            }
+          }
+
+          return mapInfo;
+        }
       }
+    } catch (e) {
+      mapInfo["error"] = e;
+      mapInfo["success"] = false;
+      return mapInfo;
     }
+
+    mapInfo["error"] = "unknown error (isSceltaCarriera)";
+    mapInfo["success"] = false;
+    return mapInfo;
   }
 
-  static Future<bool> _isSceltaCarrieraCancellaAppello(var sceltaCarriera, var basicAuth64, Map infoAppello) async {
-    var tableScelta = sceltaCarriera.querySelector(".table-1-body");
-    int lengthScelta = tableScelta.children.length;
-    for (int i = 0; i < lengthScelta; i++) {
-      if (tableScelta.children[i].children[3].text == "Attivo") {
-        var urlCookie =
-            "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-        var getCookie = await http.get(urlCookie);
-        var jsessionCookie = getCookie.headers.values.toList();
-        String jsessionid = jsessionCookie.sublist(1, 2).toString();
-        List<String> jSession = jsessionid.split(";");
-        jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-        String newUrl = tableScelta
-            .children[i].children[4].children[0].children[0].attributes["href"];
-        newUrl = newUrl
-            .replaceAll("auth/studente/SceltaCarrieraStudente.do", "")
-            .replaceAll("?", "&");
-        var newRequestUrl =
-            "https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;jsessionid=" +
-                jsessionid +
-                newUrl;
-
-        final getResponse = await http.post(
-          newRequestUrl,
-          body: infoAppello,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-
-        dom.Document document = parser.parse(getResponse.body);
-
-        var formHiddens = document.querySelector("#esse3old").querySelector('form').children[0];
-
-        Map newBodyRequest = new Map();
-        int lenBody = formHiddens.children.length - 1;
-
-        for(int i = 0; i < lenBody; i++){
-          newBodyRequest[formHiddens.children[i].attributes["name"]] = formHiddens.children[i].attributes["value"];
-        }
-
-        newRequestUrl = "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" + jsessionid + newUrl;
-
-        final finalResponse = await http.post(
-          newRequestUrl,
-          body: infoAppello,
-          headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-        ).catchError((e) {
-          return null;
-        });
-
-        bool success = finalResponse.statusCode == 302;
-
-        return success;
-      }
-    }
-  }
-
+  /// Serve ad ottenere le prime informazioni iniziali della home.
   static Future<Map> getAccess(String basicAuth64, String username) async {
-    //Grab the cookie for the request
-    var urlCookie =
+    Map mapInfo = new Map();
+    //Ottengo il cookie di sessione per la request
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessioncookie = getCookie.headers.values.toList();
-    String jsessionid = jsessioncookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapInfo["success"] = false;
+      mapInfo["error"] = e;
+      return mapInfo;
+    });
+    String jsessionId = "";
 
-    //Create the request url
-    var requestUrl = urlCookie + ";jsessionid=" + jsessionid;
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapInfo["success"] = false;
+      mapInfo["error"] = e;
+      return mapInfo;
+    }
 
-    //Get the response
-    final response = await http.get(
+    String requestUrl = urlCookie + ";jsessionid=" + jsessionId;
+
+    //Ottengo la response
+    final http.Response response = await http.get(
       requestUrl,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
-      debugPrint("Errore response getAccess: $e");
-      return null;
+      mapInfo["success"] = false;
+      mapInfo["error"] = e;
+      return mapInfo;
     });
 
-    var map_info = new Map();
-    map_info["success"] = response.statusCode == 200 ? true : false;
-    if (!map_info["success"]) return map_info;
+    mapInfo["success"] = response.statusCode == 200;
+    if (!mapInfo["success"]) {
+      mapInfo["error"] =
+          "{responseCode: ${response.statusCode}, responseBody: ${response.body}, responseHeader: ${response.headers}}";
+      return mapInfo;
+    }
     //Scraping home page
     dom.Document documentHome = parser.parse(response.body);
 
-    var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    //TODO: sceltaCarriera != null
+    //Controllo se hai una scelta della carriera da effettuare
+    dom.Element sceltaCarriera =
+        documentHome.querySelector("#gu_table_sceltacarriera");
     if (sceltaCarriera != null) {
-      return await _isSceltaCarrieraAccess(
-          sceltaCarriera, jsessionid, basicAuth64, map_info, username);
+      return await _isSceltaCarriera(
+          sceltaCarriera, jsessionId, basicAuth64, mapInfo);
     }
 
-    List<String> scrapingNomeMatricola = documentHome
-        .querySelector(".pagetitle_title")
-        .innerHtml
-        .replaceAll("Area Studente ", "")
-        .split(" - ");
-    var nomeStudente = scrapingNomeMatricola[0];
-    var matricolaStudente = scrapingNomeMatricola[1]
+    mapInfo["scelta_carriera"] = false;
+    mapInfo["id_scelta_carriera"] = "";
+
+    //Recupero l'immagine del profilo
+    mapInfo["profile_pic"] = "";
+
+    final http.Response responsePhoto = await http.get(
+      "https://www.esse3.unimore.it/auth/AddressBook/DownloadFoto.do?r=" +
+          jsessionId.substring(3, 13),
+      headers: {
+        "Authorization": basicAuth64,
+        "cookie": "JSESSIONID=" + jsessionId
+      },
+    ).catchError((e) {
+      debugPrint("Errore response foto profilo getAccess: $e");
+      mapInfo["profile_pic"] = "error";
+    });
+
+    if (mapInfo["profile_pic"] != "error")
+      mapInfo["profile_pic"] = base64Encode(responsePhoto.bodyBytes);
+    else
+      mapInfo["profile_pic"] = false;
+
+    List<String> scrapingNomeMatricola = [];
+    try {
+      scrapingNomeMatricola = documentHome
+          .querySelector(".pagetitle_title")
+          .innerHtml
+          .replaceAll("Area Studente ", "")
+          .split(" - ");
+    } catch (e) {
+      mapInfo["error"] = ".pagetitle_title not found";
+      mapInfo["success"] = false;
+      return mapInfo;
+    }
+
+    String nomeStudente = scrapingNomeMatricola[0];
+    String matricolaStudente = scrapingNomeMatricola[1]
         .replaceFirst("[MAT. ", "")
         .replaceFirst("]", "");
 
-    var info = documentHome.querySelector(".record-riga");
+    dom.Element info = documentHome.querySelector(".record-riga");
+    if (info == null) {
+      mapInfo["error"] = ".record-riga not found";
+      mapInfo["success"] = false;
+      return mapInfo;
+    }
     int lengthInfo = info.children.length;
 
-    //Save info home as map
+    mapInfo["nome"] = nomeStudente;
+    String _nomeCompletoCamel = "";
+    mapInfo["nome"].split(" ").forEach((str) {
+      _nomeCompletoCamel +=
+          "${str.toString()[0]}${str.toString().substring(1).toLowerCase()} ";
+    });
+    mapInfo["nome"] =
+        _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
+    mapInfo["matricola"] = matricolaStudente;
+    List<String> bufferNome = nomeStudente.split(" ");
+    mapInfo["text_avatar"] =
+        "${bufferNome[0].substring(0, 1)}${bufferNome[1].substring(0, 1)}";
+    mapInfo["username"] = username;
 
-    map_info["nome"] = nomeStudente;
-    map_info["matricola"] = matricolaStudente;
-    List<String> prov = nomeStudente.split(" ");
-    map_info["text_avatar"] =
-        "${prov[0].substring(0, 1)}${prov[1].substring(0, 1)}";
-    map_info["username"] = username;
-
-    for (int i = 1; i < lengthInfo; i += 2) {
-      int index = info.children[i].innerHtml.indexOf("&");
-      String key = _getNomeInfo(i);
-      if (key == "part_time") {
-        map_info[key] = info.children[i].children[0].innerHtml.trim();
-      } else {
-        map_info[key] = info.children[i].innerHtml
-            .replaceRange(index, info.children[i].innerHtml.length - 1, "")
-            .trim();
+    //Scraping info
+    try {
+      for (int i = 1; i < lengthInfo; i += 2) {
+        int index = info.children[i].innerHtml.indexOf("&");
+        String key = _getNomeInfo(i);
+        if (key == "part_time") {
+          mapInfo[key] = info.children[i].children[0].innerHtml.trim();
+        } else {
+          mapInfo[key] = info.children[i].innerHtml
+              .replaceRange(index, info.children[i].innerHtml.length - 1, "")
+              .trim();
+        }
       }
+      mapInfo["corso_stud"] = mapInfo["corso_stud"].toString().split(" (")[0];
+    } catch (e) {
+      mapInfo["error"] = e;
+      mapInfo["success"] = false;
+      return mapInfo;
     }
 
-    return map_info;
+    return mapInfo;
   }
 
+  /// Aiuta a prelevare le info in [getAccess].
   static String _getNomeInfo(int n) {
     switch (n) {
       case 1:
@@ -668,711 +290,881 @@ class Provider {
     }
   }
 
+  /// Serve a scaricare le informazioni del libretto universitario per [LibrettoScreen].
   static Future<Map> getLibretto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
+    String basicAuth64 = prefs.getString("auth64Cred");
 
-    if (auth64Cred == null) return null;
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    Map mapLibretto = new Map();
 
-    var urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
-
-    //Libretto
-
-    var requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Libretto/LibrettoHome.do;jsessionid=" +
-            jsessionid +
-            "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
-    //var requestUrlTmp = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
-
-    // final responseTmp = await http.get(
-    //   requestUrlTmp,
-    //   headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    // ).catchError((e) {
-    //   return null;
-    // });
-
-    if(isSceltaCarriera){
-        var idStud = prefs.getString("idStud");
-        requestUrl = requestUrl + idStud;
+    if (basicAuth64 == null) {
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = "noCredential";
+      return mapLibretto;
     }
 
-    final response = await http.get(
-      requestUrl,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    ).catchError((e) {
-      debugPrint("Errore richiesta libretto: $e");
-      return null;
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+
+    String urlCookie =
+        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = e;
+      return mapLibretto;
     });
 
-    var map_libretto = new Map();
+    String jsessionId = "";
 
-    // dom.Document documentHome = parser.parse(responseTmp.body);
-    //
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    // //TODO: sceltaCarriera != null
-    // if (sceltaCarriera != null) {
-    //   return await _isSceltaCarrieraLibretto(
-    //       sceltaCarriera, basicAuth64, map_libretto);
-    // }
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = e;
+      return mapLibretto;
+    }
 
-    map_libretto["success"] = response.statusCode == 200;
-    if (!map_libretto["success"]) return map_libretto;
+    //Libretto
+    String requestUrl =
+        "https://www.esse3.unimore.it/auth/studente/Libretto/LibrettoHome.do;jsessionid=" +
+            jsessionId +
+            "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
+
+    if (isSceltaCarriera) {
+      String idStud = prefs.getString("idStud");
+      requestUrl = requestUrl + idStud;
+    }
+
+    final http.Response response = await http.get(
+      requestUrl,
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
+    ).catchError((e) {
+      debugPrint("Errore richiesta libretto: $e");
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = e;
+      return mapLibretto;
+    });
+
+    mapLibretto["success"] = response.statusCode == 200;
+    if (!mapLibretto["success"]) {
+      mapLibretto["error"] =
+          "{responseCode: ${response.statusCode}, responseBody: ${response.body}, responseHeader: ${response.headers}";
+      return mapLibretto;
+    }
 
     dom.Document documentLibretto = parser.parse(response.body);
 
-    var tableLibretto = documentLibretto.querySelector("#tableLibretto");
-    tableLibretto = tableLibretto.querySelector(".table-1-body");
-    int lenghtLibretto = tableLibretto.children.length;
+    dom.Element boxMedie = documentLibretto.querySelector("#boxMedie");
 
-    map_libretto["materie"] = new Map();
-    map_libretto["crediti"] = new Map();
-    map_libretto["voti"] = new Map();
-    map_libretto["data_esame"] = new Map();
-    map_libretto["cod_materia"] = new Map();
-    map_libretto["superati"] = 0;
-    map_libretto["totali"] = lenghtLibretto;
-
-    for (int i = 0; i < lenghtLibretto; i++) {
-      var materia =
-          tableLibretto.children[i].children[0].children[0].text.split(" - ");
-      map_libretto["materie"][i] = materia[1];
-      map_libretto["cod_materia"][i] = materia[0];
-      map_libretto["crediti"][i] =
-          tableLibretto.children[i].children[2].innerHtml;
-      map_libretto["voti"][i] = tableLibretto.children[i].children[5].innerHtml;
-
-      String buff = map_libretto["voti"][i];
-
-      //print(buff);
-
-      if (buff != "") {
-        List<String> l = buff.split("&nbsp;-&nbsp;");
-        //print(l);
-        map_libretto["voti"][i] = l[0];
-        map_libretto["data_esame"][i] = l[1];
-        map_libretto["superati"]++;
-        if (map_libretto["voti"][i].toString().contains("ID", 0)) {
-          map_libretto["voti"][i] = "IDONEO";
-        } else if (map_libretto["voti"][i].toString().contains("30L", 0) ||
-            map_libretto["voti"][i].toString().contains("30 L", 0)) {
-          map_libretto["voti"][i] = "30 LODE";
-        }//else if (map_libretto["voti"][i].toString().contains("APP", 0)) {
-        //   map_libretto["voti"][i] = "APPR";
-        // } else if (map_libretto["voti"][i].toString().contains("DIT", 0)) {
-        //   map_libretto["voti"][i] = "DIT";
-        // }
+    try {
+      if (boxMedie != null) {
+        mapLibretto["media_arit"] = boxMedie.children[0].children[0].innerHtml
+            .split("&nbsp;​")[1]
+            .replaceAll(" / 30", "");
+        mapLibretto["media_pond"] = boxMedie.children[0].children[1].innerHtml
+            .split("&nbsp;​")[1]
+            .replaceAll(" / 30", "");
+        mapLibretto["media_arit"] =
+            double.tryParse(mapLibretto["media_arit"]) ??
+                mapLibretto["media_arit"];
+        mapLibretto["media_pond"] =
+            double.tryParse(mapLibretto["media_pond"]) ??
+                mapLibretto["media_pond"];
       } else {
-        map_libretto["data_esame"][i] = "";
+        mapLibretto["media_arit"] = "NaN";
+        mapLibretto["media_pond"] = "NaN";
       }
+    } catch (e) {
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = e;
+      return mapLibretto;
     }
 
-    return map_libretto;
+    dom.Element tableLibretto =
+        documentLibretto.querySelector("#tableLibretto");
+    if (tableLibretto == null) {
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = "#tableLibretto = null";
+      return mapLibretto;
+    }
+
+    tableLibretto = tableLibretto.querySelector(".table-1-body");
+    int lengthLibretto = tableLibretto.children.length;
+
+    mapLibretto["materie"] = new Map();
+    mapLibretto["crediti"] = new Map();
+    mapLibretto["voti"] = new Map();
+    mapLibretto["data_esame"] = new Map();
+    mapLibretto["cod_materia"] = new Map();
+    mapLibretto["superati"] = 0;
+    mapLibretto["totali"] = lengthLibretto;
+
+    //Scraping libretto
+    try {
+      for (int i = 0; i < lengthLibretto; i++) {
+        List<String> materia =
+            tableLibretto.children[i].children[0].children[0].text.split(" - ");
+        mapLibretto["cod_materia"][i] = materia[0];
+        mapLibretto["materie"][i] = materia[1];
+        mapLibretto["crediti"][i] =
+            tableLibretto.children[i].children[2].innerHtml;
+        mapLibretto["voti"][i] =
+            tableLibretto.children[i].children[5].innerHtml;
+
+        if (mapLibretto["voti"][i] != "") {
+          List<String> tempVoto = mapLibretto["voti"][i].split("&nbsp;-&nbsp;");
+          mapLibretto["voti"][i] = tempVoto[0];
+          mapLibretto["data_esame"][i] = tempVoto[1];
+          mapLibretto["superati"]++;
+          if (tempVoto[0].contains("ID", 0)) {
+            mapLibretto["voti"][i] = "IDONEO";
+          } else if (tempVoto[0].contains("30L", 0) ||
+              tempVoto[0].contains("30 L", 0)) {
+            mapLibretto["voti"][i] = "30 LODE";
+          }
+        } else {
+          mapLibretto["data_esame"][i] = "";
+        }
+      }
+    } catch (e) {
+      mapLibretto["success"] = false;
+      mapLibretto["error"] = e;
+      return mapLibretto;
+    }
+
+    return mapLibretto;
   }
 
+  /// Serve a scaricare le informazioni delle tasse per [TasseScreen].
   static Future<Map> getTasse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
+    String basicAuth64 = prefs.getString("auth64Cred");
 
-    if (auth64Cred == null) return null;
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    Map mapTasse = new Map();
 
-    var urlCookie =
+    if (basicAuth64 == null) {
+      mapTasse["success"] = false;
+      mapTasse["error"] = "noCredential";
+      return mapTasse;
+    }
+
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapTasse["success"] = false;
+      mapTasse["error"] = e;
+      return mapTasse;
+    });
+
+    String jsessionId = "";
+
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapTasse["success"] = false;
+      mapTasse["error"] = e;
+      return mapTasse;
+    }
 
     //Tasse
-    var requestUrl =
+    String requestUrl =
         "https://www.esse3.unimore.it/auth/studente/Tasse/ListaFatture.do;jsessionid=" +
-            jsessionid +
+            jsessionId +
             "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
-    //var requestUrlTmp = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
 
-    if(isSceltaCarriera){
-      var idStud = prefs.getString("idStud");
+    if (isSceltaCarriera) {
+      String idStud = prefs.getString("idStud");
       requestUrl = requestUrl + idStud;
     }
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       requestUrl,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore richiesta tasse: $e");
-      return null;
+      mapTasse["success"] = false;
+      mapTasse["error"] = e;
+      return mapTasse;
     });
 
-    // final responseTmp = await http.get(
-    //   requestUrlTmp,
-    //   headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    // ).catchError((e) {
-    //   return null;
-    // });
-
-    var map_tasse = new Map();
-
-    // dom.Document documentHome = parser.parse(responseTmp.body);
-    //
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    // //TODO: sceltaCarriera != null
-    // if (sceltaCarriera != null) {
-    //   //map_info["scelta_carriera"] = true;
-    //   return await _isSceltaCarrieraTasse(
-    //       sceltaCarriera, basicAuth64, map_tasse, prefs);
-    // }
-
-    map_tasse["success"] = response.statusCode == 200;
-    if (!map_tasse["success"]) return map_tasse;
+    mapTasse["success"] = response.statusCode == 200;
+    if (!mapTasse["success"]) {
+      mapTasse["error"] =
+          "{responseCode: ${response.statusCode}, responseBody: ${response.body}, responseHeader: ${response.headers}";
+      return mapTasse;
+    }
 
     dom.Document document = parser.parse(response.body);
 
-    var tableTasse = document.querySelector("#tasse-tableFatt");
+    dom.Element tableTasse = document.querySelector("#tasse-tableFatt");
+    if (tableTasse == null) {
+      mapTasse["success"] = false;
+      mapTasse["error"] = "#tasse-tableFatt = null";
+      return mapTasse;
+    }
     tableTasse = tableTasse.querySelector(".table-1-body");
+    if (tableTasse == null) {
+      mapTasse["success"] = false;
+      mapTasse["error"] = ".table-1-body = null";
+      return mapTasse;
+    }
     int lenghtTasse = tableTasse.children.length;
 
-    map_tasse["importi"] = new Map();
-    map_tasse["scadenza"] = new Map();
-    map_tasse["desc"] = new Map();
-    map_tasse["stato_pagamento"] = new Map();
-    map_tasse["totali"] = lenghtTasse;
-    map_tasse["da_pagare"] = 0;
+    mapTasse["importi"] = new Map();
+    mapTasse["scadenza"] = new Map();
+    mapTasse["desc"] = new Map();
+    mapTasse["stato_pagamento"] = new Map();
+    mapTasse["totali"] = lenghtTasse;
+    mapTasse["da_pagare"] = 0;
 
-    for (int i = 0; i < lenghtTasse; i++) {
-      map_tasse["desc"][i] = tableTasse
-          .children[i].children[3].children[0].children[0].children[1].innerHtml
-          .replaceAll("&nbsp;", "")
-          .substring(2);
-      map_tasse["scadenza"][i] = tableTasse.children[i].children[4].innerHtml;
-      map_tasse["importi"][i] = tableTasse.children[i].children[5].innerHtml;
-      String buff = tableTasse.children[i].children[6].innerHtml;
-      if (buff.contains("non")) {
-        map_tasse["stato_pagamento"][i] = "NON PAGATO";
-        map_tasse["da_pagare"]++;
-      } else if (buff.contains("pagato"))
-        map_tasse["stato_pagamento"][i] = "PAGATO";
-      else if (buff.contains("pagamen"))
-        map_tasse["stato_pagamento"][i] = "IN ATTESA";
+    //Scraping tasse
+    try {
+      for (int i = 0; i < lenghtTasse; i++) {
+        mapTasse["desc"][i] = tableTasse.children[i].children[3].children[0]
+            .children[0].children[1].innerHtml
+            .replaceAll("&nbsp;", "")
+            .substring(2);
+        mapTasse["scadenza"][i] = tableTasse.children[i].children[4].innerHtml;
+        mapTasse["importi"][i] = tableTasse.children[i].children[5].innerHtml;
+        String buff = tableTasse.children[i].children[6].innerHtml;
+        if (buff.contains("non")) {
+          mapTasse["stato_pagamento"][i] = "NON PAGATO";
+          mapTasse["da_pagare"]++;
+        } else if (buff.contains("pagato"))
+          mapTasse["stato_pagamento"][i] = "PAGATO";
+        else if (buff.contains("pagamen"))
+          mapTasse["stato_pagamento"][i] = "IN ATTESA";
+      }
+    } catch (e) {
+      mapTasse["success"] = false;
+      mapTasse["error"] = e;
+      return mapTasse;
     }
 
-    return map_tasse;
+    return mapTasse;
   }
 
+  /// Serve a scaricare le informazioni dei prossimi appelli per [ProssimiAppelliScreen].
   static Future<Map> getAppelli() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
+    String basicAuth64 = prefs.getString("auth64Cred");
 
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    Map mapAppelli = new Map();
 
-    var urlCookie =
+    if (basicAuth64 == null) {
+      mapAppelli["success"] = false;
+      mapAppelli["error"] = "noCredential";
+      return mapAppelli;
+    }
+
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapAppelli["success"] = false;
+      mapAppelli["error"] = e;
+      return mapAppelli;
+    });
 
-    //var requestUrlTmp = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
+    String jsessionId = "";
 
-    var requestUrl =
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapAppelli["success"] = false;
+      mapAppelli["error"] = e;
+      return mapAppelli;
+    }
+
+    String requestUrl =
         "https://www.esse3.unimore.it/auth/studente/Appelli/AppelliF.do;jsessionid=" +
-            jsessionid +
+            jsessionId +
             "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
 
-    if(isSceltaCarriera){
-      var idStud = prefs.getString("idStud");
+    if (isSceltaCarriera) {
+      String idStud = prefs.getString("idStud");
       requestUrl = requestUrl + idStud;
     }
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       requestUrl,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore richiesta appelli: $e");
-      return null;
+      mapAppelli["success"] = false;
+      mapAppelli["error"] = e;
+      return mapAppelli;
     });
 
-    var map_appelli = new Map();
-
-    //dom.Document documentHome = parser.parse(response.body);
-
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    // //TODO: sceltaCarriera != null
-    // if (sceltaCarriera != null) {
-    //   //map_info["scelta_carriera"] = true;
-    //   return await _isSceltaCarrieraProssimiAppelli(
-    //       sceltaCarriera, basicAuth64, map_appelli);
-    // }
-
     //Appelli
-
-    map_appelli["success"] = response.statusCode == 200;
-    if (!map_appelli["success"]) return map_appelli;
+    mapAppelli["success"] = response.statusCode == 200;
+    if (!mapAppelli["success"]) {
+      mapAppelli["error"] =
+          "{responseCode: ${response.statusCode}, responseBody: ${response.body}, responseHeader: ${response.headers}";
+      return mapAppelli;
+    }
 
     dom.Document document = parser.parse(response.body);
-    var tableAppelli = document.querySelector("tbody.table-1-body");
+    dom.Element tableAppelli = document.querySelector("tbody.table-1-body");
 
     if (tableAppelli == null) {
-      map_appelli["totali"] = 0;
-      return map_appelli;
+      mapAppelli["success"] = false;
+      mapAppelli["error"] = "tbody.table-1-body = null";
+      return mapAppelli;
     }
 
     int lenghtAppelli = tableAppelli.children.length;
-    map_appelli["totali"] = lenghtAppelli;
+    mapAppelli["totali"] = lenghtAppelli;
 
-    map_appelli["materia"] = new Map();
-    map_appelli["data_appello"] = new Map();
-    map_appelli["periodo_iscrizione"] = new Map();
-    map_appelli["desc"] = new Map();
-    map_appelli["sessione"] = new Map();
-    map_appelli["link_info"] = new Map();
+    mapAppelli["materia"] = new Map();
+    mapAppelli["data_appello"] = new Map();
+    mapAppelli["periodo_iscrizione"] = new Map();
+    mapAppelli["desc"] = new Map();
+    mapAppelli["sessione"] = new Map();
+    mapAppelli["link_info"] = new Map();
 
-    for (int i = 0; i < lenghtAppelli; i++) {
-      map_appelli["link_info"][i] = tableAppelli
-          .children[i].children[0].children[0].children[0].attributes["href"];
-      map_appelli["materia"][i] = tableAppelli.children[i].children[1].text;
-      map_appelli["data_appello"][i] =
-          tableAppelli.children[i].children[2].text.substring(0, 10);
-      map_appelli["periodo_iscrizione"][i] = tableAppelli
-          .children[i].children[3].innerHtml
-          .replaceAll("<br>", " - ");
-      map_appelli["desc"][i] = tableAppelli.children[i].children[4].text;
-      map_appelli["sessione"][i] =
-          tableAppelli.children[i].children[5].innerHtml.substring(0, 9);
+    try {
+      for (int i = 0; i < lenghtAppelli; i++) {
+        mapAppelli["link_info"][i] = tableAppelli
+            .children[i].children[0].children[0].children[0].attributes["href"];
+        mapAppelli["materia"][i] = tableAppelli.children[i].children[1].text;
+        mapAppelli["data_appello"][i] =
+            tableAppelli.children[i].children[2].text.substring(0, 10);
+        mapAppelli["periodo_iscrizione"][i] = tableAppelli
+            .children[i].children[3].innerHtml
+            .replaceAll("<br>", " - ");
+        mapAppelli["desc"][i] = tableAppelli.children[i].children[4].text;
+        mapAppelli["sessione"][i] =
+            tableAppelli.children[i].children[6].innerHtml.substring(0, 9);
+      }
+    } catch (e) {
+      mapAppelli["success"] = false;
+      mapAppelli["error"] = e;
+      return mapAppelli;
     }
 
-    return map_appelli;
+    return mapAppelli;
   }
 
+  /// Serve a scaricare le informazioni nascoste dell'appello per poter prenotarsi.
   static Future<Map> getInfoAppello(String urlInfo) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    String basicAuth64 = prefs.getString("auth64Cred");
 
-    var urlCookie =
+    Map mapInfoAppello = new Map();
+
+    if (basicAuth64 == null) {
+      mapInfoAppello["success"] = false;
+      mapInfoAppello["error"] = "noCredential";
+      return mapInfoAppello;
+    }
+
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapInfoAppello["success"] = false;
+      mapInfoAppello["error"] = e;
+      return mapInfoAppello;
+    });
+
+    String jsessionId = "";
+
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapInfoAppello["success"] = false;
+      mapInfoAppello["error"] = e;
+      return mapInfoAppello;
+    }
 
     urlInfo = urlInfo.replaceAll(
         "auth/studente/Appelli/DatiPrenotazioneAppello.do?", "");
 
     //Appelli
-    var requestUrl =
+    String requestUrl =
         "https://www.esse3.unimore.it/auth/studente/Appelli/DatiPrenotazioneAppello.do;jsessionid=" +
-            jsessionid +
+            jsessionId +
             "?&" +
             urlInfo;
-    //var requestUrlTmp = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
 
-    if(isSceltaCarriera){
-      var idStud = prefs.getString("idStud");
+    if (isSceltaCarriera) {
+      String idStud = prefs.getString("idStud");
       requestUrl = requestUrl + idStud;
     }
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       requestUrl,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore getInfoAppello: $e");
-      return null;
+      mapInfoAppello["success"] = false;
+      mapInfoAppello["error"] = e;
+      return mapInfoAppello;
     });
 
-    // final responseTmp = await http.get(
-    //   requestUrlTmp,
-    //   headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    // ).catchError((e) {
-    //   return null;
-    // });
-
-    var map_info_appello = new Map();
-
-    // dom.Document documentHome = parser.parse(responseTmp.body);
-    //
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    // //TODO: sceltaCarriera != null
-    // if (sceltaCarriera != null) {
-    //   //map_info["scelta_carriera"] = true;
-    //   return await _isSceltaCarrieraInfoAppello(
-    //       sceltaCarriera, basicAuth64, map_info_appello, urlInfo);
-    // }
+    mapInfoAppello["success"] = response.statusCode == 200;
+    if (!mapInfoAppello["success"]) {
+      mapInfoAppello["error"] =
+          "{responseCode: ${response.statusCode}, responseBody: ${response.body}, responseHeader: ${response.headers}";
+      return mapInfoAppello;
+    }
 
     dom.Document document = parser.parse(response.body);
 
-    var tableAppello = document.querySelector("#app-box_dati_pren");
-    var tabellaTurni = document
-        .querySelector("#app-tabella_turni")
-        .querySelector(".table-1-body");
-    var tabellaHidden =
-        document.querySelector("#app-form_dati_pren").children[5];
+    dom.Element tableAppello;
+    dom.Element tabellaTurni;
+    dom.Element tabellaHidden;
 
-    if (tabellaHidden != null) {
-      map_info_appello["tabellaHidden"] = true;
-      int lunghezzaHidden = tabellaHidden.children.length;
-      map_info_appello["lunghezzaHidden"] = lunghezzaHidden;
-      map_info_appello["hiddens_name"] = new Map();
-      map_info_appello["hiddens_value"] = new Map();
-      for (int i = 0; i < lunghezzaHidden; i++) {
-        if (i < lunghezzaHidden - 1) {
-          map_info_appello["hiddens_name"][i] = tabellaHidden.children[i].id;
-          map_info_appello["hiddens_value"][i] =
-              tabellaHidden.children[i].attributes["value"];
-        } else {
-          map_info_appello["hiddens_name"][i] = "form_id_app-form_dati_pren";
-          map_info_appello["hiddens_value"][i] = "app-form_dati_pren";
-        }
-      }
+    try {
+      tableAppello = document.querySelector("#app-box_dati_pren");
+      tabellaHidden = document.querySelector("#app-form_dati_pren").children[5];
+      tabellaTurni = document
+          .querySelector("#app-tabella_turni")
+          .querySelector(".table-1-body");
+    } catch (e) {
+      mapInfoAppello["success"] = false;
+      mapInfoAppello["error"] = e;
+      return mapInfoAppello;
     }
 
-    //print(tableAppello.innerHtml);
+    mapInfoAppello["tabellaHidden"] = true;
+    int lunghezzaHidden = tabellaHidden.children.length;
+    mapInfoAppello["lunghezzaHidden"] = lunghezzaHidden;
+    mapInfoAppello["hiddens_name"] = new Map();
+    mapInfoAppello["hiddens_value"] = new Map();
 
-    map_info_appello["tipo_esame"] =
-        tableAppello.children[1].children[7].text.trim();
-    map_info_appello["verbalizzazione"] =
-        tableAppello.children[1].children[9].text.trim();
-    map_info_appello["docente"] = tableAppello
-        .children[1].children[11].innerHtml
-        .replaceAll("<br>", " ")
-        .replaceAll("&nbsp;", "")
-        .trim();
-    map_info_appello["num_iscritti"] =
-        tabellaTurni.children[0].children[2].text.trim();
-    map_info_appello["aula"] = tabellaTurni.children[0].children[1].text;
+    try {
+      for (int i = 0; i < lunghezzaHidden; i++) {
+        if (i < lunghezzaHidden - 1) {
+          mapInfoAppello["hiddens_name"][i] = tabellaHidden.children[i].id;
+          mapInfoAppello["hiddens_value"][i] =
+              tabellaHidden.children[i].attributes["value"];
+        } else {
+          mapInfoAppello["hiddens_name"][i] = "form_id_app-form_dati_pren";
+          mapInfoAppello["hiddens_value"][i] = "app-form_dati_pren";
+        }
+      }
+      mapInfoAppello["tipo_esame"] =
+          tableAppello.children[1].children[7].text.trim();
+      mapInfoAppello["verbalizzazione"] =
+          tableAppello.children[1].children[9].text.trim();
+      mapInfoAppello["docente"] = tableAppello
+          .children[1].children[11].innerHtml
+          .replaceAll("<br>", " ")
+          .replaceAll("&nbsp;", "")
+          .trim();
+      mapInfoAppello["num_iscritti"] =
+          tabellaTurni.children[0].children[2].text.trim();
+      mapInfoAppello["aula"] = tabellaTurni.children[0].children[1].text;
+    } catch (e) {
+      mapInfoAppello["success"] = false;
+      mapInfoAppello["error"] = e;
+      return mapInfoAppello;
+    }
 
-    // debugPrint(response.body);
-    return map_info_appello;
+    return mapInfoAppello;
   }
 
+  /// Serve a scaricare la lista degli appelli prenotati per la [BachecaPrenotazioniScreen].
   static Future<Map> getAppelliPrenotati() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    String basicAuth64 = prefs.getString("auth64Cred");
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    if (auth64Cred == null) return null;
+    Map mapPrenotati = new Map();
 
-    var urlCookie =
+    if (basicAuth64 == null) {
+      mapPrenotati["success"] = false;
+      mapPrenotati["error"] = "noCredential";
+      return mapPrenotati;
+    }
+
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapPrenotati["success"] = false;
+      mapPrenotati["error"] = e;
+      return mapPrenotati;
+    });
 
-    var requestUrl =
+    String jsessionId = "";
+
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapPrenotati["success"] = false;
+      mapPrenotati["error"] = e;
+      return mapPrenotati;
+    }
+
+    String requestUrl =
         "https://www.esse3.unimore.it/auth/studente/Appelli/BachecaPrenotazioni.do;jsessionid=" +
-            jsessionid +
+            jsessionId +
             "?menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
-    //var requestUrlTmp = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
 
-    if(isSceltaCarriera){
-      var idStud = prefs.getString("idStud");
+    if (isSceltaCarriera) {
+      String idStud = prefs.getString("idStud");
       requestUrl = requestUrl + idStud;
     }
 
-    final response = await http.get(
+    final http.Response response = await http.get(
       requestUrl,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore getAppelliPrenotati: $e");
-      return null;
+      mapPrenotati["success"] = false;
+      mapPrenotati["error"] = e;
+      return mapPrenotati;
     });
 
-    // final responseTmp = await http.get(
-    //   requestUrlTmp,
-    //   headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    // ).catchError((e) {
-    //   return null;
-    // });
-
-    var map_prenotati = new Map();
-
-    // dom.Document documentHome = parser.parse(responseTmp.body);
-    //
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    //
-    // if (sceltaCarriera != null) {
-    //   return await _isSceltaCarrieraPrenotati(
-    //       sceltaCarriera, basicAuth64, map_prenotati);
-    // }
-
-    map_prenotati["success"] = response.statusCode == 200;
-    if (!map_prenotati["success"]) return map_prenotati;
+    mapPrenotati["success"] = response.statusCode == 200;
+    if (!mapPrenotati["success"]) {
+      mapPrenotati["error"] = "responseCode: ${response.statusCode}";
+      return mapPrenotati;
+    }
 
     dom.Document document = parser.parse(response.body);
 
-    var divPrenotati = document.querySelector("#esse3old");
-    var arrayPrenotati = divPrenotati.querySelector('tbody');
+    dom.Element divPrenotati = document.querySelector("#esse3old");
+
+    if (divPrenotati == null) {
+      mapPrenotati["success"] = false;
+      mapPrenotati["error"] = "div#esse3old not found";
+      return mapPrenotati;
+    }
+
+    dom.Element arrayPrenotati = divPrenotati.querySelector('tbody');
 
     if (arrayPrenotati == null) {
-      map_prenotati["totali"] = 0;
-      return map_prenotati;
+      mapPrenotati["totali"] = 0;
+      return mapPrenotati;
     }
 
     int lengthPrenotati = arrayPrenotati.children.length;
-    map_prenotati["totali"] = 0;
-    map_prenotati["esame"] = new Map();
-    map_prenotati["iscrizione"] = new Map();
-    map_prenotati["tipo_esame"] = new Map();
-    map_prenotati["giorno"] = new Map();
-    map_prenotati["ora"] = new Map();
-    map_prenotati["docente"] = new Map();
-    map_prenotati["formHiddens"] = new Map();
+    mapPrenotati["totali"] = 0;
+    mapPrenotati["esame"] = new Map();
+    mapPrenotati["iscrizione"] = new Map();
+    mapPrenotati["tipo_esame"] = new Map();
+    mapPrenotati["giorno"] = new Map();
+    mapPrenotati["ora"] = new Map();
+    mapPrenotati["docente"] = new Map();
+    mapPrenotati["formHiddens"] = new Map();
 
-    for (int i = 0; i < lengthPrenotati; i++) {
-      if (i == 0) continue;
-      if (i % 2 == 0) {
-        var tablePrenotazione =
-            arrayPrenotati.children[i].querySelector('tbody');
-        if (tablePrenotazione.children.length < 2) break;
-        map_prenotati["esame"][map_prenotati["totali"]] =
-            tablePrenotazione.children[0].children[0].text;
-        map_prenotati["iscrizione"][map_prenotati["totali"]] =
-            tablePrenotazione.children[2].children[0].text;
-        map_prenotati["tipo_esame"][map_prenotati["totali"]] =
-            tablePrenotazione.children[3].children[0].text;
-        map_prenotati["giorno"][map_prenotati["totali"]] =
-            tablePrenotazione.children[6].children[0].text;
-        map_prenotati["ora"][map_prenotati["totali"]] =
-            tablePrenotazione.children[6].children[1].text;
-        map_prenotati["docente"][map_prenotati["totali"]] =
-            tablePrenotazione.children[6].children[5].text;
+    try {
+      for (int i = 2; i < lengthPrenotati; i++) {
+        if (i % 2 == 0) {
+          dom.Element tablePrenotazione =
+              arrayPrenotati.children[i].querySelector('tbody');
+          if (tablePrenotazione == null ||
+              tablePrenotazione.children.length < 2) break;
 
-        int lenHiddens = tablePrenotazione.children[6].children[6].children[0].children.length;
-        map_prenotati["lenHiddens"] = lenHiddens - 1;
-        var hiddens = tablePrenotazione.children[6].children[6].children[0];
-        for(int j = 1; j < lenHiddens; j++){
-          String key = map_prenotati["totali"].toString() + "_" + hiddens.children[j].attributes["name"].toString();
-          map_prenotati["formHiddens"][key] = hiddens.children[j].attributes["value"];
+          mapPrenotati["esame"][mapPrenotati["totali"]] =
+              tablePrenotazione.children[0].children[0].text;
+          mapPrenotati["iscrizione"][mapPrenotati["totali"]] =
+              tablePrenotazione.children[2].children[0].text;
+
+          mapPrenotati["tipo_esame"][mapPrenotati["totali"]] =
+              tablePrenotazione.children[3].children[0].text;
+
+          mapPrenotati["giorno"][mapPrenotati["totali"]] =
+              tablePrenotazione.children[6].children[0].text;
+          mapPrenotati["ora"][mapPrenotati["totali"]] =
+              tablePrenotazione.children[6].children[1].text;
+          mapPrenotati["docente"][mapPrenotati["totali"]] =
+              tablePrenotazione.children[6].children[6].text;
+
+          int lenHiddens = tablePrenotazione
+              .children[6].children[7].children[0].children.length;
+          mapPrenotati["lenHiddens"] = lenHiddens - 1;
+          dom.Element hiddens =
+              tablePrenotazione.children[6].children[7].children[0];
+          for (int j = 1; j < lenHiddens; j++) {
+            String key = mapPrenotati["totali"].toString() +
+                "_" +
+                hiddens.children[j].attributes["name"].toString();
+            mapPrenotati["formHiddens"][key] =
+                hiddens.children[j].attributes["value"];
+          }
+          mapPrenotati["totali"]++;
         }
-        map_prenotati["totali"]++;
       }
+    } catch (e) {
+      print(e);
+      mapPrenotati["success"] = false;
+      mapPrenotati["error"] = e;
+      return mapPrenotati;
     }
-    return map_prenotati;
+    return mapPrenotati;
   }
 
-  static Future<bool> prenotaAppello(Map infoAppello) async {
+  /// Serve a prenotare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
+  static Future<Map> prenotaAppello(Map infoAppello) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    String basicAuth64 = prefs.getString("auth64Cred");
 
-    var urlCookie =
+    Map mapHiddens = new Map();
+
+    if (basicAuth64 == null) {
+      mapHiddens["success"] = false;
+      mapHiddens["error"] = "noCredential";
+      return mapHiddens;
+    }
+
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+      mapHiddens["success"] = false;
+      mapHiddens["error"] = e;
+      return mapHiddens;
+    });
 
-    var requestUrl =
+    String jsessionId = "";
+
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      mapHiddens["success"] = false;
+      mapHiddens["error"] = e;
+      return mapHiddens;
+    }
+
+    String requestUrl =
         "https://www.esse3.unimore.it/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;jsessionid=" +
-            jsessionid +
+            jsessionId +
             "?TIPO_ATTIVITA=1";
-    //var requestUrl = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
 
-    if(isSceltaCarriera){
-      var idStud = prefs.getString("idStud");
+    if (isSceltaCarriera) {
+      String idStud = prefs.getString("idStud");
       requestUrl = requestUrl + idStud;
     }
 
-    Map mapHiddens = new Map();
     int lunghezzaHidden = infoAppello["lunghezzaHidden"];
 
     for (int i = 0; i < lunghezzaHidden; i++) {
       mapHiddens[infoAppello["hiddens_name"][i]] =
-      infoAppello["hiddens_value"][i];
+          infoAppello["hiddens_value"][i];
     }
-    //print(mapHiddens);
 
-    final response = await http.post(
+    final http.Response response = await http.post(
       requestUrl,
       body: mapHiddens,
-      headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+      headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore prenotazione appello: $e");
-      return null;
+      mapHiddens["success"] = false;
+      mapHiddens["error"] = e;
+      return mapHiddens;
     });
-    // final getResponseTmp = await http.get(
-    //   requestUrl,
-    //   headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    // ).catchError((e) {
-    //   return null;
-    // });
 
-
-    // dom.Document documentHome = parser.parse(getResponseTmp.body);
-    //
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    //
-    // if (sceltaCarriera != null) {
-    //   return await _isSceltaCarrieraPrenotaAppello(
-    //       sceltaCarriera, basicAuth64, infoAppello);
-    // }
-    bool success;
     if (response.statusCode == 302) {
-      String location = "https://www.esse3.unimore.it" +
-          response.headers.values.elementAt(2);
-      final responseAppello = await http.post(
+      String location =
+          "https://www.esse3.unimore.it" + response.headers.values.elementAt(2);
+      if (location.endsWith("TIPO_ATTIVITA=1")) {
+        location =
+            location.substring(0, location.lastIndexOf("TIPO_ATTIVITA=1"));
+      }
+
+      http.Response responseAppello = await http.post(
         location,
         body: mapHiddens,
-        headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+        headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
       ).catchError((e) {
         print("error: $e");
-        return null;
+        mapHiddens["success"] = false;
+        mapHiddens["error"] = e;
+        return mapHiddens;
       });
-      success = responseAppello.statusCode == 302 ? true : false;
-      if(!success){
+
+      mapHiddens["success"] = responseAppello.statusCode == 302;
+      if (!mapHiddens["success"]) {
         dom.Document document = parser.parse(responseAppello.body);
-        success = document.querySelector("#app-text_esito_pren_msg").text.contains("PRENOTAZIONE EFFETTUATA");
+        if (document.querySelector("#app-text_esito_pren_msg") != null) {
+          try {
+            mapHiddens["success"] = document
+                .querySelector("#app-text_esito_pren_msg")
+                .text
+                .contains("PRENOTAZIONE EFFETTUATA");
+          } catch (e) {
+            mapHiddens["success"] = false;
+            mapHiddens["error"] = e;
+            return mapHiddens;
+          }
+
+          if (!mapHiddens["success"]) {
+            try {
+              mapHiddens["error"] = document
+                  .querySelector("#app-text_esito_pren_msg")
+                  .innerHtml
+                  .replaceFirst(
+                      "PRENOTAZIONE NON EFFETTUATA<br>Questo messaggio può presentarsi se:",
+                      "");
+              mapHiddens["error"] =
+                  mapHiddens["error"].toString().replaceAll(";", ";\n");
+            } catch (e) {
+              mapHiddens["error"] = e;
+            }
+          }
+        } else {
+          mapHiddens["success"] = false;
+          mapHiddens["error"] = "#app-text_esito_pren_msg = null";
+        }
       }
+    } else {
+      mapHiddens["success"] = false;
+      mapHiddens["error"] = "responseCode: ${response.statusCode}";
     }
 
-    return success;
+    return mapHiddens;
   }
 
+  /// Serve a cancellare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
   static Future<bool> cancellaAppello(Map infoAppello) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var auth64Cred = prefs.getString("auth64Cred");
-    var isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
+    String basicAuth64 = prefs.getString("auth64Cred");
+    bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    var urlCookie =
+    if (basicAuth64 == null) return false;
+
+    String urlCookie =
         "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    var getCookie = await http.get(urlCookie);
-    var jsessionCookie = getCookie.headers.values.toList();
-    String jsessionid = jsessionCookie.sublist(1, 2).toString();
-    List<String> jSession = jsessionid.split(";");
-    jsessionid = jSession[0].replaceAll("[JSESSIONID=", "");
+    http.Response getCookie =
+        await http.head(urlCookie).catchError((e) => false);
 
-    var requestUrl = "https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;jsessionid=" + jsessionid;
-    //var requestUrl = urlCookie + ";jsessionid=" + jsessionid;
-    var basicAuth64 = "Basic " + auth64Cred;
+    String jsessionId = "";
 
-    if(isSceltaCarriera){
-      var idStud = prefs.getString("idStud");
+    try {
+      jsessionId = getCookie.headers["set-cookie"]
+          .split(";")[0]
+          .replaceAll("JSESSIONID=", "");
+    } catch (e) {
+      return false;
+    }
+
+    String requestUrl =
+        "https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;jsessionid=" +
+            jsessionId;
+    String idStud;
+
+    if (isSceltaCarriera) {
+      idStud = prefs.getString("idStud");
       requestUrl = requestUrl + idStud;
     }
-    //print(infoAppello);
-    // final getResponseTmp = await http.get(
-    //   requestUrl,
-    //   headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
-    // ).catchError((e) {
-    //   return null;
-    // });
-    //
-    // dom.Document documentHome = parser.parse(getResponseTmp.body);
-    //
-    // var sceltaCarriera = documentHome.querySelector("#gu_table_sceltacarriera");
-    //
-    // if (sceltaCarriera != null) {
-    //   return await _isSceltaCarrieraCancellaAppello(
-    //       sceltaCarriera, basicAuth64, infoAppello);
-    // }
-    final response = await http.post(
+
+    http.Response response = await http.post(
       requestUrl,
       body: infoAppello,
-      headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionid, "origin": "https://www.esse3.unimore.it"},
+      headers: {
+        "Authorization": basicAuth64,
+        "JSESSIONID": jsessionId,
+        "origin": "https://www.esse3.unimore.it"
+      },
     ).catchError((e) {
       debugPrint("Errore cancellazione appello: $e");
       return false;
     });
 
-    if(response.statusCode == 302){
-      final response2 = await http.post(
+    if (response.statusCode == 302) {
+      http.Response response2 = await http.post(
         requestUrl,
         body: infoAppello,
-        headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionid},
+        headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionId},
       ).catchError((e) {
         debugPrint("Errore cancellazione appello: $e");
         return false;
       });
 
       dom.Document document = parser.parse(response2.body);
-      //var formHiddens = document.querySelector("#esse3old").querySelector('form').children[0];
-      var formHiddens = document.querySelector("#esse3old");
-      if(formHiddens == null) return false;
+      dom.Element formHiddens = document.querySelector("#esse3old");
+      if (formHiddens == null) return false;
 
       formHiddens = formHiddens.querySelector('form').children[0];
 
       Map newBodyRequest = new Map();
       int lenBody = formHiddens.children.length - 1;
 
-      for(int i = 0; i < lenBody; i++){
-        newBodyRequest[formHiddens.children[i].attributes["name"]] = formHiddens.children[i].attributes["value"];
+      try {
+        for (int i = 0; i < lenBody; i++) {
+          newBodyRequest[formHiddens.children[i].attributes["name"]] =
+              formHiddens.children[i].attributes["value"];
+        }
+      } catch (e) {
+        return false;
       }
 
-      requestUrl = "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" + jsessionid;
+      requestUrl =
+          "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" +
+              jsessionId;
 
-      if(isSceltaCarriera){
-        var idStud = prefs.getString("idStud");
+      if (isSceltaCarriera) {
         requestUrl = requestUrl + idStud;
       }
 
       final finalResponse = await http.post(
         requestUrl,
         body: newBodyRequest,
-        headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionid},
+        headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionId},
       ).catchError((e) {
         debugPrint("Errore finalResponse cancellazione apppello: $e");
-        return null;
+        return false;
       });
 
-      bool success = finalResponse.statusCode == 302;
-
-      return success;
+      return finalResponse.statusCode == 302;
     } else if (response.statusCode == 200) {
       dom.Document document = parser.parse(response.body);
-      //var formHiddens = document.querySelector("#esse3old").querySelector('form').children[0];
-      var formHiddens = document.querySelector("#esse3old");
-      if(formHiddens == null) return false;
+      dom.Element formHiddens = document.querySelector("#esse3old");
+      if (formHiddens == null) return false;
 
       formHiddens = formHiddens.querySelector('form').children[0];
 
       Map newBodyRequest = new Map();
       int lenBody = formHiddens.children.length - 1;
 
-      for(int i = 0; i < lenBody; i++){
-        newBodyRequest[formHiddens.children[i].attributes["name"]] = formHiddens.children[i].attributes["value"];
+      try {
+        for (int i = 0; i < lenBody; i++) {
+          newBodyRequest[formHiddens.children[i].attributes["name"]] =
+              formHiddens.children[i].attributes["value"];
+        }
+      } catch (e) {
+        return false;
       }
 
-      requestUrl = "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" + jsessionid;
+      requestUrl =
+          "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" +
+              jsessionId;
 
-      if(isSceltaCarriera){
-        var idStud = prefs.getString("idStud");
+      if (isSceltaCarriera) {
         requestUrl = requestUrl + idStud;
       }
 
-      final finalResponse = await http.post(
+      http.Response finalResponse = await http.post(
         requestUrl,
         body: newBodyRequest,
-        headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionid},
+        headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
       ).catchError((e) {
         debugPrint("Errore finalResponse cancellazione apppello: $e");
-        return null;
+        return false;
       });
 
-      bool success = finalResponse.statusCode == 302;
-
-      return success;
-    } else return false;
-
-
+      return finalResponse.statusCode == 302;
+    } else
+      return false;
   }
-
-//TODO: fare metodo getDatiAnagrafici !!
 }

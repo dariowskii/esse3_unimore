@@ -1,166 +1,55 @@
-import 'dart:core';
-import 'package:Esse3/utils/provider.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
-import 'package:animated_splash/animated_splash.dart';
-import 'package:background_fetch/background_fetch.dart';
-
 import 'package:flutter/material.dart';
 import 'screens/screens.dart';
 
-void backgroundFetchLibretto(String taskId) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var nuoviVoti = prefs.getInt("totEsamiSuperati") ?? 99;
-  Provider.getLibretto().then((libretto) {
-    if (libretto != null && libretto["success"]) {
-      prefs.setInt("totEsamiSuperati", libretto["superati"]);
-      if (libretto["superati"] > nuoviVoti) {
-        AwesomeNotifications().createNotification(
-          content: NotificationContent(
-              color: kMainColor_darker,
-              notificationLayout: NotificationLayout.BigText,
-              backgroundColor: Colors.white,
-              id: 1,
-              channelKey: 'libretto',
-              title: 'Nuovo voto registrato!',
-              body: "Potrebbero aver registrato un nuovo voto nel libretto, dai un'occhiata."),
-        );
-      }
-    }
-  });
-  BackgroundFetch.finish(taskId);
-}
-
-void backgroundFetchTasse(String taskId) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var tasseDaPagare = prefs.getInt("tasseDaPagare") ?? 0;
-  Provider.getTasse().then((tasse) {
-    if (tasse != null && tasse["success"]) {
-      prefs.setInt("tasseDaPagare", tasse["da_pagare"]);
-      if (tasse["da_pagare"] > tasseDaPagare) {
-        AwesomeNotifications().createNotification(
-          content: NotificationContent(
-            notificationLayout: NotificationLayout.BigText,
-              id: 2,
-              channelKey: 'tasse',
-              title: 'Nuove tasse!',
-              body: "Potrebbero esserci nuove tasse da pagare, dai un'occhiata."),
-        );
-      }
-    }
-
-  });
-  BackgroundFetch.finish(taskId);
-}
-
+/// Metodo principale che avvia [Esse3].
+///
+/// Controlla se l'utente è già loggato o se deve effettuare il login,
+/// in modo da reinderizzare correttamente l'utente.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //Forzo il device ad orientarsi verticalmente
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  //Controllo se l'utente è loggato
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  var status = prefs.getBool('isLoggedIn') ?? false;
-  AwesomeNotifications().setChannel(NotificationChannel(
-      importance: NotificationImportance.Max,
-      channelKey: 'tasse',
-      channelName: 'Tasse',
-      channelDescription: 'Tasse universitarie.',
-      defaultColor: Colors.white,
-      ledColor: kMainColor_darker));
-  AwesomeNotifications().setChannel(NotificationChannel(
-      importance: NotificationImportance.Max,
-      channelKey: 'libretto',
-      channelName: 'Libretto',
-      channelDescription: 'Libretto universitario',
-      defaultColor: Colors.white,
-      ledColor: kMainColor_darker));
-  AwesomeNotifications().initialize('@mipmap/ic_launcher', [
-    NotificationChannel(
-      importance: NotificationImportance.Max,
-      channelKey: 'libretto',
-    ),
-    NotificationChannel(
-      importance: NotificationImportance.Max,
-      channelKey: 'tasse',
-    )
-  ]);
-  runApp(MyApp(status: status));
+  bool version = prefs.getBool("1.2.0") ?? false;
+  if (!version) {
+    prefs.clear();
+    prefs.setBool("1.2.0", true);
+  }
+  bool status = prefs.getBool('isLoggedIn') ?? false;
+  runApp(Esse3(logged: status));
 }
 
-class MyApp extends StatefulWidget {
-  MyApp({@required this.status});
+/// Rappresenta la classe che avvia l'applicazione.
+class Esse3 extends StatefulWidget {
+  Esse3({@required this.logged});
 
-  final bool status;
+  /// Serve per controllare se l'utente è loggato.
+  final bool logged;
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _Esse3State createState() => _Esse3State();
 }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  Future<void> initPlatformState() async {
-    // Configure BackgroundFetch.
-    BackgroundFetch.configure(
-        BackgroundFetchConfig(
-          startOnBoot: true,
-          minimumFetchInterval: 15,
-          requiresBatteryNotLow: true,
-          requiresCharging: false,
-          requiresStorageNotLow: false,
-          requiresDeviceIdle: false,
-          requiredNetworkType: NetworkType.ANY,
-        ), (String taskId) async {
-      backgroundFetchLibretto(taskId);
-      backgroundFetchTasse(taskId);
-    }).catchError((e) {
-      print('[BackgroundFetch] configure ERROR: $e');
-    });
-
-    if (!mounted) return;
-  }
-
+class _Esse3State extends State<Esse3> {
   @override
   Widget build(BuildContext context) {
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          color: Colors.white,
-          iconTheme: IconThemeData(
-            color: kMainColor,
-          ),
-          textTheme: TextTheme(
-            headline6:
-                TextStyle(color: kMainColor, fontWeight: FontWeight.bold, fontFamily: 'Proxima Nova', fontSize: 20),
-          ),
-        ),
-        accentColorBrightness: Brightness.light,
-        buttonTheme: ButtonThemeData(
-          colorScheme: Theme.of(context).colorScheme.copyWith(secondary: kMainColor),
-        ),
-        accentColor: kMainColor,
-        primaryColor: kMainColor,
-        backgroundColor: Colors.white,
-        splashColor: Colors.white,
-        primaryColorDark: kMainColor_darker,
-        fontFamily: 'Proxima Nova',
-      ),
-      home: AnimatedSplash(
-        home: widget.status ? HomePage() : LoginPage(),
-        imagePath: 'assets/img/logo_app.png',
-        duration: 1500,
-        type: AnimatedSplashType.StaticDuration,
-      ),
+      darkTheme: Constants.darkTheme,
+      theme: Constants.lightTheme,
+      initialRoute: widget.logged ? HomeScreen.id : LoginScreen.id,
+      routes: {
+        LoginScreen.id: (context) => LoginScreen(),
+        HomeScreen.id: (context) => HomeScreen(),
+        LibrettoScreen.id: (context) => LibrettoScreen(),
+        TasseScreen.id: (context) => TasseScreen(),
+        BachecaPrenotazioniScreen.id: (context) => BachecaPrenotazioniScreen(),
+        ProssimiAppelliScreen.id: (context) => ProssimiAppelliScreen(),
+      },
     );
   }
 }

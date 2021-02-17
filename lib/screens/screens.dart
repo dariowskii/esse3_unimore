@@ -1,9 +1,7 @@
-export 'home_page.dart';
-export 'appelli_page.dart';
-export 'info_app.dart';
-export 'libretto_page.dart';
-export 'tasse_page.dart';
-export 'login_page.dart';
-export 'orario_lezioni_page.dart';
-export 'impostazioni_page.dart';
-export 'bacheca_prenotazioni_page.dart';
+export 'home_screen.dart';
+export 'prossimi_appelli_screen.dart';
+export 'info_app_screen.dart';
+export 'libretto_screen.dart';
+export 'tasse_screen.dart';
+export 'login_screen.dart';
+export 'bacheca_prenotazioni_screen.dart';
