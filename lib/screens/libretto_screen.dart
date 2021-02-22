@@ -53,7 +53,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
           b["data"].toString().substring(0, 2);
       return ad.compareTo(bd);
     });
-    if (puntiGrafico.length >= 8) puntiGrafico = puntiGrafico.sublist(0, 8);
+    if (puntiGrafico.length >= 8)
+      puntiGrafico =
+          puntiGrafico.sublist(puntiGrafico.length - 8, puntiGrafico.length);
   }
 
   @override

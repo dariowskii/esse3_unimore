@@ -141,6 +141,9 @@ class _HomeScreenState extends State<HomeScreen>
                                     return LinearProgressIndicator();
                                   case ConnectionState.active:
                                   case ConnectionState.done:
+                                    if(!userData.hasData){
+                                      return Text("Errore nel recuperare i dati.");
+                                    }
                                     return Row(
                                       children: [
                                         Container(
@@ -150,14 +153,14 @@ class _HomeScreenState extends State<HomeScreen>
                                             radius: 30,
                                             backgroundImage: userData
                                                         .data["profile_pic"] ==
-                                                    false
+                                                    "no"
                                                 ? null
                                                 : MemoryImage(base64Decode(
                                                     userData
                                                         .data["profile_pic"])),
                                             child: userData
                                                         .data["profile_pic"] ==
-                                                    false
+                                                    "no"
                                                 ? Text(
                                                     userData
                                                         .data["text_avatar"],
@@ -168,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                       color: Colors.white,
                                                     ),
                                                   )
-                                                : null,
+                                                : SizedBox.shrink(),
                                           ),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
@@ -217,11 +220,11 @@ class _HomeScreenState extends State<HomeScreen>
                                         Constants.mainColor.withOpacity(0.9),
                                     radius: 30,
                                     backgroundImage:
-                                        widget.user["profile_pic"] == false
+                                        widget.user["profile_pic"] == "no"
                                             ? null
                                             : MemoryImage(base64Decode(
                                                 widget.user["profile_pic"])),
-                                    child: widget.user["profile_pic"] == false
+                                    child: widget.user["profile_pic"] == "no"
                                         ? Text(
                                             widget.user["text_avatar"],
                                             style: TextStyle(
@@ -230,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen>
                                               color: Colors.white,
                                             ),
                                           )
-                                        : null,
+                                        : SizedBox.shrink(),
                                   ),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -380,14 +383,14 @@ class _HomeScreenState extends State<HomeScreen>
                                               radius: _animation.value * 50,
                                               backgroundImage: userData.data[
                                                           "profile_pic"] ==
-                                                      false
+                                                      "no"
                                                   ? null
                                                   : MemoryImage(base64Decode(
                                                       userData.data[
                                                           "profile_pic"])),
                                               child: userData.data[
                                                           "profile_pic"] ==
-                                                      false
+                                                      "no"
                                                   ? Text(
                                                       userData
                                                           .data["text_avatar"],
@@ -400,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                         color: Colors.white,
                                                       ),
                                                     )
-                                                  : null,
+                                                  : SizedBox.shrink(),
                                             ),
                                             padding: EdgeInsets.all(2.0),
                                             decoration: BoxDecoration(
@@ -510,11 +513,11 @@ class _HomeScreenState extends State<HomeScreen>
                                           Constants.mainColorLighter,
                                       radius: _animation.value * 50,
                                       backgroundImage:
-                                          widget.user["profile_pic"] == false
+                                          widget.user["profile_pic"] == "no"
                                               ? null
                                               : MemoryImage(base64Decode(
                                                   widget.user["profile_pic"])),
-                                      child: widget.user["profile_pic"] == false
+                                      child: widget.user["profile_pic"] == "no"
                                           ? Text(
                                               widget.user["text_avatar"],
                                               style: TextStyle(
@@ -523,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                 color: Colors.white,
                                               ),
                                             )
-                                          : null,
+                                          : SizedBox.shrink(),
                                     ),
                                     padding: EdgeInsets.all(2.0),
                                     decoration: BoxDecoration(

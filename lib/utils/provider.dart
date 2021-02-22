@@ -12,10 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Questa classe effettua lo scraping su esse3.unimore.it
 class Provider {
   /// Serve sostanzialmente ad estrarre l'`idStud` per mandare le
-  /// request in caso di [sceltaCarriera] iniziale.
-  static Future<Map> _isSceltaCarriera(dom.Element sceltaCarriera,
-      String jsessionid, String basicAuth64, Map mapInfo) async {
-    dom.Element tableScelta = sceltaCarriera.querySelector(".table-1-body");
+  /// request in caso di scelta carriera iniziale.
+  static Future<Map> _isSceltaCarriera(dom.Element tableCarriere,
+      String jsessionId, String basicAuth64, Map mapInfo) async {
+    mapInfo["sceltaCarriera"] = true;
+
+    dom.Element tableScelta = tableCarriere.querySelector(".table-1-body");
     if (tableScelta == null) {
       mapInfo["error"] = "tableScelta not found";
       mapInfo["success"] = false;
@@ -38,17 +40,14 @@ class Provider {
           prefs.setBool("isSceltaCarriera", true);
           prefs.setString("idStud", idStud);
 
-          mapInfo["scelta_carriera"] = true;
-          mapInfo["id_scelta_carriera"] = idStud;
-
           String newRequestUrl =
               "https://www.esse3.unimore.it/auth/studente/AreaStudente.do;jsessionid=" +
-                  jsessionid +
+                  jsessionId +
                   idStud;
           //Get the response
           http.Response response = await http.get(
             newRequestUrl,
-            headers: {"Authorization": basicAuth64, "jsessionid": jsessionid},
+            headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
           ).catchError((e) {
             mapInfo["error"] = e;
             mapInfo["success"] = false;
@@ -116,6 +115,26 @@ class Provider {
             }
           }
 
+          //Recupero l'immagine del profilo
+          mapInfo["profile_pic"] = "";
+
+          final http.Response responsePhoto = await http.get(
+            "https://www.esse3.unimore.it/auth/AddressBook/DownloadFoto.do?r=" +
+                jsessionId.substring(3, 13),
+            headers: {
+              "Authorization": basicAuth64,
+              "cookie": "JSESSIONID=" + jsessionId
+            },
+          ).catchError((e) {
+            debugPrint("Errore response foto profilo getAccess: $e");
+            mapInfo["profile_pic"] = "error";
+          });
+
+          if (mapInfo["profile_pic"] != "error")
+            mapInfo["profile_pic"] = base64Encode(responsePhoto.bodyBytes);
+          else
+            mapInfo["profile_pic"] = "no";
+
           return mapInfo;
         }
       }
@@ -182,9 +201,6 @@ class Provider {
           sceltaCarriera, jsessionId, basicAuth64, mapInfo);
     }
 
-    mapInfo["scelta_carriera"] = false;
-    mapInfo["id_scelta_carriera"] = "";
-
     //Recupero l'immagine del profilo
     mapInfo["profile_pic"] = "";
 
@@ -203,7 +219,7 @@ class Provider {
     if (mapInfo["profile_pic"] != "error")
       mapInfo["profile_pic"] = base64Encode(responsePhoto.bodyBytes);
     else
-      mapInfo["profile_pic"] = false;
+      mapInfo["profile_pic"] = "no";
 
     List<String> scrapingNomeMatricola = [];
     try {
@@ -847,14 +863,15 @@ class Provider {
       return mapPrenotati;
     }
 
-    dom.Element arrayPrenotati = divPrenotati.querySelector('tbody');
+    List<dom.Element> arrayPrenotati =
+        divPrenotati.querySelectorAll('table.detail_table');
 
     if (arrayPrenotati == null) {
       mapPrenotati["totali"] = 0;
       return mapPrenotati;
     }
 
-    int lengthPrenotati = arrayPrenotati.children.length;
+    int lengthPrenotati = arrayPrenotati.length;
     mapPrenotati["totali"] = 0;
     mapPrenotati["esame"] = new Map();
     mapPrenotati["iscrizione"] = new Map();
@@ -865,42 +882,39 @@ class Provider {
     mapPrenotati["formHiddens"] = new Map();
 
     try {
-      for (int i = 2; i < lengthPrenotati; i++) {
-        if (i % 2 == 0) {
-          dom.Element tablePrenotazione =
-              arrayPrenotati.children[i].querySelector('tbody');
-          if (tablePrenotazione == null ||
-              tablePrenotazione.children.length < 2) break;
+      for (int i = 0; i < lengthPrenotati; i++) {
+        dom.Element tablePrenotazione = arrayPrenotati[i].children[0];
+        if (tablePrenotazione == null || tablePrenotazione.children.length < 2)
+          break;
 
-          mapPrenotati["esame"][mapPrenotati["totali"]] =
-              tablePrenotazione.children[0].children[0].text;
-          mapPrenotati["iscrizione"][mapPrenotati["totali"]] =
-              tablePrenotazione.children[2].children[0].text;
+        mapPrenotati["esame"][mapPrenotati["totali"]] =
+            tablePrenotazione.children[0].children[0].text;
+        mapPrenotati["iscrizione"][mapPrenotati["totali"]] =
+            tablePrenotazione.children[2].children[0].text;
 
-          mapPrenotati["tipo_esame"][mapPrenotati["totali"]] =
-              tablePrenotazione.children[3].children[0].text;
+        mapPrenotati["tipo_esame"][mapPrenotati["totali"]] =
+            tablePrenotazione.children[3].children[0].text;
 
-          mapPrenotati["giorno"][mapPrenotati["totali"]] =
-              tablePrenotazione.children[6].children[0].text;
-          mapPrenotati["ora"][mapPrenotati["totali"]] =
-              tablePrenotazione.children[6].children[1].text;
-          mapPrenotati["docente"][mapPrenotati["totali"]] =
-              tablePrenotazione.children[6].children[6].text;
+        mapPrenotati["giorno"][mapPrenotati["totali"]] =
+            tablePrenotazione.children[6].children[0].text;
+        mapPrenotati["ora"][mapPrenotati["totali"]] =
+            tablePrenotazione.children[6].children[1].text;
+        mapPrenotati["docente"][mapPrenotati["totali"]] =
+            tablePrenotazione.children[6].children[6].text;
 
-          int lenHiddens = tablePrenotazione
-              .children[6].children[7].children[0].children.length;
-          mapPrenotati["lenHiddens"] = lenHiddens - 1;
-          dom.Element hiddens =
-              tablePrenotazione.children[6].children[7].children[0];
-          for (int j = 1; j < lenHiddens; j++) {
-            String key = mapPrenotati["totali"].toString() +
-                "_" +
-                hiddens.children[j].attributes["name"].toString();
-            mapPrenotati["formHiddens"][key] =
-                hiddens.children[j].attributes["value"];
-          }
-          mapPrenotati["totali"]++;
+        int lenHiddens = tablePrenotazione
+            .children[6].children[7].children[0].children.length;
+        mapPrenotati["lenHiddens"] = lenHiddens - 1;
+        dom.Element hiddens =
+            tablePrenotazione.children[6].children[7].children[0];
+        for (int j = 1; j < lenHiddens; j++) {
+          String key = mapPrenotati["totali"].toString() +
+              "_" +
+              hiddens.children[j].attributes["name"].toString();
+          mapPrenotati["formHiddens"][key] =
+              hiddens.children[j].attributes["value"];
         }
+        mapPrenotati["totali"]++;
       }
     } catch (e) {
       print(e);

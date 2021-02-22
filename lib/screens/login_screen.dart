@@ -15,7 +15,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final _userController = TextEditingController();
   final _passController = TextEditingController();
 
@@ -34,7 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     FocusScope.of(context).unfocus();
 
-    if (_userController.value.text.isEmpty || _passController.value.text.isEmpty) {
+    if (_userController.value.text.isEmpty ||
+        _passController.value.text.isEmpty) {
       setState(() {
         _isLoading = !_isLoading;
       });
@@ -61,11 +61,13 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
 
-    String _authCred = "${_userController.value.text}:${_passController.value.text}";
+    String _authCred =
+        "${_userController.value.text}:${_passController.value.text}";
     Uint8List _bytesInLatin1 = latin1.encode(_authCred);
     String _basichAuth64 = "Basic " + base64.encode(_bytesInLatin1);
 
-    Provider.getAccess(_basichAuth64, _userController.value.text.trim()).then((response) async {
+    Provider.getAccess(_basichAuth64, _userController.value.text.trim())
+        .then((response) async {
       if (response == null) {
         setState(() {
           _isLoading = !_isLoading;
@@ -80,7 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
               content: Text("Riprova a effettuare l'accesso fra 30 secondi."),
               actions: <Widget>[
                 FlatButton(
-                  child: Text("Chiudi", style: TextStyle(color: Constants.mainColorLighter),),
+                  child: Text(
+                    "Chiudi",
+                    style: TextStyle(color: Constants.mainColorLighter),
+                  ),
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
@@ -120,7 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
               content: Text("Riprova a inserire le credenziali"),
               actions: <Widget>[
                 FlatButton(
-                  child: Text("Chiudi", style: TextStyle(color: Constants.mainColorLighter)),
+                  child: Text("Chiudi",
+                      style: TextStyle(color: Constants.mainColorLighter)),
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
@@ -141,7 +147,9 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Scaffold(),
         SvgPicture.asset(
-          isTablet ? "assets/img/backgroundLoginTablet.svg" : "assets/img/backgroundLogin.svg",
+          isTablet
+              ? "assets/img/backgroundLoginTablet.svg"
+              : "assets/img/backgroundLogin.svg",
           width: deviceWidth,
           height: MediaQuery.of(context).size.height,
           fit: BoxFit.cover,
@@ -155,7 +163,9 @@ class _LoginScreenState extends State<LoginScreen> {
             backgroundColor: Colors.transparent,
             body: Builder(builder: (BuildContext context) {
               return Padding(
-                padding: isTablet ? EdgeInsets.symmetric(horizontal: deviceWidth / 6) : EdgeInsets.all(32.0),
+                padding: isTablet
+                    ? EdgeInsets.symmetric(horizontal: deviceWidth / 6)
+                    : EdgeInsets.all(32.0),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -174,7 +184,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(20)),
                           boxShadow: [
-                            BoxShadow(color: Colors.black12, offset: Offset.zero, blurRadius: 10, spreadRadius: 2),
+                            BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset.zero,
+                                blurRadius: 10,
+                                spreadRadius: 2),
                           ],
                           color: Colors.white,
                         ),
@@ -205,7 +219,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       labelText: "Username",
                                       counterText: "",
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
                                       ),
                                     ),
                                     onSubmitted: (value) {
@@ -222,8 +237,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     decoration: InputDecoration(
                                       labelText: "Password",
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        borderSide: BorderSide(
+                                            color: Colors.redAccent, width: 2),
                                       ),
                                     ),
                                     onSubmitted: (value) {
@@ -240,7 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(height: 20),
                                     LinearProgressIndicator(
                                       backgroundColor: Colors.transparent,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Constants.mainColor),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Constants.mainColor),
                                     ),
                                   ],
                                 )),
@@ -249,8 +267,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               disabledColor: Constants.buttonDisabled,
                               onPressed: !_isLoading
                                   ? () {
-                                _clickBtn();
-                              }
+                                      _clickBtn();
+                                    }
                                   : null,
                               child: Text(
                                 "ACCEDI",
@@ -262,7 +280,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               disabledTextColor: Colors.black26,
                               minWidth: double.infinity,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(30)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),
                               ),
                             ),
                           ],
