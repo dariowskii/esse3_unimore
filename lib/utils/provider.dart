@@ -11,6 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Questa classe effettua lo scraping su esse3.unimore.it
 class Provider {
+  static const String _authority = "www.esse3.unimore.it";
+  static Uri _cookieUri =
+      Uri.https(_authority, "/auth/studente/AreaStudente.do");
   /// Serve sostanzialmente ad estrarre l'`idStud` per mandare le
   /// request in caso di scelta carriera iniziale.
   static Future<Map> _isSceltaCarriera(dom.Element tableCarriere,
@@ -40,13 +43,14 @@ class Provider {
           prefs.setBool("isSceltaCarriera", true);
           prefs.setString("idStud", idStud);
 
-          String newRequestUrl =
-              "https://www.esse3.unimore.it/auth/studente/AreaStudente.do;jsessionid=" +
+          Uri newRequestUri = Uri.https(
+              _authority,
+              "/auth/studente/AreaStudente.do;jsessionid=" +
                   jsessionId +
-                  idStud;
+                  idStud);
           //Get the response
           http.Response response = await http.get(
-            newRequestUrl,
+            newRequestUri,
             headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
           ).catchError((e) {
             mapInfo["error"] = e;
@@ -119,8 +123,8 @@ class Provider {
           mapInfo["profile_pic"] = "";
 
           final http.Response responsePhoto = await http.get(
-            "https://www.esse3.unimore.it/auth/AddressBook/DownloadFoto.do?r=" +
-                jsessionId.substring(3, 13),
+            Uri.https(_authority, "/auth/AddressBook/DownloadFoto.do",
+                {"r": jsessionId.substring(3, 13)}),
             headers: {
               "Authorization": basicAuth64,
               "cookie": "JSESSIONID=" + jsessionId
@@ -153,9 +157,7 @@ class Provider {
   static Future<Map> getAccess(String basicAuth64, String username) async {
     Map mapInfo = new Map();
     //Ottengo il cookie di sessione per la request
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
       mapInfo["success"] = false;
       mapInfo["error"] = e;
       return mapInfo;
@@ -172,11 +174,10 @@ class Provider {
       return mapInfo;
     }
 
-    String requestUrl = urlCookie + ";jsessionid=" + jsessionId;
-
     //Ottengo la response
     final http.Response response = await http.get(
-      requestUrl,
+      Uri.https(_authority,
+          "/auth/studente/AreaStudente.do;jsessionid=" + jsessionId),
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       mapInfo["success"] = false;
@@ -205,8 +206,8 @@ class Provider {
     mapInfo["profile_pic"] = "";
 
     final http.Response responsePhoto = await http.get(
-      "https://www.esse3.unimore.it/auth/AddressBook/DownloadFoto.do?r=" +
-          jsessionId.substring(3, 13),
+      Uri.https(_authority, "/auth/AddressBook/DownloadFoto.do",
+          {"r": jsessionId.substring(3, 13)}),
       headers: {
         "Authorization": basicAuth64,
         "cookie": "JSESSIONID=" + jsessionId
@@ -321,9 +322,7 @@ class Provider {
 
     bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
       mapLibretto["success"] = false;
       mapLibretto["error"] = e;
       return mapLibretto;
@@ -342,18 +341,22 @@ class Provider {
     }
 
     //Libretto
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Libretto/LibrettoHome.do;jsessionid=" +
-            jsessionId +
-            "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
+
+    Uri requestUri = Uri.https(
+        _authority,
+        "/auth/studente/Libretto/LibrettoHome.do;jsessionid=" + jsessionId,
+        {"menu_opened_cod": "menu_link-navbox_studenti_Area_Studente"});
 
     if (isSceltaCarriera) {
       String idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+      requestUri = Uri.https(_authority,
+          "/auth/studente/Libretto/LibrettoHome.do;jsessionid=" + jsessionId, {
+        "menu_opened_cod": "menu_link-navbox_studenti_Area_Studente" + idStud
+      });
     }
 
     final http.Response response = await http.get(
-      requestUrl,
+      requestUri,
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore richiesta libretto: $e");
@@ -467,9 +470,7 @@ class Provider {
 
     bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
       mapTasse["success"] = false;
       mapTasse["error"] = e;
       return mapTasse;
@@ -488,18 +489,23 @@ class Provider {
     }
 
     //Tasse
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Tasse/ListaFatture.do;jsessionid=" +
-            jsessionId +
-            "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
+    Uri requestUri = Uri.https(_authority,
+        "/auth/studente/Tasse/ListaFatture.do;jsessionid=" + jsessionId, {
+      "menu_opened_cod":
+          "menu_opened_cod=menu_link-navbox_studenti_Area_Studente"
+    });
 
     if (isSceltaCarriera) {
       String idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+      requestUri = Uri.https(_authority,
+          "/auth/studente/Tasse/ListaFatture.do;jsessionid=" + jsessionId, {
+        "menu_opened_cod":
+            "menu_opened_cod=menu_link-navbox_studenti_Area_Studente" + idStud
+      });
     }
 
     final http.Response response = await http.get(
-      requestUrl,
+      requestUri,
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore richiesta tasse: $e");
@@ -580,9 +586,7 @@ class Provider {
 
     bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
       mapAppelli["success"] = false;
       mapAppelli["error"] = e;
       return mapAppelli;
@@ -600,18 +604,22 @@ class Provider {
       return mapAppelli;
     }
 
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Appelli/AppelliF.do;jsessionid=" +
-            jsessionId +
-            "?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
+
+    Uri requestUri = Uri.https(
+        _authority,
+        "/auth/studente/Appelli/AppelliF.do;jsessionid=" + jsessionId,
+        {"menu_opened_cod": "menu_link-navbox_studenti_Area_Studente"});
 
     if (isSceltaCarriera) {
       String idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+      requestUri = Uri.https(_authority,
+          "/auth/studente/Appelli/AppelliF.do;jsessionid=" + jsessionId, {
+        "menu_opened_cod": "menu_link-navbox_studenti_Area_Studente" + idStud
+      });
     }
 
     final http.Response response = await http.get(
-      requestUrl,
+      requestUri,
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore richiesta appelli: $e");
@@ -632,8 +640,9 @@ class Provider {
     dom.Element tableAppelli = document.querySelector("tbody.table-1-body");
 
     if (tableAppelli == null) {
-      mapAppelli["success"] = false;
+      mapAppelli["success"] = true;
       mapAppelli["error"] = "tbody.table-1-body = null";
+      mapAppelli["totali"] = 0;
       return mapAppelli;
     }
 
@@ -685,9 +694,7 @@ class Provider {
 
     bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
       mapInfoAppello["success"] = false;
       mapInfoAppello["error"] = e;
       return mapInfoAppello;
@@ -709,19 +716,26 @@ class Provider {
         "auth/studente/Appelli/DatiPrenotazioneAppello.do?", "");
 
     //Appelli
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Appelli/DatiPrenotazioneAppello.do;jsessionid=" +
+    Uri requestUri = Uri.https(
+        _authority,
+        "/auth/studente/Appelli/DatiPrenotazioneAppello.do;jsessionid=" +
             jsessionId +
             "?&" +
-            urlInfo;
+            urlInfo);
 
     if (isSceltaCarriera) {
       String idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+      requestUri = Uri.https(
+          _authority,
+          "/auth/studente/Appelli/DatiPrenotazioneAppello.do;jsessionid=" +
+              jsessionId +
+              "?&" +
+              urlInfo +
+              idStud);
     }
 
     final http.Response response = await http.get(
-      requestUrl,
+      requestUri,
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore getInfoAppello: $e");
@@ -807,9 +821,7 @@ class Provider {
       return mapPrenotati;
     }
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
       mapPrenotati["success"] = false;
       mapPrenotati["error"] = e;
       return mapPrenotati;
@@ -827,18 +839,28 @@ class Provider {
       return mapPrenotati;
     }
 
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Appelli/BachecaPrenotazioni.do;jsessionid=" +
-            jsessionId +
-            "?menu_opened_cod=menu_link-navbox_studenti_Area_Studente";
+
+    Uri requestUri = Uri.https(
+        _authority,
+        "/auth/studente/Appelli/BachecaPrenotazioni.do;jsessionid=" +
+            jsessionId,
+        {"menu_opened_cod": "menu_link-navbox_studenti_Area_Studente"});
 
     if (isSceltaCarriera) {
       String idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+      requestUri = Uri.https(
+          _authority,
+          "/auth/studente/Appelli/BachecaPrenotazioni.do;jsessionid=" +
+              jsessionId,
+          {
+            "menu_opened_cod":
+                "menu_link-navbox_studenti_Area_Studente" + idStud
+          });
     }
 
     final http.Response response = await http.get(
-      requestUrl,
+      requestUri,
+
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
       debugPrint("Errore getAppelliPrenotati: $e");
@@ -940,9 +962,9 @@ class Provider {
 
     bool isSceltaCarriera = prefs.getBool("isSceltaCarriera") ?? false;
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
-    http.Response getCookie = await http.head(urlCookie).catchError((e) {
+
+    http.Response getCookie = await http.head(_cookieUri).catchError((e) {
+
       mapHiddens["success"] = false;
       mapHiddens["error"] = e;
       return mapHiddens;
@@ -960,14 +982,21 @@ class Provider {
       return mapHiddens;
     }
 
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;jsessionid=" +
-            jsessionId +
-            "?TIPO_ATTIVITA=1";
+
+    Uri requestUri = Uri.https(
+        _authority,
+        "/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;jsessionid=" +
+            jsessionId,
+        {"TIPO_ATTIVITA": "1"});
 
     if (isSceltaCarriera) {
       String idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+      requestUri = Uri.https(
+          _authority,
+          "/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;jsessionid=" +
+              jsessionId,
+          {"TIPO_ATTIVITA": "1" + idStud});
+
     }
 
     int lunghezzaHidden = infoAppello["lunghezzaHidden"];
@@ -978,7 +1007,9 @@ class Provider {
     }
 
     final http.Response response = await http.post(
-      requestUrl,
+
+      requestUri,
+
       body: mapHiddens,
       headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
     ).catchError((e) {
@@ -989,15 +1020,17 @@ class Provider {
     });
 
     if (response.statusCode == 302) {
-      String location =
-          "https://www.esse3.unimore.it" + response.headers.values.elementAt(2);
+
+      String location = response.headers.values.elementAt(2);
+      Uri locationUri = Uri.https(_authority, location);
       if (location.endsWith("TIPO_ATTIVITA=1")) {
         location =
             location.substring(0, location.lastIndexOf("TIPO_ATTIVITA=1"));
+        locationUri = Uri.https(_authority, location);
       }
 
       http.Response responseAppello = await http.post(
-        location,
+        locationUri,
         body: mapHiddens,
         headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
       ).catchError((e) {
@@ -1057,10 +1090,10 @@ class Provider {
 
     if (basicAuth64 == null) return false;
 
-    String urlCookie =
-        "https://www.esse3.unimore.it/auth/studente/AreaStudente.do";
+
     http.Response getCookie =
-        await http.head(urlCookie).catchError((e) => false);
+        await http.head(_cookieUri).catchError((e) => false);
+
 
     String jsessionId = "";
 
@@ -1072,18 +1105,27 @@ class Provider {
       return false;
     }
 
-    String requestUrl =
-        "https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;jsessionid=" +
-            jsessionId;
+
+    Uri requestUri = Uri.https(
+        _authority,
+        "/auth/studente/Appelli/ConfermaCancellaAppello.do;jsessionid=" +
+            jsessionId);
+
     String idStud;
 
     if (isSceltaCarriera) {
       idStud = prefs.getString("idStud");
-      requestUrl = requestUrl + idStud;
+
+      requestUri = Uri.https(
+          _authority,
+          "/auth/studente/Appelli/ConfermaCancellaAppello.do;jsessionid=" +
+              jsessionId +
+              idStud);
     }
 
     http.Response response = await http.post(
-      requestUrl,
+      requestUri,
+
       body: infoAppello,
       headers: {
         "Authorization": basicAuth64,
@@ -1097,7 +1139,9 @@ class Provider {
 
     if (response.statusCode == 302) {
       http.Response response2 = await http.post(
-        requestUrl,
+
+        requestUri,
+
         body: infoAppello,
         headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionId},
       ).catchError((e) {
@@ -1123,16 +1167,21 @@ class Provider {
         return false;
       }
 
-      requestUrl =
-          "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" +
-              jsessionId;
+
+      requestUri = Uri.https(_authority,
+          "/auth/studente/Appelli/CancellaAppello.do;jsessionid=" + jsessionId);
 
       if (isSceltaCarriera) {
-        requestUrl = requestUrl + idStud;
+        requestUri = Uri.https(
+            _authority,
+            "/auth/studente/Appelli/CancellaAppello.do;jsessionid=" +
+                jsessionId +
+                idStud);
       }
 
       final finalResponse = await http.post(
-        requestUrl,
+        requestUri,
+
         body: newBodyRequest,
         headers: {"Authorization": basicAuth64, "JSESSIONID": jsessionId},
       ).catchError((e) {
@@ -1160,16 +1209,21 @@ class Provider {
         return false;
       }
 
-      requestUrl =
-          "https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do;jsessionid=" +
-              jsessionId;
+
+      requestUri = Uri.https(_authority,
+          "/auth/studente/Appelli/CancellaAppello.do;jsessionid=" + jsessionId);
 
       if (isSceltaCarriera) {
-        requestUrl = requestUrl + idStud;
+        requestUri = Uri.https(
+            _authority,
+            "/auth/studente/Appelli/CancellaAppello.do;jsessionid=" +
+                jsessionId +
+                idStud);
       }
 
       http.Response finalResponse = await http.post(
-        requestUrl,
+        requestUri,
+
         body: newBodyRequest,
         headers: {"Authorization": basicAuth64, "jsessionid": jsessionId},
       ).catchError((e) {

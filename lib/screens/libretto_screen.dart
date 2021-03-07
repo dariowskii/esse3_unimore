@@ -40,19 +40,23 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
         }
       }
     }
-    puntiGrafico.sort((a, b) {
-      var ad = a["data"].toString().substring(6) +
-          "-" +
-          a["data"].toString().substring(3, 5) +
-          "-" +
-          a["data"].toString().substring(0, 2);
-      var bd = b["data"].toString().substring(6) +
-          "-" +
-          b["data"].toString().substring(3, 5) +
-          "-" +
-          b["data"].toString().substring(0, 2);
-      return ad.compareTo(bd);
-    });
+
+    if (puntiGrafico.length > 0) {
+      puntiGrafico.sort((a, b) {
+        var ad = a["data"].toString().substring(6) +
+            "-" +
+            a["data"].toString().substring(3, 5) +
+            "-" +
+            a["data"].toString().substring(0, 2);
+        var bd = b["data"].toString().substring(6) +
+            "-" +
+            b["data"].toString().substring(3, 5) +
+            "-" +
+            b["data"].toString().substring(0, 2);
+        return ad.compareTo(bd);
+      });
+    }
+
     if (puntiGrafico.length >= 8)
       puntiGrafico =
           puntiGrafico.sublist(puntiGrafico.length - 8, puntiGrafico.length);
@@ -88,7 +92,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Stack(
-                overflow: Overflow.visible,
+
+                clipBehavior: Clip.none,
+
                 alignment: Alignment.bottomCenter,
                 children: [
                   Container(
@@ -140,105 +146,120 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              AspectRatio(
-                                aspectRatio: 3,
-                                child: LineChart(
-                                  LineChartData(
-                                    gridData: FlGridData(
-                                      show: true,
-                                      drawVerticalLine: true,
-                                      getDrawingHorizontalLine: (value) {
-                                        return FlLine(
-                                          color: Colors.white,
-                                          strokeWidth: .3,
-                                        );
-                                      },
-                                      getDrawingVerticalLine: (value) {
-                                        return FlLine(
-                                          color: Colors.white,
-                                          strokeWidth: .1,
-                                        );
-                                      },
-                                    ),
-                                    titlesData: FlTitlesData(
-                                      show: true,
-                                      bottomTitles: SideTitles(
-                                        showTitles: false,
-                                        reservedSize: 15,
-                                        getTextStyles: (value) => TextStyle(
-                                            color: darkModeOn
-                                                ? Color(0xff68737d)
-                                                : Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10),
-                                        getTitles: (value) {
-                                          return '';
-                                        },
-                                      ),
-                                      leftTitles: SideTitles(
-                                        showTitles: true,
-                                        getTextStyles: (value) => TextStyle(
-                                          color: darkModeOn
-                                              ? Color(0xff67727d)
-                                              : Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
+
+                              puntiGrafico.length == 0
+                                  ? Text(
+                                      "Non ho abbastanza elementi...",
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic),
+                                    )
+                                  : AspectRatio(
+                                      aspectRatio: 3,
+                                      child: LineChart(
+                                        LineChartData(
+                                          gridData: FlGridData(
+                                            show: true,
+                                            drawVerticalLine: true,
+                                            getDrawingHorizontalLine: (value) {
+                                              return FlLine(
+                                                color: Colors.white,
+                                                strokeWidth: .3,
+                                              );
+                                            },
+                                            getDrawingVerticalLine: (value) {
+                                              return FlLine(
+                                                color: Colors.white,
+                                                strokeWidth: .1,
+                                              );
+                                            },
+                                          ),
+                                          titlesData: FlTitlesData(
+                                            show: true,
+                                            bottomTitles: SideTitles(
+                                              showTitles: false,
+                                              reservedSize: 15,
+                                              getTextStyles: (value) =>
+                                                  TextStyle(
+                                                      color:
+                                                          darkModeOn
+                                                              ? Color(
+                                                                  0xff68737d)
+                                                              : Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 10),
+                                              getTitles: (value) {
+                                                return '';
+                                              },
+                                            ),
+                                            leftTitles: SideTitles(
+                                              showTitles: true,
+                                              getTextStyles: (value) =>
+                                                  TextStyle(
+                                                color: darkModeOn
+                                                    ? Color(0xff67727d)
+                                                    : Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                              reservedSize: 15,
+                                              getTitles: (value) {
+                                                switch (value.toInt()) {
+                                                  case 18:
+                                                    return '18';
+                                                  case 24:
+                                                    return '24';
+                                                  case 30:
+                                                    return '30';
+                                                }
+                                                return '';
+                                              },
+                                            ),
+                                          ),
+                                          borderData: FlBorderData(
+                                            show: false,
+                                          ),
+                                          minX: 0,
+                                          //TODO: aggiustare qua
+                                          maxX: puntiGrafico.length.toDouble() -
+                                              1,
+                                          minY: 18,
+                                          maxY: 30,
+                                          lineBarsData: [
+                                            LineChartBarData(
+                                              spots: puntiGrafico.map((punto) {
+                                                var index =
+                                                    puntiGrafico.indexOf(punto);
+                                                return FlSpot(index.toDouble(),
+                                                    punto["voto"].toDouble());
+                                              }).toList(),
+                                              isCurved: true,
+                                              colors: darkModeOn
+                                                  ? _gradientColorsDark
+                                                  : _gradientColorsLight,
+                                              barWidth: 3,
+                                              isStrokeCapRound: true,
+                                              dotData: FlDotData(
+                                                show: true,
+                                              ),
+                                              belowBarData: BarAreaData(
+                                                show: true,
+                                                colors: darkModeOn
+                                                    ? _gradientColorsDark
+                                                        .map((color) => color
+                                                            .withOpacity(0.3))
+                                                        .toList()
+                                                    : _gradientColorsLight
+                                                        .map((color) => color
+                                                            .withOpacity(0.3))
+                                                        .toList(),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        reservedSize: 15,
-                                        getTitles: (value) {
-                                          switch (value.toInt()) {
-                                            case 18:
-                                              return '18';
-                                            case 24:
-                                              return '24';
-                                            case 30:
-                                              return '30';
-                                          }
-                                          return '';
-                                        },
                                       ),
                                     ),
-                                    borderData: FlBorderData(
-                                      show: false,
-                                    ),
-                                    minX: 0,
-                                    maxX: puntiGrafico.length.toDouble() - 1,
-                                    minY: 18,
-                                    maxY: 30,
-                                    lineBarsData: [
-                                      LineChartBarData(
-                                        spots: puntiGrafico.map((punto) {
-                                          var index =
-                                              puntiGrafico.indexOf(punto);
-                                          return FlSpot(index.toDouble(),
-                                              punto["voto"].toDouble());
-                                        }).toList(),
-                                        isCurved: true,
-                                        colors: darkModeOn
-                                            ? _gradientColorsDark
-                                            : _gradientColorsLight,
-                                        barWidth: 3,
-                                        isStrokeCapRound: true,
-                                        dotData: FlDotData(
-                                          show: true,
-                                        ),
-                                        belowBarData: BarAreaData(
-                                          show: true,
-                                          colors: darkModeOn
-                                              ? _gradientColorsDark
-                                                  .map((color) =>
-                                                      color.withOpacity(0.3))
-                                                  .toList()
-                                              : _gradientColorsLight
-                                                  .map((color) =>
-                                                      color.withOpacity(0.3))
-                                                  .toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+
                             ],
                           ),
                         ],

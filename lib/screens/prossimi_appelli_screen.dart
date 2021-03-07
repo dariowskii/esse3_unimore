@@ -102,6 +102,8 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               deviceWidth: deviceWidth, isTablet: isTablet);
                         case ConnectionState.active:
                         case ConnectionState.done:
+
+                          print(appelli.data);
                           if (appelli.data != null &&
                               appelli.data["success"] &&
                               appelli.data["totali"] > 0) {
