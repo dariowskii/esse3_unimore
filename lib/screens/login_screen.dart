@@ -45,9 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
             title: Text("Attenzione!"),
             content: Text("Riempi correttamente tutti i campi"),
             actions: <Widget>[
-
               TextButton(
-
                 child: Text(
                   "Chiudi",
                   style: TextStyle(color: Constants.mainColorLighter),
@@ -83,9 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               title: Text("Errore di connessione"),
               content: Text("Riprova a effettuare l'accesso fra 30 secondi."),
               actions: <Widget>[
-
                 TextButton(
-
                   child: Text(
                     "Chiudi",
                     style: TextStyle(color: Constants.mainColorLighter),
@@ -101,9 +97,9 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (response["success"] == true) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        prefs.setBool("isLoggedIn", true);
-        prefs.setString("auth64Cred", _basichAuth64);
-        prefs.setString("username", _userController.value.text.trim());
+        await prefs.setBool("isLoggedIn", true);
+        await prefs.setString("auth64Cred", _basichAuth64);
+        await prefs.setString("username", _userController.text);
 
         setState(() {
           _isLoading = !_isLoading;
@@ -128,9 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
               title: Text("Credenziali errate!"),
               content: Text("Riprova a inserire le credenziali"),
               actions: <Widget>[
-
                 TextButton(
-
                   child: Text("Chiudi",
                       style: TextStyle(color: Constants.mainColorLighter)),
                   onPressed: () {
@@ -165,8 +159,6 @@ class _LoginScreenState extends State<LoginScreen> {
             FocusScope.of(context).unfocus();
           },
           child: Scaffold(
-
-
             backgroundColor: Colors.transparent,
             body: Builder(builder: (BuildContext context) {
               return Padding(

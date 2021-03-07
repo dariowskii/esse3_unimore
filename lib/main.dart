@@ -16,8 +16,8 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool version = prefs.getBool("1.2.0") ?? false;
   if (!version) {
-    prefs.clear();
-    prefs.setBool("1.2.0", true);
+    await prefs.clear();
+    await prefs.setBool("1.2.0", true);
   }
   bool status = prefs.getBool('isLoggedIn') ?? false;
   runApp(Esse3(logged: status));
