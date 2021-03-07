@@ -92,9 +92,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Stack(
-
                 clipBehavior: Clip.none,
-
                 alignment: Alignment.bottomCenter,
                 children: [
                   Container(
@@ -132,26 +130,28 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(
-                                    puntiGrafico.length == 1
-                                        ? "Il tuo ultimo esame"
-                                        : puntiGrafico.length == 0
-                                            ? "Nessun esame con voto ancora"
-                                            : "I tuoi ultimi ${puntiGrafico.length} esami",
-                                    style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 12,
-                                        color: Colors.white),
-                                  ),
+                                  puntiGrafico.length == 0
+                                      ? SizedBox.shrink()
+                                      : Text(
+                                          puntiGrafico.length == 1
+                                              ? "Il tuo ultimo esame"
+                                              : puntiGrafico.length == 0
+                                                  ? "Nessun esame con voto ancora"
+                                                  : "I tuoi ultimi ${puntiGrafico.length} esami",
+                                          style: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              fontSize: 12,
+                                              color: Colors.white),
+                                        ),
                                 ],
                               ),
                               const SizedBox(height: 5),
-
                               puntiGrafico.length == 0
                                   ? Text(
-                                      "Non ho abbastanza elementi...",
+                                      "Non ho abbastanza elementi\nper disegnare un grafico...",
                                       style: TextStyle(
                                           fontStyle: FontStyle.italic),
+                                      textAlign: TextAlign.center,
                                     )
                                   : AspectRatio(
                                       aspectRatio: 3,
@@ -259,7 +259,6 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                         ),
                                       ),
                                     ),
-
                             ],
                           ),
                         ],
@@ -520,97 +519,108 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                           margin: EdgeInsets.only(bottom: 5),
                           child: ListTileTheme(
                             dense: true,
-                            child: ExpansionTile(
-                              maintainState: true,
-                              leading: widget.libretto["voti"][index] != ""
-                                  ? Padding(
-                                      padding: const EdgeInsets.only(right: 0),
-                                      child: Icon(Icons.star,
-                                          color: Colors.yellow[700]),
-                                    )
-                                  : null,
-                              title: Text(
-                                widget.libretto["materie"][index],
-                                style: Constants.fontBold20.copyWith(
-                                    color: Theme.of(context).primaryColorLight),
-                              ),
-                              subtitle: Text(
-                                "CFU: ${widget.libretto["crediti"][index]}",
-                                style: Constants.fontBold.copyWith(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1
-                                        .color),
-                              ),
-                              backgroundColor: Theme.of(context).cardColor,
-                              children: [
-                                widget.libretto["voti"][index] != ""
-                                    ? Container(
-                                        padding: EdgeInsets.only(
-                                            left: 16, right: 16),
-                                        width: double.infinity,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            RichText(
-                                              text: TextSpan(
-                                                text: "Voto: ",
-                                                style: Constants.font18
-                                                    .copyWith(
-                                                        color: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1
-                                                            .color,
-                                                        fontFamily: "SF Pro"),
-                                                children: [
-                                                  TextSpan(
-                                                    text:
-                                                        widget.libretto["voti"]
-                                                            [index],
-                                                    style: Constants.fontBold18
-                                                        .copyWith(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyText1
-                                                                .color),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            RichText(
-                                              text: TextSpan(
-                                                text: "Data esame: ",
-                                                style: Constants.font16
-                                                    .copyWith(
-                                                        color: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1
-                                                            .color,
-                                                        fontFamily: "SF Pro"),
-                                                children: [
-                                                  TextSpan(
-                                                    text: widget.libretto[
-                                                        "data_esame"][index],
-                                                    style: Constants.fontBold
-                                                        .copyWith(
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyText1
-                                                                .color),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                          ],
-                                        ),
-                                      )
+                            child: IgnorePointer(
+                              ignoring: widget.libretto["voti"][index] == "",
+                              child: ExpansionTile(
+                                key: UniqueKey(),
+                                trailing: widget.libretto["voti"][index] != ""
+                                    ? null
                                     : SizedBox.shrink(),
-                              ],
+                                leading: widget.libretto["voti"][index] != ""
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 0),
+                                        child: Icon(Icons.star,
+                                            color: Colors.yellow[700]),
+                                      )
+                                    : null,
+                                title: Text(
+                                  widget.libretto["materie"][index],
+                                  style: Constants.fontBold20.copyWith(
+                                      color:
+                                          Theme.of(context).primaryColorLight),
+                                ),
+                                subtitle: Text(
+                                  "CFU: ${widget.libretto["crediti"][index]}",
+                                  style: Constants.fontBold.copyWith(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1
+                                          .color),
+                                ),
+                                backgroundColor: Theme.of(context).cardColor,
+                                children: [
+                                  widget.libretto["voti"][index] != ""
+                                      ? Container(
+                                          padding: EdgeInsets.only(
+                                              left: 16, right: 16),
+                                          width: double.infinity,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              RichText(
+                                                text: TextSpan(
+                                                  text: "Voto: ",
+                                                  style: Constants.font18
+                                                      .copyWith(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color,
+                                                          fontFamily: "SF Pro"),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: widget
+                                                              .libretto["voti"]
+                                                          [index],
+                                                      style: Constants
+                                                          .fontBold18
+                                                          .copyWith(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              RichText(
+                                                text: TextSpan(
+                                                  text: "Data esame: ",
+                                                  style: Constants.font16
+                                                      .copyWith(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color,
+                                                          fontFamily: "SF Pro"),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: widget.libretto[
+                                                          "data_esame"][index],
+                                                      style: Constants.fontBold
+                                                          .copyWith(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10),
+                                            ],
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
+                                ],
+                              ),
                             ),
                           ),
                         );
