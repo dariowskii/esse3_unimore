@@ -265,59 +265,64 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    bottom: (widget.libretto["media_pond"] >= 24) ? -22 : -20,
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: widget.libretto["media_pond"] >= 24
-                            ? Colors.yellow[700]
-                            : widget.libretto["media_pond"] >= 18
-                                ? Colors.green[700]
-                                : Colors.yellow[700],
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: widget.libretto["media_pond"] >= 24
-                                ? Colors.black12
-                                : Colors.transparent,
-                            offset: Offset.zero,
-                            blurRadius: 10,
-                            spreadRadius: 3,
-                          ),
-                        ],
-                        border: Border.all(
-                            color: (widget.libretto["media_pond"] >= 24)
-                                ? Colors.white
-                                : Colors.transparent,
-                            width:
-                                (widget.libretto["media_pond"] >= 24) ? 2 : 0),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                              widget.libretto["media_pond"] >= 24
-                                  ? Icons.stars
+                  widget.libretto["media_pond"] == "NaN"
+                      ? SizedBox.shrink()
+                      : Positioned(
+                          bottom:
+                              (widget.libretto["media_pond"] >= 24) ? -22 : -20,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: widget.libretto["media_pond"] >= 24
+                                  ? Colors.yellow[700]
                                   : widget.libretto["media_pond"] >= 18
-                                      ? Icons.check_circle
-                                      : Icons.warning,
-                              color: Colors.white),
-                          const SizedBox(width: 5),
-                          Text(
-                            widget.libretto["media_pond"] >= 24
-                                ? "fantastico!".toUpperCase()
-                                : widget.libretto["media_pond"] >= 18
-                                    ? "vai così".toUpperCase()
-                                    : "attenzione".toUpperCase(),
-                            style: Constants.fontBold
-                                .copyWith(color: Colors.white),
+                                      ? Colors.green[700]
+                                      : Colors.yellow[700],
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: widget.libretto["media_pond"] >= 24
+                                      ? Colors.black12
+                                      : Colors.transparent,
+                                  offset: Offset.zero,
+                                  blurRadius: 10,
+                                  spreadRadius: 3,
+                                ),
+                              ],
+                              border: Border.all(
+                                  color: (widget.libretto["media_pond"] >= 24)
+                                      ? Colors.white
+                                      : Colors.transparent,
+                                  width: (widget.libretto["media_pond"] >= 24)
+                                      ? 2
+                                      : 0),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                    widget.libretto["media_pond"] >= 24
+                                        ? Icons.stars
+                                        : widget.libretto["media_pond"] >= 18
+                                            ? Icons.check_circle
+                                            : Icons.warning,
+                                    color: Colors.white),
+                                const SizedBox(width: 5),
+                                Text(
+                                  widget.libretto["media_pond"] >= 24
+                                      ? "fantastico!".toUpperCase()
+                                      : widget.libretto["media_pond"] >= 18
+                                          ? "vai così".toUpperCase()
+                                          : "attenzione".toUpperCase(),
+                                  style: Constants.fontBold
+                                      .copyWith(color: Colors.white),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
                 ],
               ),
               Padding(
