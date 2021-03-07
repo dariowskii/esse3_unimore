@@ -150,7 +150,8 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                   ? Text(
                                       "Non ho abbastanza elementi\nper disegnare un grafico...",
                                       style: TextStyle(
-                                          fontStyle: FontStyle.italic),
+                                          fontStyle: FontStyle.italic,
+                                          color: Colors.white),
                                       textAlign: TextAlign.center,
                                     )
                                   : AspectRatio(
