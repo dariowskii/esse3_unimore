@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/utils/widgets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// Pagina in cui vedere le tasse universitarie.

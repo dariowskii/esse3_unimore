@@ -879,9 +879,10 @@ class _CardAppelloState extends State<CardAppello> {
                                                   color: Colors.white)),
                                           onPressed: () {
                                             showDialog(
-                                              context: context,
-                                              child: Platform.isIOS
-                                                  ? CupertinoAlertDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  if (Platform.isIOS)
+                                                    return CupertinoAlertDialog(
                                                       title: Text(
                                                         "Prenotazione appello",
                                                         style: TextStyle(
@@ -895,7 +896,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                 "SF Pro"),
                                                       ),
                                                       actions: [
-                                                        FlatButton(
+                                                        TextButton(
                                                           child: Text(
                                                             "Si",
                                                             style: Constants
@@ -906,34 +907,34 @@ class _CardAppelloState extends State<CardAppello> {
                                                                     context)
                                                                 .pop();
                                                             showDialog(
-                                                              context: context,
-                                                              child:
-                                                                  WillPopScope(
-                                                                onWillPop:
-                                                                    () async =>
-                                                                        null,
-                                                                child:
-                                                                    CupertinoAlertDialog(
-                                                                  content: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceEvenly,
-                                                                    children: [
-                                                                      CupertinoActivityIndicator(),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              10),
-                                                                      Text(
-                                                                        "Attendi un secondo...",
-                                                                        style: TextStyle(
-                                                                            fontStyle:
-                                                                                FontStyle.italic),
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return WillPopScope(
+                                                                    onWillPop:
+                                                                        () async =>
+                                                                            null,
+                                                                    child:
+                                                                        CupertinoAlertDialog(
+                                                                      content:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceEvenly,
+                                                                        children: [
+                                                                          CupertinoActivityIndicator(),
+                                                                          const SizedBox(
+                                                                              width: 10),
+                                                                          Text(
+                                                                            "Attendi un secondo...",
+                                                                            style:
+                                                                                TextStyle(fontStyle: FontStyle.italic),
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
+                                                                    ),
+                                                                  );
+                                                                });
                                                             Provider.prenotaAppello(
                                                                     altreInfo
                                                                         .data)
@@ -948,25 +949,24 @@ class _CardAppelloState extends State<CardAppello> {
                                                                 showDialog(
                                                                     context:
                                                                         context,
-                                                                    child:
-                                                                        CupertinoAlertDialog(
-                                                                      content:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceEvenly,
-                                                                        children: [
-                                                                          Icon(
-                                                                            Icons.check,
-                                                                            color:
-                                                                                Colors.green,
-                                                                          ),
-                                                                          const SizedBox(
-                                                                              width: 10),
-                                                                          Text(
-                                                                              "Prenotazione effettuata!"),
-                                                                        ],
-                                                                      ),
-                                                                    ));
+                                                                    builder:
+                                                                        (context) {
+                                                                      return CupertinoAlertDialog(
+                                                                        content:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          children: [
+                                                                            Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.green,
+                                                                            ),
+                                                                            const SizedBox(width: 10),
+                                                                            Text("Prenotazione effettuata!"),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    });
                                                                 Future.delayed(
                                                                     Duration(
                                                                         seconds:
@@ -985,28 +985,30 @@ class _CardAppelloState extends State<CardAppello> {
                                                                 showDialog(
                                                                     context:
                                                                         context,
-                                                                    child:
-                                                                        WillPopScope(
-                                                                      onWillPop:
-                                                                          () async =>
-                                                                              null,
-                                                                      child:
-                                                                          CupertinoAlertDialog(
-                                                                        content:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
-                                                                          children: [
-                                                                            Icon(
-                                                                              Icons.error,
-                                                                              color: Colors.redAccent,
-                                                                            ),
-                                                                            const SizedBox(width: 10),
-                                                                            Text("Prenotazione non effettuata"),
-                                                                          ],
+                                                                    builder:
+                                                                        (context) {
+                                                                      return WillPopScope(
+                                                                        onWillPop:
+                                                                            () async =>
+                                                                                null,
+                                                                        child:
+                                                                            CupertinoAlertDialog(
+                                                                          content:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.error,
+                                                                                color: Colors.redAccent,
+                                                                              ),
+                                                                              const SizedBox(width: 10),
+                                                                              Text("Prenotazione non effettuata"),
+                                                                            ],
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ));
+                                                                      );
+                                                                    });
                                                                 Future.delayed(
                                                                     Duration(
                                                                         seconds:
@@ -1016,37 +1018,35 @@ class _CardAppelloState extends State<CardAppello> {
                                                                           context)
                                                                       .pop();
                                                                   showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    child:
-                                                                        CupertinoAlertDialog(
-                                                                      actions: [
-                                                                        FlatButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.of(context).pop();
-                                                                          },
-                                                                          child:
-                                                                              Text("Ok"),
-                                                                        ),
-                                                                      ],
-                                                                      title: Text(
-                                                                          "Questo messaggio può presentarsi se:"),
-                                                                      content:
-                                                                          Text(
-                                                                        result[
-                                                                            "error"],
-                                                                        textAlign:
-                                                                            TextAlign.left,
-                                                                      ),
-                                                                    ),
-                                                                  );
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (context) {
+                                                                        return CupertinoAlertDialog(
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                              },
+                                                                              child: Text("Ok"),
+                                                                            ),
+                                                                          ],
+                                                                          title:
+                                                                              Text("Questo messaggio può presentarsi se:"),
+                                                                          content:
+                                                                              Text(
+                                                                            result["error"],
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                          ),
+                                                                        );
+                                                                      });
                                                                 });
                                                               }
                                                             });
                                                           },
                                                         ),
-                                                        FlatButton(
+                                                        TextButton(
                                                           child: Text(
                                                             "No",
                                                             style: TextStyle(
@@ -1060,87 +1060,89 @@ class _CardAppelloState extends State<CardAppello> {
                                                           },
                                                         ),
                                                       ],
-                                                    )
-                                                  : AlertDialog(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                      title: Text(
-                                                          "Prenotazione appello"),
-                                                      content: Text(
-                                                          "Sei sicuro di volerti prenotare?"),
-                                                      actions: [
-                                                        FlatButton(
-                                                          child: Text(
-                                                            "SI",
-                                                            style: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .bodyText1
-                                                                    .color),
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            showDialog(
+                                                    );
+                                                  return AlertDialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    title: Text(
+                                                        "Prenotazione appello"),
+                                                    content: Text(
+                                                        "Sei sicuro di volerti prenotare?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        child: Text(
+                                                          "SI",
+                                                          style: TextStyle(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          showDialog(
                                                               context: context,
-                                                              child:
-                                                                  WillPopScope(
-                                                                onWillPop:
-                                                                    () async =>
-                                                                        null,
-                                                                child:
-                                                                    AlertDialog(
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            20),
+                                                              builder:
+                                                                  (context) {
+                                                                return WillPopScope(
+                                                                  onWillPop:
+                                                                      () async =>
+                                                                          null,
+                                                                  child:
+                                                                      AlertDialog(
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20),
+                                                                    ),
+                                                                    content:
+                                                                        Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceEvenly,
+                                                                      children: [
+                                                                        CircularProgressIndicator(
+                                                                          valueColor:
+                                                                              AlwaysStoppedAnimation<Color>(Constants.mainColorLighter),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                10),
+                                                                        Text(
+                                                                          "Attendi un secondo...",
+                                                                          style:
+                                                                              TextStyle(fontStyle: FontStyle.italic),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
-                                                                  content: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceEvenly,
-                                                                    children: [
-                                                                      CircularProgressIndicator(
-                                                                        valueColor:
-                                                                            AlwaysStoppedAnimation<Color>(Constants.mainColorLighter),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              10),
-                                                                      Text(
-                                                                        "Attendi un secondo...",
-                                                                        style: TextStyle(
-                                                                            fontStyle:
-                                                                                FontStyle.italic),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                            Provider.prenotaAppello(
-                                                                    altreInfo
-                                                                        .data)
-                                                                .then((result) {
-                                                              if (result !=
-                                                                      null &&
-                                                                  result[
-                                                                      "success"]) {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    child:
-                                                                        WillPopScope(
+                                                                );
+                                                              });
+                                                          Provider.prenotaAppello(
+                                                                  altreInfo
+                                                                      .data)
+                                                              .then((result) {
+                                                            if (result !=
+                                                                    null &&
+                                                                result[
+                                                                    "success"]) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return WillPopScope(
+
                                                                       onWillPop:
                                                                           () async =>
                                                                               null,
@@ -1165,27 +1167,29 @@ class _CardAppelloState extends State<CardAppello> {
                                                                           ],
                                                                         ),
                                                                       ),
-                                                                    ));
-                                                                Future.delayed(
-                                                                    Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pushNamed(
-                                                                          HomeScreen
-                                                                              .id);
-                                                                });
-                                                              } else {
+                                                                    );
+                                                                  });
+                                                              Future.delayed(
+                                                                  Duration(
+                                                                      seconds:
+                                                                          1),
+                                                                  () {
                                                                 Navigator.of(
                                                                         context)
-                                                                    .pop();
-                                                                showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    child:
-                                                                        WillPopScope(
+                                                                    .pushNamed(
+                                                                        HomeScreen
+                                                                            .id);
+                                                              });
+                                                            } else {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return WillPopScope(
                                                                       onWillPop:
                                                                           () async =>
                                                                               null,
@@ -1208,80 +1212,77 @@ class _CardAppelloState extends State<CardAppello> {
                                                                           ],
                                                                         ),
                                                                       ),
-                                                                    ));
-                                                                Future.delayed(
-                                                                    Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                  if (result[
-                                                                          "error"] !=
-                                                                      null) {
-                                                                    showDialog(
+                                                                    );
+                                                                  });
+                                                              Future.delayed(
+                                                                  Duration(
+                                                                      seconds:
+                                                                          1),
+                                                                  () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                if (result[
+                                                                        "error"] !=
+                                                                    null) {
+                                                                  showDialog(
                                                                       context:
                                                                           context,
-                                                                      child:
-                                                                          AlertDialog(
-                                                                        shape:
-                                                                            RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(20),
-                                                                        ),
-                                                                        scrollable:
-                                                                            true,
-                                                                        actions: [
-                                                                          FlatButton(
-                                                                            onPressed:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                            child:
-                                                                                Text(
-                                                                              "Ok",
-                                                                              style: TextStyle(color: Theme.of(context).primaryColor),
-                                                                            ),
+                                                                      builder:
+                                                                          (context) {
+                                                                        return AlertDialog(
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(20),
                                                                           ),
-                                                                        ],
-                                                                        title: Text(
-                                                                            "Questo messaggio può presentarsi se:"),
-                                                                        content:
-                                                                            Text(
-                                                                          result[
-                                                                              "error"],
-                                                                          textAlign:
-                                                                              TextAlign.left,
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  }
-                                                                });
-                                                              }
-                                                            });
-                                                          },
+                                                                          scrollable:
+                                                                              true,
+                                                                          actions: [
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                              },
+                                                                              child: Text(
+                                                                                "Ok",
+                                                                                style: TextStyle(color: Theme.of(context).primaryColor),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                          title:
+                                                                              Text("Questo messaggio può presentarsi se:"),
+                                                                          content:
+                                                                              Text(
+                                                                            result["error"],
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                          ),
+                                                                        );
+                                                                      });
+                                                                }
+                                                              });
+                                                            }
+                                                          });
+                                                        },
+                                                      ),
+                                                      MaterialButton(
+                                                        color: Colors.redAccent,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
                                                         ),
-                                                        MaterialButton(
-                                                          color:
-                                                              Colors.redAccent,
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        50),
-                                                          ),
-                                                          child: Text("NO"),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ),
-                                            );
+                                                        child: Text("NO"),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                });
+
                                           },
                                         ),
                                       )
@@ -1418,7 +1419,8 @@ class BottonePaginaDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+
+    return TextButton(
       onPressed: onPressed,
       child: Container(
         child: Row(
@@ -1431,7 +1433,7 @@ class BottonePaginaDrawer extends StatelessWidget {
             Text(
               testoBottone,
               textAlign: TextAlign.center,
-              style: Constants.fontBold,
+              style: Constants.fontBold.copyWith(color: textColor),
             ),
           ],
         ),
@@ -1655,29 +1657,31 @@ class CardAppelloPrenotato extends StatelessWidget {
                       style: const TextStyle(color: Colors.white)),
                   onPressed: () {
                     showDialog(
-                        context: context,
-                        child: Platform.isAndroid
-                            ? AlertDialog(
-                                title: Text("Annulla prenotazione"),
-                                content: Text(
-                                    "Sei sicuro di voler cancellare la prenotazione?"),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                      context: context,
+                      builder: (context) {
+                        if (Platform.isAndroid)
+                          return AlertDialog(
+                            title: Text("Annulla prenotazione"),
+                            content: Text(
+                                "Sei sicuro di voler cancellare la prenotazione?"),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text(
+                                  "SI",
+                                  style: TextStyle(
+                                      color: darkModeOn
+                                          ? Colors.white
+                                          : Colors.black87),
                                 ),
-                                actions: [
-                                  FlatButton(
-                                    child: Text(
-                                      "SI",
-                                      style: TextStyle(
-                                          color: darkModeOn
-                                              ? Colors.white
-                                              : Colors.black87),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        child: WillPopScope(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return WillPopScope(
                                           onWillPop: () async => null,
                                           child: AlertDialog(
                                             shape: RoundedRectangleBorder(
@@ -1699,197 +1703,202 @@ class CardAppelloPrenotato extends StatelessWidget {
                                               ],
                                             ),
                                           ),
-                                        ),
-                                      );
-                                      Provider.cancellaAppello(internalHiddens)
-                                          .then((value) {
-                                        if (value != null && value) {
-                                          Navigator.of(context).pop();
-                                          showDialog(
-                                              context: context,
-                                              child: WillPopScope(
-                                                onWillPop: () async => null,
-                                                child: AlertDialog(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  content: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.check,
-                                                        color: Colors.green,
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                          "Prenotazione cancellata!"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ));
-                                          Future.delayed(Duration(seconds: 1),
-                                              () {
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
-                                          });
-                                        } else {
-                                          Navigator.of(context).pop();
-                                          showDialog(
-                                              context: context,
-                                              child: WillPopScope(
-                                                onWillPop: () async => null,
-                                                child: AlertDialog(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  content: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.cancel,
-                                                        color: Colors.redAccent,
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                          "Errore cancellazione!"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ));
-                                          Future.delayed(Duration(seconds: 1),
-                                              () {
-                                            Navigator.of(context).pop();
-                                          });
-                                        }
+                                        );
                                       });
-                                    },
-                                  ),
-                                  MaterialButton(
-                                    elevation: 0,
-                                    color: Colors.redAccent,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    child: Text("NO",
-                                        style: TextStyle(color: Colors.white)),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              )
-                            : CupertinoAlertDialog(
-                                title: Text("Annulla prenotazione"),
-                                content: Text(
-                                    "Sei sicuro di voler cancellare la prenotazione?"),
-                                actions: [
-                                  FlatButton(
-                                    child: Text(
-                                      "SI",
-                                    ),
-                                    onPressed: () {
+                                  Provider.cancellaAppello(internalHiddens)
+                                      .then((value) {
+                                    if (value != null && value) {
                                       Navigator.of(context).pop();
                                       showDialog(
                                         context: context,
-                                        child: WillPopScope(
+                                        builder: (context) {
+                                          return WillPopScope(
+                                            onWillPop: () async => null,
+                                            child: AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              content: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Icon(
+                                                    Icons.check,
+                                                    color: Colors.green,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                      "Prenotazione cancellata!"),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                      Future.delayed(Duration(seconds: 1), () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      });
+                                    } else {
+                                      Navigator.of(context).pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return WillPopScope(
+                                            onWillPop: () async => null,
+                                            child: AlertDialog(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              content: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Icon(
+                                                    Icons.cancel,
+                                                    color: Colors.redAccent,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text("Errore cancellazione!"),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                      Future.delayed(Duration(seconds: 1), () {
+                                        Navigator.of(context).pop();
+                                      });
+                                    }
+                                  });
+                                },
+                              ),
+                              MaterialButton(
+                                elevation: 0,
+                                color: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Text("NO",
+                                    style: TextStyle(color: Colors.white)),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        return CupertinoAlertDialog(
+                          title: Text("Annulla prenotazione"),
+                          content: Text(
+                              "Sei sicuro di voler cancellare la prenotazione?"),
+                          actions: [
+                            TextButton(
+                              child: Text(
+                                "SI",
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return WillPopScope(
+                                        onWillPop: () async => null,
+                                        child: AlertDialog(
+                                          content: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                            Color>(
+                                                        Colors.redAccent),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Text("Aspetta un secondo..."),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                Provider.cancellaAppello(internalHiddens)
+                                    .then((value) {
+                                  if (value != null && value) {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return WillPopScope(
+                                            onWillPop: () async => null,
+                                            child: AlertDialog(
+                                              content: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Icon(
+                                                    Icons.check,
+                                                    color: Colors.green,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                      "Prenotazione cancellata!"),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                    Future.delayed(Duration(seconds: 1), () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    });
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return WillPopScope(
                                           onWillPop: () async => null,
                                           child: AlertDialog(
                                             content: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
-                                                CircularProgressIndicator(
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          Colors.redAccent),
+                                                Icon(
+                                                  Icons.cancel,
+                                                  color: Colors.redAccent,
                                                 ),
                                                 const SizedBox(width: 10),
-                                                Text("Aspetta un secondo..."),
+                                                Text("Errore cancellazione!"),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                      );
-                                      Provider.cancellaAppello(internalHiddens)
-                                          .then((value) {
-                                        if (value != null && value) {
-                                          Navigator.of(context).pop();
-                                          showDialog(
-                                              context: context,
-                                              child: WillPopScope(
-                                                onWillPop: () async => null,
-                                                child: AlertDialog(
-                                                  content: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.check,
-                                                        color: Colors.green,
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                          "Prenotazione cancellata!"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ));
-                                          Future.delayed(Duration(seconds: 1),
-                                              () {
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
-                                          });
-                                        } else {
-                                          Navigator.of(context).pop();
-                                          showDialog(
-                                              context: context,
-                                              child: WillPopScope(
-                                                onWillPop: () async => null,
-                                                child: AlertDialog(
-                                                  content: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.cancel,
-                                                        color: Colors.redAccent,
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                          "Errore cancellazione!"),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ));
-                                          Future.delayed(Duration(seconds: 1),
-                                              () {
-                                            Navigator.of(context).pop();
-                                          });
-                                        }
-                                      });
-                                    },
-                                  ),
-                                  MaterialButton(
-                                    elevation: 0,
-                                    textColor: Colors.redAccent,
-                                    child: Text("NO"),
-                                    onPressed: () {
+                                        );
+                                      },
+                                    );
+                                    Future.delayed(Duration(seconds: 1), () {
                                       Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              ));
+                                    });
+                                  }
+                                });
+                              },
+                            ),
+                            MaterialButton(
+                              elevation: 0,
+                              textColor: Colors.redAccent,
+                              child: Text("NO"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   },
                 ),
               ),

@@ -24,6 +24,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   List<String> _cdl;
+
+
+
   /// Future dell'utente in caso sia già loggato.
   Future _userFuture;
   AnimationController _controller;
@@ -141,8 +144,11 @@ class _HomeScreenState extends State<HomeScreen>
                                     return LinearProgressIndicator();
                                   case ConnectionState.active:
                                   case ConnectionState.done:
-                                    if(!userData.hasData){
-                                      return Text("Errore nel recuperare i dati.");
+
+                                    if (!userData.hasData) {
+                                      return Text(
+                                          "Errore nel recuperare i dati.");
+
                                     }
                                     return Row(
                                       children: [
@@ -283,6 +289,9 @@ class _HomeScreenState extends State<HomeScreen>
                   children: [
                     BottonePaginaDrawer(
                         testoBottone: "Bacheca prenotazioni",
+
+                        textColor: Theme.of(context).textTheme.bodyText1.color,
+
                         onPressed: () {
                           Navigator.of(context)
                               .pushNamed(BachecaPrenotazioniScreen.id);
@@ -298,6 +307,9 @@ class _HomeScreenState extends State<HomeScreen>
                   children: [
                     BottonePaginaDrawer(
                       testoBottone: "Info sull'applicazione",
+
+                      textColor: Theme.of(context).textTheme.bodyText1.color,
+
                       onPressed: () {
                         Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => InfoApp()));
