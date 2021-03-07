@@ -38,6 +38,8 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
     double deviceHeight = MediaQuery.of(context).size.height;
     bool darkModeOn = Theme.of(context).brightness == Brightness.dark;
     bool isTablet = deviceWidth > Constants.tabletWidth;
+    Widget _svgAsset =
+        SvgPicture.asset('assets/img/party.svg', width: deviceWidth * 0.7);
     return Scaffold(
       appBar: AppBar(
         title: Text("Esse3"),
@@ -130,8 +132,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
-                                    SvgPicture.asset('assets/img/party.svg',
-                                        width: deviceWidth * 0.7),
+                                    _svgAsset,
                                     SizedBox(
                                       height: 20,
                                     ),
