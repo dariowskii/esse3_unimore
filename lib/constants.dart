@@ -5,7 +5,7 @@ class Constants {
   //Var
   static const double tabletWidth = 650;
   static const double refreshDisplacement = 30;
-  static const String _fontFamily = "SF Pro";
+  static const String _fontFamily = 'SF Pro';
   //Dark Theme
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,

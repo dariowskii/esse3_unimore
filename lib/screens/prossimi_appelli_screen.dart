@@ -6,7 +6,7 @@ import '../constants.dart';
 
 /// Pagina in cui vedere i prossimi appelli.
 class ProssimiAppelliScreen extends StatefulWidget {
-  static const String id = "prossimiAppelliScreen";
+  static const String id = 'prossimiAppelliScreen';
   @override
   _ProssimiAppelliScreenState createState() => _ProssimiAppelliScreenState();
 }
@@ -31,11 +31,11 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
-    bool darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Esse3"),
+        title: Text('Esse3'),
         centerTitle: true,
         backgroundColor: darkModeOn
             ? Theme.of(context).cardColor
@@ -73,7 +73,7 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Prossimi Appelli",
+                            'Prossimi Appelli',
                             style: Constants.fontBold32.copyWith(
                                 color: darkModeOn
                                     ? Theme.of(context).primaryColorLight
@@ -105,22 +105,23 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
 
                           print(appelli.data);
                           if (appelli.data != null &&
-                              appelli.data["success"] &&
-                              appelli.data["totali"] > 0) {
-                            List indexImminenti = [];
-                            for (int i = 0; i < appelli.data["totali"]; i++) {
-                              DateTime dataOggi = DateTime.now();
-                              DateTime dataEsame = DateTime.parse(
-                                  appelli.data["data_appello"][i].substring(6) +
-                                      appelli.data["data_appello"][i]
+                              appelli.data['success'] &&
+                              appelli.data['totali'] > 0) {
+                            var indexImminenti = [];
+                            for (var i = 0; i < appelli.data['totali']; i++) {
+                              var dataOggi = DateTime.now();
+                              var dataEsame = DateTime.parse(
+                                  appelli.data['data_appello'][i].substring(6) +
+                                      appelli.data['data_appello'][i]
                                           .substring(3, 5) +
-                                      appelli.data["data_appello"][i]
+                                      appelli.data['data_appello'][i]
                                           .substring(0, 2));
-                              Duration diffTempo =
+                              var diffTempo =
                                   dataEsame.difference(dataOggi);
-                              if (diffTempo.inDays <= 15)
+                              if (diffTempo.inDays <= 15) {
                                 indexImminenti.add(
                                     {'index': i, 'data': dataEsame.toString()});
+                              }
                             }
                             indexImminenti.sort((a, b) {
                               var adate =
@@ -139,7 +140,7 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                   Padding(
                                     padding:
                                         EdgeInsets.only(left: 16.0, top: 16),
-                                    child: Text("Appelli imminenti",
+                                    child: Text('Appelli imminenti',
                                         style: Constants.fontBold24),
                                   ),
                                   Container(
@@ -161,14 +162,14 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                               deviceWidth: deviceWidth,
                                               isTablet: isTablet,
                                               nomeAppello:
-                                                  appelli.data["materia"][
+                                                  appelli.data['materia'][
                                                       indexImminenti[index]
                                                           ['index']],
                                               dataAppello:
-                                                  appelli.data["data_appello"][
+                                                  appelli.data['data_appello'][
                                                       indexImminenti[index]
                                                           ['index']],
-                                              descrizione: appelli.data["desc"][
+                                              descrizione: appelli.data['desc'][
                                                   indexImminenti[index]
                                                       ['index']],
                                             ),
@@ -181,7 +182,7 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text("Tutti gli appelli",
+                                        Text('Tutti gli appelli',
                                             style: Constants.fontBold24),
                                         const SizedBox(height: 15),
                                         ListView.builder(
@@ -189,21 +190,21 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                           cacheExtent: 30,
                                           physics:
                                               NeverScrollableScrollPhysics(),
-                                          itemCount: appelli.data["totali"],
+                                          itemCount: appelli.data['totali'],
                                           itemBuilder: (context, index) {
                                             return CardAppello(
                                               nomeAppello: appelli
-                                                  .data["materia"][index],
+                                                  .data['materia'][index],
                                               dataAppello: appelli
-                                                  .data["data_appello"][index],
-                                              descrizione: appelli.data["desc"]
+                                                  .data['data_appello'][index],
+                                              descrizione: appelli.data['desc']
                                                   [index],
                                               periodoIscrizioni: appelli.data[
-                                                  "periodo_iscrizione"][index],
-                                              sessione: appelli.data["sessione"]
+                                                  'periodo_iscrizione'][index],
+                                              sessione: appelli.data['sessione']
                                                   [index],
                                               linkInfo: appelli
-                                                  .data["link_info"][index],
+                                                  .data['link_info'][index],
                                             );
                                           },
                                         ),
@@ -214,8 +215,8 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               ),
                             );
                           } else if (appelli.data != null &&
-                              appelli.data["success"] &&
-                              appelli.data["totali"] <= 0) {
+                              appelli.data['success'] &&
+                              appelli.data['totali'] <= 0) {
                             return NoExams(
                                 deviceWidth: deviceWidth, isTablet: isTablet);
                           }

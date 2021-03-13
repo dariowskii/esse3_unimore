@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 /// Pagina in cui visualizzare il libretto universitario.
 class LibrettoScreen extends StatefulWidget {
-  static const id = "librettoScreen";
+  static const id = 'librettoScreen';
 
   /// Map del libretto passatto da [Provider.getLibretto()].
   final Map libretto;
@@ -19,65 +19,66 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
   double _votoLaurea = 0;
   int _cfu = 0;
 
-  List<Color> _gradientColorsDark = [Constants.mainColorLighter];
-  List<Color> _gradientColorsLight = [
+  final List<Color> _gradientColorsDark = [Constants.mainColorLighter];
+  final List<Color> _gradientColorsLight = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a),
   ];
   List<Map<String, dynamic>> puntiGrafico = [];
 
   void _initGrafico() {
-    for (int i = 0; i < widget.libretto["totali"]; i++) {
-      String voto = widget.libretto["voti"][i];
-      if (voto != "") {
-        _cfu += int.parse(widget.libretto["crediti"][i]);
-        if (int.tryParse(voto) != null || voto == "30 LODE") {
-          if (voto == "30 LODE") voto = "30";
+    for (var i = 0; i < widget.libretto['totali']; i++) {
+      String voto = widget.libretto['voti'][i];
+      if (voto != '') {
+        _cfu += int.parse(widget.libretto['crediti'][i]);
+        if (int.tryParse(voto) != null || voto == '30 LODE') {
+          if (voto == '30 LODE') voto = '30';
           puntiGrafico.add({
-            "voto": int.parse(voto),
-            "data": widget.libretto["data_esame"][i]
+            'voto': int.parse(voto),
+            'data': widget.libretto['data_esame'][i]
           });
         }
       }
     }
 
-    if (puntiGrafico.length > 0) {
+    if (puntiGrafico.isNotEmpty) {
       puntiGrafico.sort((a, b) {
-        var ad = a["data"].toString().substring(6) +
-            "-" +
-            a["data"].toString().substring(3, 5) +
-            "-" +
-            a["data"].toString().substring(0, 2);
-        var bd = b["data"].toString().substring(6) +
-            "-" +
-            b["data"].toString().substring(3, 5) +
-            "-" +
-            b["data"].toString().substring(0, 2);
+        var ad = a['data'].toString().substring(6) +
+            '-' +
+            a['data'].toString().substring(3, 5) +
+            '-' +
+            a['data'].toString().substring(0, 2);
+        var bd = b['data'].toString().substring(6) +
+            '-' +
+            b['data'].toString().substring(3, 5) +
+            '-' +
+            b['data'].toString().substring(0, 2);
         return ad.compareTo(bd);
       });
     }
 
-    if (puntiGrafico.length >= 8)
+    if (puntiGrafico.length >= 8) {
       puntiGrafico =
           puntiGrafico.sublist(puntiGrafico.length - 8, puntiGrafico.length);
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _initGrafico();
-    double media = double.tryParse(widget.libretto["media_pond"].toString());
+    var media = double.tryParse(widget.libretto['media_pond'].toString());
     _votoLaurea = media != null ? ((media * 110) / 30) : 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    bool darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var deviceWidth = MediaQuery.of(context).size.width;
+    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Esse3"),
+        title: Text('Esse3'),
         centerTitle: true,
         backgroundColor: darkModeOn
             ? Theme.of(context).cardColor
@@ -111,14 +112,14 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Libretto",
+                            'Libretto',
                             style: Constants.fontBold32.copyWith(
                                 color: darkModeOn
                                     ? Theme.of(context).primaryColorLight
                                     : Colors.white),
                           ),
                           Text(
-                            "Qui puoi vedere il tuo libretto universitario.",
+                            'Qui puoi vedere il tuo libretto universitario.',
                             style: darkModeOn
                                 ? Constants.font16
                                 : Constants.font16
@@ -130,14 +131,14 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  puntiGrafico.length == 0
+                                  puntiGrafico.isEmpty
                                       ? SizedBox.shrink()
                                       : Text(
                                           puntiGrafico.length == 1
-                                              ? "Il tuo ultimo esame"
-                                              : puntiGrafico.length == 0
-                                                  ? "Nessun esame con voto ancora"
-                                                  : "I tuoi ultimi ${puntiGrafico.length} esami",
+                                              ? 'Il tuo ultimo esame'
+                                              : puntiGrafico.isEmpty
+                                                  ? 'Nessun esame con voto ancora'
+                                                  : 'I tuoi ultimi ${puntiGrafico.length} esami',
                                           style: TextStyle(
                                               fontStyle: FontStyle.italic,
                                               fontSize: 12,
@@ -146,9 +147,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              puntiGrafico.length == 0
+                              puntiGrafico.isEmpty
                                   ? Text(
-                                      "Non ho abbastanza elementi\nper disegnare un grafico...",
+                                      'Non ho abbastanza elementi\nper disegnare un grafico...',
                                       style: TextStyle(
                                           fontStyle: FontStyle.italic,
                                           color: Colors.white),
@@ -232,7 +233,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                                 var index =
                                                     puntiGrafico.indexOf(punto);
                                                 return FlSpot(index.toDouble(),
-                                                    punto["voto"].toDouble());
+                                                    punto['voto'].toDouble());
                                               }).toList(),
                                               isCurved: true,
                                               colors: darkModeOn
@@ -266,25 +267,25 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                       ),
                     ),
                   ),
-                  widget.libretto["media_pond"] == "NaN"
+                  widget.libretto['media_pond'] == 'NaN'
                       ? SizedBox.shrink()
                       : Positioned(
                           bottom:
-                              (widget.libretto["media_pond"] >= 24) ? -22 : -20,
+                              (widget.libretto['media_pond'] >= 24) ? -22 : -20,
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: widget.libretto["media_pond"] >= 24
+                              color: widget.libretto['media_pond'] >= 24
                                   ? Colors.yellow[700]
-                                  : widget.libretto["media_pond"] >= 18
+                                  : widget.libretto['media_pond'] >= 18
                                       ? Colors.green[700]
                                       : Colors.yellow[700],
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
                               boxShadow: [
                                 BoxShadow(
-                                  color: widget.libretto["media_pond"] >= 24
+                                  color: widget.libretto['media_pond'] >= 24
                                       ? Colors.black12
                                       : Colors.transparent,
                                   offset: Offset.zero,
@@ -293,10 +294,10 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                 ),
                               ],
                               border: Border.all(
-                                  color: (widget.libretto["media_pond"] >= 24)
+                                  color: (widget.libretto['media_pond'] >= 24)
                                       ? Colors.white
                                       : Colors.transparent,
-                                  width: (widget.libretto["media_pond"] >= 24)
+                                  width: (widget.libretto['media_pond'] >= 24)
                                       ? 2
                                       : 0),
                             ),
@@ -304,19 +305,19 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                    widget.libretto["media_pond"] >= 24
+                                    widget.libretto['media_pond'] >= 24
                                         ? Icons.stars
-                                        : widget.libretto["media_pond"] >= 18
+                                        : widget.libretto['media_pond'] >= 18
                                             ? Icons.check_circle
                                             : Icons.warning,
                                     color: Colors.white),
                                 const SizedBox(width: 5),
                                 Text(
-                                  widget.libretto["media_pond"] >= 24
-                                      ? "fantastico!".toUpperCase()
-                                      : widget.libretto["media_pond"] >= 18
-                                          ? "vai così".toUpperCase()
-                                          : "attenzione".toUpperCase(),
+                                  widget.libretto['media_pond'] >= 24
+                                      ? 'fantastico!'.toUpperCase()
+                                      : widget.libretto['media_pond'] >= 18
+                                          ? 'vai così'.toUpperCase()
+                                          : 'attenzione'.toUpperCase(),
                                   style: Constants.fontBold
                                       .copyWith(color: Colors.white),
                                 ),
@@ -336,7 +337,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Il tuo andamento",
+                      'Il tuo andamento',
                       style: Constants.fontBold20,
                     ),
                     Divider(),
@@ -353,9 +354,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               children: [
                                 RichText(
                                   text: TextSpan(
-                                    text: "Media Aritmetica: ",
+                                    text: 'Media Aritmetica: ',
                                     style: Constants.font16.copyWith(
-                                      fontFamily: "SF Pro",
+                                      fontFamily: 'SF Pro',
                                       color: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -363,7 +364,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                     ),
                                     children: [
                                       TextSpan(
-                                          text: widget.libretto["media_arit"]
+                                          text: widget.libretto['media_arit']
                                               .toString(),
                                           style: Constants.fontBold20)
                                     ],
@@ -371,9 +372,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                 ),
                                 RichText(
                                   text: TextSpan(
-                                    text: "Media Ponderata: ",
+                                    text: 'Media Ponderata: ',
                                     style: Constants.font16.copyWith(
-                                      fontFamily: "SF Pro",
+                                      fontFamily: 'SF Pro',
                                       color: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -381,7 +382,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                     ),
                                     children: [
                                       TextSpan(
-                                          text: widget.libretto["media_pond"]
+                                          text: widget.libretto['media_pond']
                                               .toString(),
                                           style: Constants.fontBold20)
                                     ],
@@ -403,9 +404,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               ),
                               child: RichText(
                                 text: TextSpan(
-                                    text: "CFU: ",
+                                    text: 'CFU: ',
                                     style: Constants.font20.copyWith(
-                                      fontFamily: "SF Pro",
+                                      fontFamily: 'SF Pro',
                                       color: Theme.of(context)
                                           .textTheme
                                           .bodyText1
@@ -423,7 +424,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          "Voto di Laurea: ",
+                          'Voto di Laurea: ',
                           style: Constants.font16,
                         ),
                         const SizedBox(height: 10),
@@ -476,7 +477,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                                 opacity: 1,
                                                 child: Text(
                                                   _votoLaurea == 0
-                                                      ? "NaN"
+                                                      ? 'NaN'
                                                       : _votoLaurea
                                                           .toStringAsPrecision(
                                                               4),
@@ -499,12 +500,12 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "66",
+                                  '66',
                                   style:
                                       Constants.fontBold.copyWith(fontSize: 13),
                                 ),
                                 Text(
-                                  "110",
+                                  '110',
                                   style:
                                       Constants.fontBold.copyWith(fontSize: 13),
                                 ),
@@ -519,20 +520,20 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       cacheExtent: 30,
-                      itemCount: widget.libretto["totali"],
+                      itemCount: widget.libretto['totali'],
                       itemBuilder: (context, index) {
                         return Container(
                           margin: EdgeInsets.only(bottom: 5),
                           child: ListTileTheme(
                             dense: true,
                             child: IgnorePointer(
-                              ignoring: widget.libretto["voti"][index] == "",
+                              ignoring: widget.libretto['voti'][index] == '',
                               child: ExpansionTile(
                                 key: UniqueKey(),
-                                trailing: widget.libretto["voti"][index] != ""
+                                trailing: widget.libretto['voti'][index] != ''
                                     ? null
                                     : SizedBox.shrink(),
-                                leading: widget.libretto["voti"][index] != ""
+                                leading: widget.libretto['voti'][index] != ''
                                     ? Padding(
                                         padding:
                                             const EdgeInsets.only(right: 0),
@@ -541,13 +542,13 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                       )
                                     : null,
                                 title: Text(
-                                  widget.libretto["materie"][index],
+                                  widget.libretto['materie'][index],
                                   style: Constants.fontBold20.copyWith(
                                       color:
                                           Theme.of(context).primaryColorLight),
                                 ),
                                 subtitle: Text(
-                                  "CFU: ${widget.libretto["crediti"][index]}",
+                                  'CFU: ${widget.libretto['crediti'][index]}',
                                   style: Constants.fontBold.copyWith(
                                       color: Theme.of(context)
                                           .textTheme
@@ -556,7 +557,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                 ),
                                 backgroundColor: Theme.of(context).cardColor,
                                 children: [
-                                  widget.libretto["voti"][index] != ""
+                                  widget.libretto['voti'][index] != ''
                                       ? Container(
                                           padding: EdgeInsets.only(
                                               left: 16, right: 16),
@@ -567,7 +568,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                             children: [
                                               RichText(
                                                 text: TextSpan(
-                                                  text: "Voto: ",
+                                                  text: 'Voto: ',
                                                   style: Constants.font18
                                                       .copyWith(
                                                           color:
@@ -575,11 +576,11 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                                                   .textTheme
                                                                   .bodyText1
                                                                   .color,
-                                                          fontFamily: "SF Pro"),
+                                                          fontFamily: 'SF Pro'),
                                                   children: [
                                                     TextSpan(
                                                       text: widget
-                                                              .libretto["voti"]
+                                                              .libretto['voti']
                                                           [index],
                                                       style: Constants
                                                           .fontBold18
@@ -596,7 +597,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                               const SizedBox(height: 5),
                                               RichText(
                                                 text: TextSpan(
-                                                  text: "Data esame: ",
+                                                  text: 'Data esame: ',
                                                   style: Constants.font16
                                                       .copyWith(
                                                           color:
@@ -604,11 +605,11 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                                                   .textTheme
                                                                   .bodyText1
                                                                   .color,
-                                                          fontFamily: "SF Pro"),
+                                                          fontFamily: 'SF Pro'),
                                                   children: [
                                                     TextSpan(
                                                       text: widget.libretto[
-                                                          "data_esame"][index],
+                                                          'data_esame'][index],
                                                       style: Constants.fontBold
                                                           .copyWith(
                                                               color: Theme.of(

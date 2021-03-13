@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/screens/screens.dart';
 import 'package:Esse3/utils/provider.dart';
@@ -9,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Pagina iniziale di login.
 class LoginScreen extends StatefulWidget {
-  static const String id = "loginScreen";
+  static const String id = 'loginScreen';
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -20,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
 
-  FocusNode _passFocus = FocusNode();
+  final FocusNode _passFocus = FocusNode();
 
   void _clickBtn() {
     setState(() {
@@ -42,18 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Attenzione!"),
-            content: Text("Riempi correttamente tutti i campi"),
+            title: Text('Attenzione!'),
+            content: Text('Riempi correttamente tutti i campi'),
             actions: <Widget>[
               TextButton(
-                child: Text(
-                  "Chiudi",
-                  style: TextStyle(color: Constants.mainColorLighter),
-                ),
                 onPressed: () {
                   _passController.clear();
                   Navigator.of(context).pop();
                 },
+                child: Text(
+                  'Chiudi',
+                  style: TextStyle(color: Constants.mainColorLighter),
+                ),
               ),
             ],
           );
@@ -61,12 +60,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
 
-    String _authCred =
-        "${_userController.value.text}:${_passController.value.text}";
-    Uint8List _bytesInLatin1 = latin1.encode(_authCred);
-    String _basichAuth64 = "Basic " + base64.encode(_bytesInLatin1);
+    var _authCred =
+        '${_userController.value.text}:${_passController.value.text}';
+    var _bytesInLatin1 = latin1.encode(_authCred);
+    var _basichAuth64 = 'Basic ' + base64.encode(_bytesInLatin1);
 
-    Provider.getAccess(_basichAuth64, _userController.value.text.trim())
+    await Provider.getAccess(_basichAuth64, _userController.value.text.trim())
         .then((response) async {
       if (response == null) {
         setState(() {
@@ -74,62 +73,62 @@ class _LoginScreenState extends State<LoginScreen> {
           _userController.clear();
           _passController.clear();
         });
-        showDialog(
+        await showDialog(
           context: context,
           builder: (BuildContext ctx) {
             return AlertDialog(
-              title: Text("Errore di connessione"),
+              title: Text('Errore di connessione'),
               content: Text("Riprova a effettuare l'accesso fra 30 secondi."),
               actions: <Widget>[
                 TextButton(
-                  child: Text(
-                    "Chiudi",
-                    style: TextStyle(color: Constants.mainColorLighter),
-                  ),
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
+                  child: Text(
+                    'Chiudi',
+                    style: TextStyle(color: Constants.mainColorLighter),
+                  ),
                 ),
               ],
             );
           },
         );
-      } else if (response["success"] == true) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+      } else if (response['success'] == true) {
+        var prefs = await SharedPreferences.getInstance();
 
-        await prefs.setBool("isLoggedIn", true);
-        await prefs.setString("auth64Cred", _basichAuth64);
-        await prefs.setString("username", _userController.text);
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('auth64Cred', _basichAuth64);
+        await prefs.setString('username', _userController.text);
 
         setState(() {
           _isLoading = !_isLoading;
         });
 
-        Navigator.pushReplacement(
+        await Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomeScreen(user: response),
           ),
         );
-      } else if (!response["success"]) {
+      } else if (!response['success']) {
         setState(() {
           _isLoading = !_isLoading;
           _userController.clear();
           _passController.clear();
         });
-        showDialog(
+        await showDialog(
           context: context,
           builder: (BuildContext ctx) {
             return AlertDialog(
-              title: Text("Credenziali errate!"),
-              content: Text("Riprova a inserire le credenziali"),
+              title: Text('Credenziali errate!'),
+              content: Text('Riprova a inserire le credenziali'),
               actions: <Widget>[
                 TextButton(
-                  child: Text("Chiudi",
-                      style: TextStyle(color: Constants.mainColorLighter)),
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
+                  child: Text('Chiudi',
+                      style: TextStyle(color: Constants.mainColorLighter)),
                 ),
               ],
             );
@@ -141,15 +140,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var deviceWidth = MediaQuery.of(context).size.width;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     return Stack(
       children: [
         Scaffold(),
         SvgPicture.asset(
           isTablet
-              ? "assets/img/backgroundLoginTablet.svg"
-              : "assets/img/backgroundLogin.svg",
+              ? 'assets/img/backgroundLoginTablet.svg'
+              : 'assets/img/backgroundLogin.svg',
           width: deviceWidth,
           height: MediaQuery.of(context).size.height,
           fit: BoxFit.cover,
@@ -171,11 +170,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Esse3 Unimore",
+                        'Esse3 Unimore',
                         style: Constants.fontBold32,
                       ),
                       Text(
-                        "App non (ancora) ufficiale",
+                        'App non (ancora) ufficiale',
                         style: Constants.font20,
                       ),
                       const SizedBox(height: 30),
@@ -196,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Usa le credenziali Esse3 per accedere.",
+                              'Usa le credenziali Esse3 per accedere.',
                               style: Constants.font16.copyWith(
                                 color: Colors.black87,
                               ),
@@ -215,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     keyboardType: TextInputType.emailAddress,
                                     cursorColor: Constants.mainColor,
                                     decoration: InputDecoration(
-                                      labelText: "Username",
-                                      counterText: "",
+                                      labelText: 'Username',
+                                      counterText: '',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10)),
@@ -234,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     controller: _passController,
                                     cursorColor: Constants.mainColor,
                                     decoration: InputDecoration(
-                                      labelText: "Password",
+                                      labelText: 'Password',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10)),
@@ -269,10 +268,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       _clickBtn();
                                     }
                                   : null,
-                              child: Text(
-                                "ACCEDI",
-                                style: Constants.fontBold,
-                              ),
                               padding: const EdgeInsets.all(16),
                               color: Constants.mainColor,
                               textColor: Colors.white,
@@ -281,6 +276,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(30)),
+                              ),
+                              child: Text(
+                                'ACCEDI',
+                                style: Constants.fontBold,
                               ),
                             ),
                           ],

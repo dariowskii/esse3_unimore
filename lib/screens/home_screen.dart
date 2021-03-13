@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Home screen dell'app.
 class HomeScreen extends StatefulWidget {
   final Map user;
-  static const String id = "homeScreen";
+  static const String id = 'homeScreen';
 
   HomeScreen({this.user});
 
@@ -38,8 +38,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// Ritorna lo username corrente.
   Future<String> _getCurrentUserName() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString("username");
+    var prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
   }
 
   @override
@@ -64,14 +64,15 @@ class _HomeScreenState extends State<HomeScreen>
         });
       });
     } else {
-      _cdl = widget.user["corso_stud"].toString().split("] - ");
-      _cdl[0] = "${_cdl[0]}]";
+      _cdl = widget.user['corso_stud'].toString().split('] - ');
+      _cdl[0] = '${_cdl[0]}]';
 
-      DBProvider.db.checkExistUser(widget.user["username"]).then((data) {
-        if (data != null)
+      DBProvider.db.checkExistUser(widget.user['username']).then((data) {
+        if (data != null) {
           DBProvider.db.updateUser(widget.user);
-        else
+        } else {
           DBProvider.db.newUser(widget.user);
+        }
       });
 
       _controller.forward();
@@ -86,20 +87,20 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double deviceHeight = MediaQuery.of(context).size.height;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var deviceWidth = MediaQuery.of(context).size.width;
+    var deviceHeight = MediaQuery.of(context).size.height;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     return WillPopScope(
       onWillPop: () async {
         if (Platform.isAndroid) {
-          SystemNavigator.pop(animated: true);
+          await SystemNavigator.pop(animated: true);
         }
         return null;
       },
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Esse3",
+            'Esse3',
           ),
           centerTitle: true,
         ),
@@ -119,12 +120,12 @@ class _HomeScreenState extends State<HomeScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Client Esse3",
+                        'Client Esse3',
                         style:
                             const TextStyle(color: Colors.white, fontSize: 22),
                       ),
                       Text(
-                        "Unimore",
+                        'Unimore',
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 40,
@@ -137,35 +138,40 @@ class _HomeScreenState extends State<HomeScreen>
                               builder: (context, userData) {
                                 switch (userData.connectionState) {
                                   case ConnectionState.none:
-                                    return Text("Nessuna connessione.");
+                                    return Text('Nessuna connessione.');
                                   case ConnectionState.waiting:
                                     return LinearProgressIndicator();
                                   case ConnectionState.active:
                                   case ConnectionState.done:
                                     if (!userData.hasData) {
                                       return Text(
-                                          "Errore nel recuperare i dati.");
+                                          'Errore nel recuperare i dati.');
                                     }
                                     return Row(
                                       children: [
                                         Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white,
+                                          ),
+                                          padding: const EdgeInsets.all(1),
                                           child: CircleAvatar(
                                             backgroundColor: Constants.mainColor
                                                 .withOpacity(0.9),
                                             radius: 30,
                                             backgroundImage: userData
-                                                        .data["profile_pic"] ==
-                                                    "no"
+                                                        .data['profile_pic'] ==
+                                                    'no'
                                                 ? null
                                                 : MemoryImage(base64Decode(
                                                     userData
-                                                        .data["profile_pic"])),
+                                                        .data['profile_pic'])),
                                             child: userData
-                                                        .data["profile_pic"] ==
-                                                    "no"
+                                                        .data['profile_pic'] ==
+                                                    'no'
                                                 ? Text(
                                                     userData
-                                                        .data["text_avatar"],
+                                                        .data['text_avatar'],
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w100,
@@ -175,11 +181,6 @@ class _HomeScreenState extends State<HomeScreen>
                                                   )
                                                 : SizedBox.shrink(),
                                           ),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Colors.white,
-                                          ),
-                                          padding: const EdgeInsets.all(1),
                                         ),
                                         const SizedBox(width: 15),
                                         Flexible(
@@ -190,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                "${userData.data["nome_studente"]}",
+                                                '${userData.data['nome_studente']}',
                                                 style: const TextStyle(
                                                   fontSize: 16,
                                                   color: Colors.white,
@@ -200,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen>
                                               ),
                                               const SizedBox(height: 5),
                                               Text(
-                                                "Matr. ${userData.data["matricola"]}",
+                                                'Matr. ${userData.data['matricola']}',
                                                 style: const TextStyle(
                                                     color: Colors.white),
                                               )
@@ -210,25 +211,30 @@ class _HomeScreenState extends State<HomeScreen>
                                       ],
                                     );
                                   default:
-                                    return Text("Errore builder.");
+                                    return Text('Errore builder.');
                                 }
                               },
                             )
                           : Row(
                               children: [
                                 Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  padding: const EdgeInsets.all(1),
                                   child: CircleAvatar(
                                     backgroundColor:
                                         Constants.mainColor.withOpacity(0.9),
                                     radius: 30,
                                     backgroundImage:
-                                        widget.user["profile_pic"] == "no"
+                                        widget.user['profile_pic'] == 'no'
                                             ? null
                                             : MemoryImage(base64Decode(
-                                                widget.user["profile_pic"])),
-                                    child: widget.user["profile_pic"] == "no"
+                                                widget.user['profile_pic'])),
+                                    child: widget.user['profile_pic'] == 'no'
                                         ? Text(
-                                            widget.user["text_avatar"],
+                                            widget.user['text_avatar'],
                                             style: TextStyle(
                                               fontWeight: FontWeight.w100,
                                               fontSize: 16,
@@ -237,11 +243,6 @@ class _HomeScreenState extends State<HomeScreen>
                                           )
                                         : SizedBox.shrink(),
                                   ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                  ),
-                                  padding: const EdgeInsets.all(1),
                                 ),
                                 const SizedBox(width: 15),
                                 Flexible(
@@ -251,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "${widget.user["nome"]}",
+                                        '${widget.user['nome']}',
                                         style: const TextStyle(
                                           fontSize: 16,
                                           color: Colors.white,
@@ -261,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        "Matr. ${widget.user["matricola"]}",
+                                        'Matr. ${widget.user['matricola']}',
                                         style: const TextStyle(
                                             color: Colors.white),
                                       )
@@ -272,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                       const SizedBox(height: 15),
                       Text(
-                        "Created by 145622",
+                        'Created by 145622',
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       )
                     ],
@@ -284,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Column(
                   children: [
                     BottonePaginaDrawer(
-                        testoBottone: "Bacheca prenotazioni",
+                        testoBottone: 'Bacheca prenotazioni',
                         textColor: Theme.of(context).textTheme.bodyText1.color,
                         onPressed: () {
                           Navigator.of(context)
@@ -309,13 +310,13 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     BottoneMaterialCustom(
                       onPressed: () async {
-                        SharedPreferences prefs =
+                        var prefs =
                             await SharedPreferences.getInstance();
                         await prefs.clear();
                         await prefs.setBool('1.2.0', true);
-                        Navigator.pushReplacementNamed(context, LoginScreen.id);
+                        await Navigator.pushReplacementNamed(context, LoginScreen.id);
                       },
-                      textButton: "ESCI",
+                      textButton: 'ESCI',
                       backgroundColor: Constants.mainColorDarker,
                     )
                   ],
@@ -329,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen>
           child: Stack(
             children: [
               SvgPicture.asset(
-                "assets/img/backgroundHome.svg",
+                'assets/img/backgroundHome.svg',
                 width: deviceWidth,
               ),
               Container(
@@ -360,10 +361,10 @@ class _HomeScreenState extends State<HomeScreen>
                             case ConnectionState.active:
                             case ConnectionState.done:
                               if (!userData.hasData) return ErrorHomeData();
-                              _cdl = userData.data["corso_stud"]
+                              _cdl = userData.data['corso_stud']
                                   .toString()
-                                  .split("] - ");
-                              _cdl[0] += "]";
+                                  .split('] - ');
+                              _cdl[0] += ']';
                               _controller.forward();
                               return Column(
                                 children: <Widget>[
@@ -382,34 +383,6 @@ class _HomeScreenState extends State<HomeScreen>
                                           child: Container(
                                             width: _animation.value * 100,
                                             height: _animation.value * 100,
-                                            child: CircleAvatar(
-                                              backgroundColor:
-                                                  Constants.mainColorLighter,
-                                              radius: _animation.value * 50,
-                                              backgroundImage: userData.data[
-                                                          "profile_pic"] ==
-                                                      "no"
-                                                  ? null
-                                                  : MemoryImage(base64Decode(
-                                                      userData.data[
-                                                          "profile_pic"])),
-                                              child: userData.data[
-                                                          "profile_pic"] ==
-                                                      "no"
-                                                  ? Text(
-                                                      userData
-                                                          .data["text_avatar"],
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w100,
-                                                        fontSize:
-                                                            _animation.value *
-                                                                40,
-                                                        color: Colors.white,
-                                                      ),
-                                                    )
-                                                  : SizedBox.shrink(),
-                                            ),
                                             padding: EdgeInsets.all(2.0),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
@@ -426,15 +399,43 @@ class _HomeScreenState extends State<HomeScreen>
                                                 )
                                               ],
                                             ),
+                                            child: CircleAvatar(
+                                              backgroundColor:
+                                                  Constants.mainColorLighter,
+                                              radius: _animation.value * 50,
+                                              backgroundImage: userData.data[
+                                                          'profile_pic'] ==
+                                                      'no'
+                                                  ? null
+                                                  : MemoryImage(base64Decode(
+                                                      userData.data[
+                                                          'profile_pic'])),
+                                              child: userData.data[
+                                                          'profile_pic'] ==
+                                                      'no'
+                                                  ? Text(
+                                                      userData
+                                                          .data['text_avatar'],
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w100,
+                                                        fontSize:
+                                                            _animation.value *
+                                                                40,
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : SizedBox.shrink(),
+                                            ),
                                           ),
                                         ),
                                         Text(
-                                          userData.data["nome_studente"],
+                                          userData.data['nome_studente'],
                                           style: Constants.fontBold28,
                                         ),
                                         const SizedBox(height: 5),
                                         Text(
-                                          "- Mat. ${userData.data["matricola"]} -",
+                                          '- Mat. ${userData.data['matricola']} -',
                                           style: Constants.font16,
                                         ),
                                         const SizedBox(height: 10),
@@ -458,27 +459,27 @@ class _HomeScreenState extends State<HomeScreen>
                                     runSpacing: -5,
                                     children: <Widget>[
                                       ChipInfo(
-                                          text: userData.data["tipo_corso"],
+                                          text: userData.data['tipo_corso'],
                                           textSize:
                                               deviceWidth >= 390 ? 13 : 10),
                                       ChipInfo(
                                           text:
-                                              "Profilo: ${userData.data["profilo_studente"]}",
+                                              'Profilo: ${userData.data['profilo_studente']}',
                                           textSize:
                                               deviceWidth >= 390 ? 13 : 10),
                                       ChipInfo(
                                           text:
-                                              "Anno di Corso: ${userData.data["anno_corso"]}",
+                                              'Anno di Corso: ${userData.data['anno_corso']}',
                                           textSize:
                                               deviceWidth >= 390 ? 13 : 10),
                                       ChipInfo(
                                           text:
-                                              "Immatricolazione: ${userData.data["data_imm"]}",
+                                              'Immatricolazione: ${userData.data['data_imm']}',
                                           textSize:
                                               deviceWidth >= 390 ? 13 : 10),
                                       ChipInfo(
                                           text:
-                                              "Part Time: ${userData.data["part_time"]}",
+                                              'Part Time: ${userData.data['part_time']}',
                                           textSize:
                                               deviceWidth >= 390 ? 13 : 10),
                                     ],
@@ -513,26 +514,6 @@ class _HomeScreenState extends State<HomeScreen>
                                   child: Container(
                                     width: _animation.value * 100,
                                     height: _animation.value * 100,
-                                    child: CircleAvatar(
-                                      backgroundColor:
-                                          Constants.mainColorLighter,
-                                      radius: _animation.value * 50,
-                                      backgroundImage:
-                                          widget.user["profile_pic"] == "no"
-                                              ? null
-                                              : MemoryImage(base64Decode(
-                                                  widget.user["profile_pic"])),
-                                      child: widget.user["profile_pic"] == "no"
-                                          ? Text(
-                                              widget.user["text_avatar"],
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w100,
-                                                fontSize: 40,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : SizedBox.shrink(),
-                                    ),
                                     padding: EdgeInsets.all(2.0),
                                     decoration: BoxDecoration(
                                       color: Color(0xFFFFFFFF),
@@ -547,15 +528,35 @@ class _HomeScreenState extends State<HomeScreen>
                                         )
                                       ],
                                     ),
+                                    child: CircleAvatar(
+                                      backgroundColor:
+                                          Constants.mainColorLighter,
+                                      radius: _animation.value * 50,
+                                      backgroundImage:
+                                          widget.user['profile_pic'] == 'no'
+                                              ? null
+                                              : MemoryImage(base64Decode(
+                                                  widget.user['profile_pic'])),
+                                      child: widget.user['profile_pic'] == 'no'
+                                          ? Text(
+                                              widget.user['text_avatar'],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w100,
+                                                fontSize: 40,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ),
                                   ),
                                 ),
                                 Text(
-                                  widget.user["nome"],
+                                  widget.user['nome'],
                                   style: Constants.fontBold28,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  "- Mat. ${widget.user["matricola"]} -",
+                                  '- Mat. ${widget.user['matricola']} -',
                                   style: Constants.font16,
                                 ),
                                 const SizedBox(height: 10),
@@ -573,23 +574,23 @@ class _HomeScreenState extends State<HomeScreen>
                                   runSpacing: -5,
                                   children: <Widget>[
                                     ChipInfo(
-                                        text: widget.user["tipo_corso"],
+                                        text: widget.user['tipo_corso'],
                                         textSize: deviceWidth >= 390 ? 13 : 10),
                                     ChipInfo(
                                         text:
-                                            "Profilo: ${widget.user["profilo_studente"]}",
+                                            'Profilo: ${widget.user['profilo_studente']}',
                                         textSize: deviceWidth >= 390 ? 13 : 10),
                                     ChipInfo(
                                         text:
-                                            "Anno di Corso: ${widget.user["anno_corso"]}",
+                                            'Anno di Corso: ${widget.user['anno_corso']}',
                                         textSize: deviceWidth >= 390 ? 13 : 10),
                                     ChipInfo(
                                         text:
-                                            "Immatricolazione: ${widget.user["data_imm"]}",
+                                            'Immatricolazione: ${widget.user['data_imm']}',
                                         textSize: deviceWidth >= 390 ? 13 : 10),
                                     ChipInfo(
                                         text:
-                                            "Part Time: ${widget.user["part_time"]}",
+                                            'Part Time: ${widget.user['part_time']}',
                                         textSize: deviceWidth >= 390 ? 13 : 10),
                                   ],
                                 ),

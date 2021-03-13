@@ -7,7 +7,7 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 /// Pagina in cui vedere la bacheca prenotazioni.
 class BachecaPrenotazioniScreen extends StatefulWidget {
-  static const String id = "bachecaPrenotazioniScreen";
+  static const String id = 'bachecaPrenotazioniScreen';
   @override
   _BachecaPrenotazioniScreenState createState() =>
       _BachecaPrenotazioniScreenState();
@@ -34,15 +34,15 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double deviceHeight = MediaQuery.of(context).size.height;
-    bool darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var deviceWidth = MediaQuery.of(context).size.width;
+    var deviceHeight = MediaQuery.of(context).size.height;
+    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     Widget _svgAsset =
         SvgPicture.asset('assets/img/party.svg', width: deviceWidth * 0.7);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Esse3"),
+        title: Text('Esse3'),
         centerTitle: true,
       ),
       body: FutureBuilder(
@@ -62,7 +62,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Bacheca prenotazioni",
+                      'Bacheca prenotazioni',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 25),
                     ),
@@ -80,7 +80,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                             ),
                             const SizedBox(height: 15),
                             Text(
-                              "Sto scaricando i dati...",
+                              'Sto scaricando i dati...',
                               style: Constants.font16.copyWith(
                                   color: darkModeOn
                                       ? Colors.white
@@ -103,9 +103,9 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                   onReload: _refreshBacheca,
                 );
               }
-              if (appello.data["success"]) {
+              if (appello.data['success']) {
                 //In caso non ci siano appelli
-                if (appello.data["totali"] == 0) {
+                if (appello.data['totali'] == 0) {
                   return LiquidPullToRefresh(
                     animSpeedFactor: 1.5,
                     height: 80,
@@ -120,7 +120,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Bacheca prenotazioni",
+                                'Bacheca prenotazioni',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 25),
                               ),
@@ -137,14 +137,14 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                                       height: 20,
                                     ),
                                     Text(
-                                      "Nessuna prenotazione",
+                                      'Nessuna prenotazione',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 32),
                                     ),
                                     SizedBox(height: 10),
                                     Text(
-                                      "È tempo di preparare qualche esame e prenotarsi!",
+                                      'È tempo di preparare qualche esame e prenotarsi!',
                                       softWrap: true,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -176,7 +176,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Bacheca prenotazioni",
+                          'Bacheca prenotazioni',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 25),
                         ),
@@ -189,15 +189,15 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                                   horizontal: deviceWidth / 6)
                               : null,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: appello.data["totali"],
+                          itemCount: appello.data['totali'],
                           itemBuilder: (context, index) {
                             return CardAppelloPrenotato(
-                              nomeEsame: appello.data["esame"][index],
-                              iscrizione: appello.data["iscrizione"][index],
-                              giorno: appello.data["giorno"][index],
-                              ora: appello.data["ora"][index],
-                              docente: appello.data["docente"][index],
-                              formHiddens: appello.data["formHiddens"],
+                              nomeEsame: appello.data['esame'][index],
+                              iscrizione: appello.data['iscrizione'][index],
+                              giorno: appello.data['giorno'][index],
+                              ora: appello.data['ora'][index],
+                              docente: appello.data['docente'][index],
+                              formHiddens: appello.data['formHiddens'],
                               index: index,
                               darkModeOn: darkModeOn,
                               isTablet: isTablet,

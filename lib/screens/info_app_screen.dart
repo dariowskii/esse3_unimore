@@ -6,10 +6,10 @@ class InfoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Esse3"),
+        title: Text('Esse3'),
         brightness: Brightness.light,
         centerTitle: true,
       ),
@@ -24,14 +24,14 @@ class InfoApp extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Text(
-                  "Esse3",
+                  'Esse3',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  "Unimore",
+                  'Unimore',
                   style: TextStyle(
                     fontSize: 48,
                     height: 1,
@@ -40,7 +40,7 @@ class InfoApp extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "App non (ancora) ufficiale",
+                  'App non (ancora) ufficiale',
                 ),
                 SizedBox(height: 40),
                 Column(
@@ -49,7 +49,7 @@ class InfoApp extends StatelessWidget {
                     Text(
                         "Quest'app estrapola i dati del sito https://esse3.unimore.it, per poterli vedere in maniera organizzata e pulita in un design moderno.\n\nL'app è stata sviluppata da uno stesso studente dell'ateneo UniMoRe, dopo tante sfide e problematiche che di certo non sono state facili da superare, ma alla fine siamo qua!\n\nEsse3 (Cineca) non mette a disposizione delle API per raccogliere facilmente i dati, perciò ne ho creata una ad hoc andando poi a manipolare e a gestire le stringhe.\n\n"),
                     Text(
-                      "Le mie informazioni vengono salvate su qualche server?\n",
+                      'Le mie informazioni vengono salvate su qualche server?\n',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -57,10 +57,10 @@ class InfoApp extends StatelessWidget {
                     Text(
                         "Assolutamente no! Le informazioni che vedi nell'applicazione restano salvate SOLO ed esclusivamente sul tuo dispositivo.\n\n"),
                     Text(
-                      "Best Regards,\n",
+                      'Best Regards,\n',
                       style: TextStyle(fontSize: 18),
                     ),
-                    Text("145622"),
+                    Text('145622'),
                   ],
                 ),
                 //TODO: Aggiornare versione!
@@ -68,7 +68,7 @@ class InfoApp extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      "version: 1.2.3+33",
+                      'version: 1.2.3+34',
                       style: Constants.fontBold,
                     ),
                   ],

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 /// Pagina in cui vedere le tasse universitarie.
 class TasseScreen extends StatefulWidget {
-  static const String id = "tasseScreen";
+  static const String id = 'tasseScreen';
   @override
   _TasseScreenState createState() => _TasseScreenState();
 }
@@ -16,7 +16,7 @@ class _TasseScreenState extends State<TasseScreen> {
   Future<Map> _tasse;
 
   /// Lista di citazioni sulle tasse.
-  List<String> _citTasse = [
+  final List<String> _citTasse = [
     '"Credo che dovremmo tutti pagare le nostre tasse con un sorriso. Io ci ho provato, ma hanno voluto dei contanti."\n\n(Anonimo)',
     'Bisognerebbe tassare la frase "diminuiremo le tasse."\n\n(Anonimo)',
     '"In questo mondo non vi è nulla di sicuro, tranne la morte e le tasse."\n\n(B. Franklin)',
@@ -40,11 +40,11 @@ class _TasseScreenState extends State<TasseScreen> {
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
-    bool darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    bool isTablet = deviceWidth > Constants.tabletWidth;
+    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    var isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Esse3"),
+        title: Text('Esse3'),
         centerTitle: true,
         backgroundColor:
             darkModeOn ? Theme.of(context).cardColor : Colors.redAccent,
@@ -83,14 +83,14 @@ class _TasseScreenState extends State<TasseScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Tasse",
+                                'Tasse',
                                 style: Constants.fontBold32.copyWith(
                                     color: darkModeOn
                                         ? Colors.redAccent
                                         : Colors.white),
                               ),
                               Text(
-                                "Qui puoi vedere lo storico delle tue tasse universitarie.",
+                                'Qui puoi vedere lo storico delle tue tasse universitarie.',
                                 style: darkModeOn
                                     ? Constants.font16
                                     : Constants.font16
@@ -122,7 +122,7 @@ class _TasseScreenState extends State<TasseScreen> {
                             shimmerHeight: 150);
                       case ConnectionState.active:
                       case ConnectionState.done:
-                        if (tasse.hasData && tasse.data["success"]) {
+                        if (tasse.hasData && tasse.data['success']) {
                           return Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -135,13 +135,13 @@ class _TasseScreenState extends State<TasseScreen> {
                                         vertical: 32)
                                     : EdgeInsets.all(16),
                                 cacheExtent: 20,
-                                itemCount: tasse.data["totali"],
+                                itemCount: tasse.data['totali'],
                                 itemBuilder: (ctx, index) {
                                   return TassaExpansionTile(
-                                    descTassa: tasse.data["desc"][index],
-                                    importo: tasse.data["importi"][index],
-                                    scadenza: tasse.data["scadenza"][index],
-                                    stato: tasse.data["stato_pagamento"][index],
+                                    descTassa: tasse.data['desc'][index],
+                                    importo: tasse.data['importi'][index],
+                                    scadenza: tasse.data['scadenza'][index],
+                                    stato: tasse.data['stato_pagamento'][index],
                                     darkModeOn: darkModeOn,
                                   );
                                 },

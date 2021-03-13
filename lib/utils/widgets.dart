@@ -19,7 +19,7 @@ class ChipInfo extends StatelessWidget {
   /// Grandezza del font della chip.
   final double textSize;
 
-  ChipInfo({this.text = "null", this.textSize = 14});
+  ChipInfo({this.text = 'null', this.textSize = 14});
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +54,12 @@ class ErrorHomeData extends StatelessWidget {
               height: 20,
             ),
             Text(
-              "Oops..",
+              'Oops..',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
             ),
             SizedBox(height: 10),
             Text(
-              "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
+              'Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!',
               softWrap: true,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -115,7 +115,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Libretto",
+                  'Libretto',
                   style: Constants.fontBold20.copyWith(
                     color: Theme.of(context).primaryColorLight,
                   ),
@@ -138,7 +138,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                           return Column(
                             children: <Widget>[
                               Text(
-                                "Sto recuperando i tuoi dati...",
+                                'Sto recuperando i tuoi dati...',
                               ),
                               SizedBox(height: 10),
                               LinearProgressIndicator(
@@ -151,16 +151,17 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                         case ConnectionState.active:
                         case ConnectionState.done:
                           if (libretto.data == null ||
-                              !libretto.data["success"])
+                              !libretto.data['success']) {
                             return ErrorLibretto(libretto: _libretto);
+                          }
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               RichText(
                                 text: TextSpan(
-                                  text: libretto.data["superati"].toString(),
+                                  text: libretto.data['superati'].toString(),
                                   style: TextStyle(
-                                    fontFamily: "SF Pro",
+                                    fontFamily: 'SF Pro',
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
@@ -169,46 +170,46 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                                   ),
                                   children: [
                                     TextSpan(
-                                      text: " su ",
+                                      text: ' su ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),
                                     TextSpan(
-                                      text: libretto.data["totali"].toString(),
+                                      text: libretto.data['totali'].toString(),
                                     ),
                                     TextSpan(
-                                      text: " superati. ",
+                                      text: ' superati. ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),
-                                    libretto.data["superati"] == 0
+                                    libretto.data['superati'] == 0
                                         ? TextSpan(
                                             text:
-                                                "Il cammino è lungo, ma ce la farai!",
+                                                'Il cammino è lungo, ma ce la farai!',
                                           )
-                                        : libretto.data["superati"] ==
-                                                libretto.data["totali"]
+                                        : libretto.data['superati'] ==
+                                                libretto.data['totali']
                                             ? TextSpan(
                                                 text:
-                                                    "Che la Sbronza sia con te! 🍻",
+                                                    'Che la Sbronza sia con te! 🍻',
                                               )
-                                            : libretto.data["superati"] <=
-                                                    libretto.data["totali"] / 2
+                                            : libretto.data['superati'] <=
+                                                    libretto.data['totali'] / 2
                                                 ? TextSpan(
-                                                    text: "Continua così!",
+                                                    text: 'Continua così!',
                                                   )
-                                                : libretto.data["superati"] >
+                                                : libretto.data['superati'] >
                                                         libretto.data[
-                                                                "totali"] /
+                                                                'totali'] /
                                                             2
                                                     ? TextSpan(
                                                         text:
-                                                            "Ci sei quasi, dai!",
+                                                            'Ci sei quasi, dai!',
                                                       )
                                                     : TextSpan(
-                                                        text: "",
+                                                        text: '',
                                                       ),
                                   ],
                                 ),
@@ -241,8 +242,8 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                                           return Container(
                                             height: 5,
                                             width: (constraints.maxWidth /
-                                                libretto.data["totali"] *
-                                                libretto.data["superati"]),
+                                                libretto.data['totali'] *
+                                                libretto.data['superati']),
                                             decoration: BoxDecoration(
                                               color: Theme.of(context)
                                                   .primaryColorLight,
@@ -281,7 +282,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                                       textColor: Colors.white,
                                       color: Theme.of(context).primaryColor,
                                       child: Text(
-                                        "Guarda Libretto",
+                                        'Guarda Libretto',
                                       ),
                                     ),
                                   ),
@@ -315,7 +316,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(50))),
                     child: Text(
-                      "Scarica info",
+                      'Scarica info',
                     ),
                   ),
           ],
@@ -350,7 +351,7 @@ class _ErrorLibrettoState extends State<ErrorLibretto> {
             ),
             SizedBox(width: 5),
             Text(
-              "Errore nel recuperare i dati!",
+              'Errore nel recuperare i dati!',
             ),
           ],
         ),
@@ -392,7 +393,7 @@ class ProssimiAppelliCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Prossimi appelli",
+                  'Prossimi appelli',
                   style: Constants.fontBold20.copyWith(
                     color: Theme.of(context).primaryColorLight,
                   ),
@@ -423,7 +424,7 @@ class ProssimiAppelliCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
               child: Text(
-                "Guarda i prossimi appelli",
+                'Guarda i prossimi appelli',
               ),
             ),
           ],
@@ -451,7 +452,7 @@ class TasseHomeCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Tasse universitarie",
+                  'Tasse universitarie',
                   style: Constants.fontBold20.copyWith(
                     color: Colors.white,
                   ),
@@ -474,7 +475,7 @@ class TasseHomeCard extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
               child: Text(
-                "Sei sicuro di volerle guardare?",
+                'Sei sicuro di volerle guardare?',
               ),
             ),
           ],
@@ -528,7 +529,7 @@ class CardAppelloImminente extends StatelessWidget {
         children: [
           Text(
             nomeAppello.length > 30
-                ? nomeAppello.substring(0, 28) + "..."
+                ? nomeAppello.substring(0, 28) + '...'
                 : nomeAppello,
             style: Constants.fontBold20
                 .copyWith(color: Theme.of(context).primaryColorLight),
@@ -536,9 +537,9 @@ class CardAppelloImminente extends StatelessWidget {
           SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: "Data appello: ",
+                text: 'Data appello: ',
                 style: TextStyle(
-                  fontFamily: "SF Pro",
+                  fontFamily: 'SF Pro',
                   color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 children: [
@@ -548,9 +549,9 @@ class CardAppelloImminente extends StatelessWidget {
           SizedBox(height: 10),
           RichText(
             text: TextSpan(
-                text: "Descrizione: ",
+                text: 'Descrizione: ',
                 style: TextStyle(
-                  fontFamily: "SF Pro",
+                  fontFamily: 'SF Pro',
                   color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 children: [
@@ -622,9 +623,9 @@ class _CardAppelloState extends State<CardAppello> {
           SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: "Data appello: ",
+                text: 'Data appello: ',
                 style: TextStyle(
-                  fontFamily: "SF Pro",
+                  fontFamily: 'SF Pro',
                   color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 children: [
@@ -635,9 +636,9 @@ class _CardAppelloState extends State<CardAppello> {
           SizedBox(height: 10),
           RichText(
             text: TextSpan(
-                text: "Descrizione: ",
+                text: 'Descrizione: ',
                 style: TextStyle(
-                  fontFamily: "SF Pro",
+                  fontFamily: 'SF Pro',
                   color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 children: [
@@ -646,9 +647,9 @@ class _CardAppelloState extends State<CardAppello> {
           ),
           RichText(
             text: TextSpan(
-                text: "Periodo iscrizioni: ",
+                text: 'Periodo iscrizioni: ',
                 style: TextStyle(
-                  fontFamily: "SF Pro",
+                  fontFamily: 'SF Pro',
                   color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 children: [
@@ -658,9 +659,9 @@ class _CardAppelloState extends State<CardAppello> {
           ),
           RichText(
             text: TextSpan(
-                text: "Sessione: ",
+                text: 'Sessione: ',
                 style: TextStyle(
-                  fontFamily: "SF Pro",
+                  fontFamily: 'SF Pro',
                   color: Theme.of(context).textTheme.bodyText1.color,
                 ),
                 children: [
@@ -684,7 +685,7 @@ class _CardAppelloState extends State<CardAppello> {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  "Errore nel recuperare i dati!",
+                                  'Errore nel recuperare i dati!',
                                 ),
                                 Expanded(child: Container()),
                                 IconButton(
@@ -703,15 +704,13 @@ class _CardAppelloState extends State<CardAppello> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              child: Text("IMPOSTA PROMEMORIA",
-                                  style: TextStyle(color: Colors.white)),
                               onPressed: () {
-                                final Event event = Event(
+                                final event = Event(
                                   title:
                                       'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
                                   description:
                                       "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                                  location: "Esse3",
+                                  location: 'Esse3',
                                   startDate: DateTime.parse(widget.dataAppello
                                               .substring(6) +
                                           widget.dataAppello.substring(3, 5) +
@@ -726,6 +725,8 @@ class _CardAppelloState extends State<CardAppello> {
                                 );
                                 Add2Calendar.addEvent2Cal(event);
                               },
+                              child: Text('IMPOSTA PROMEMORIA',
+                                  style: TextStyle(color: Colors.white)),
                             )
                           ],
                         );
@@ -742,7 +743,7 @@ class _CardAppelloState extends State<CardAppello> {
                                 CupertinoActivityIndicator(),
                                 SizedBox(width: 10),
                                 Text(
-                                  "Sto scaricando le info...",
+                                  'Sto scaricando le info...',
                                   style: TextStyle(fontStyle: FontStyle.italic),
                                 )
                               ],
@@ -756,15 +757,13 @@ class _CardAppelloState extends State<CardAppello> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
-                              child: Text("IMPOSTA PROMEMORIA",
-                                  style: TextStyle(color: Colors.white)),
                               onPressed: () {
-                                final Event event = Event(
+                                final event = Event(
                                   title:
                                       'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
                                   description:
                                       "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                                  location: "Esse3",
+                                  location: 'Esse3',
                                   startDate: DateTime.parse(widget.dataAppello
                                               .substring(6) +
                                           widget.dataAppello.substring(3, 5) +
@@ -779,76 +778,79 @@ class _CardAppelloState extends State<CardAppello> {
                                 );
                                 Add2Calendar.addEvent2Cal(event);
                               },
+                              child: Text('IMPOSTA PROMEMORIA',
+                                  style: TextStyle(color: Colors.white)),
                             )
                           ],
                         );
                       case ConnectionState.done:
                         if (altreInfo.data == null ||
-                            !altreInfo.data["success"])
-                          return Text("Sembra non ci siano risultati...");
+                            !altreInfo.data['success']) {
+                          return Text('Sembra non ci siano risultati...');
+                        }
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             RichText(
                               text: TextSpan(
-                                text: "Tipo esame: ",
+                                text: 'Tipo esame: ',
                                 style: TextStyle(
-                                    fontFamily: "SF Pro",
+                                    fontFamily: 'SF Pro',
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data["tipo_esame"],
+                                      text: altreInfo.data['tipo_esame'],
                                       style: Constants.fontBold),
                                 ],
                               ),
                             ),
                             RichText(
                               text: TextSpan(
-                                text: "Verbalizzazione: ",
+                                text: 'Verbalizzazione: ',
                                 style: TextStyle(
-                                    fontFamily: "SF Pro",
+                                    fontFamily: 'SF Pro',
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data["verbalizzazione"],
+                                      text: altreInfo.data['verbalizzazione'],
                                       style: Constants.fontBold),
                                 ],
                               ),
                             ),
                             RichText(
                               text: TextSpan(
-                                text: "Aula: ",
+                                text: 'Aula: ',
                                 style: TextStyle(
-                                    fontFamily: "SF Pro",
+                                    fontFamily: 'SF Pro',
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data["aula"],
+                                      text: altreInfo.data['aula'],
                                       style: Constants.fontBold),
                                 ],
                               ),
                             ),
                             RichText(
                               text: TextSpan(
-                                text: "Numero iscritti: ",
+                                text: 'Numero iscritti: ',
                                 style: TextStyle(
-                                    fontFamily: "SF Pro",
+                                    fontFamily: 'SF Pro',
                                     color: Theme.of(context)
                                         .textTheme
                                         .bodyText1
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data["num_iscritti"],
+                                      text: altreInfo.data['num_iscritti'],
                                       style: Constants.fontBold),
                                 ],
                               ),
@@ -857,14 +859,14 @@ class _CardAppelloState extends State<CardAppello> {
                               height: 10,
                             ),
                             Text(
-                              "Docente: ${altreInfo.data["docente"]}",
+                              'Docente: ${altreInfo.data['docente']}',
                               style: Constants.fontBold,
                               textAlign: TextAlign.left,
                             ),
                             SizedBox(height: 15),
                             Row(
                               children: [
-                                altreInfo.data["tabellaHidden"] != null
+                                altreInfo.data['tabellaHidden'] != null
                                     ? Flexible(
                                         child: MaterialButton(
                                           padding: const EdgeInsets.all(0),
@@ -874,34 +876,26 @@ class _CardAppelloState extends State<CardAppello> {
                                             borderRadius:
                                                 BorderRadius.circular(50),
                                           ),
-                                          child: Text("PRENOTA",
-                                              style: TextStyle(
-                                                  color: Colors.white)),
                                           onPressed: () {
                                             showDialog(
                                                 context: context,
                                                 builder: (context) {
-                                                  if (Platform.isIOS)
+                                                  if (Platform.isIOS) {
                                                     return CupertinoAlertDialog(
                                                       title: Text(
-                                                        "Prenotazione appello",
+                                                        'Prenotazione appello',
                                                         style: TextStyle(
                                                             fontFamily:
-                                                                "SF Pro"),
+                                                                'SF Pro'),
                                                       ),
                                                       content: Text(
-                                                        "Sei sicuro di volerti prenotare?",
+                                                        'Sei sicuro di volerti prenotare?',
                                                         style: TextStyle(
                                                             fontFamily:
-                                                                "SF Pro"),
+                                                                'SF Pro'),
                                                       ),
                                                       actions: [
                                                         TextButton(
-                                                          child: Text(
-                                                            "Si",
-                                                            style: Constants
-                                                                .font16,
-                                                          ),
                                                           onPressed: () {
                                                             Navigator.of(
                                                                     context)
@@ -926,7 +920,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                           const SizedBox(
                                                                               width: 10),
                                                                           Text(
-                                                                            "Attendi un secondo...",
+                                                                            'Attendi un secondo...',
                                                                             style:
                                                                                 TextStyle(fontStyle: FontStyle.italic),
                                                                           ),
@@ -942,7 +936,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                               if (result !=
                                                                       null &&
                                                                   result[
-                                                                      "success"]) {
+                                                                      'success']) {
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop();
@@ -962,7 +956,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                               color: Colors.green,
                                                                             ),
                                                                             const SizedBox(width: 10),
-                                                                            Text("Prenotazione effettuata!"),
+                                                                            Text('Prenotazione effettuata!'),
                                                                           ],
                                                                         ),
                                                                       );
@@ -1003,7 +997,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                                 color: Colors.redAccent,
                                                                               ),
                                                                               const SizedBox(width: 10),
-                                                                              Text("Prenotazione non effettuata"),
+                                                                              Text('Prenotazione non effettuata'),
                                                                             ],
                                                                           ),
                                                                         ),
@@ -1028,14 +1022,14 @@ class _CardAppelloState extends State<CardAppello> {
                                                                               onPressed: () {
                                                                                 Navigator.of(context).pop();
                                                                               },
-                                                                              child: Text("Ok"),
+                                                                              child: Text('Ok'),
                                                                             ),
                                                                           ],
                                                                           title:
-                                                                              Text("Questo messaggio può presentarsi se:"),
+                                                                              Text('Questo messaggio può presentarsi se:'),
                                                                           content:
                                                                               Text(
-                                                                            result["error"],
+                                                                            result['error'],
                                                                             textAlign:
                                                                                 TextAlign.left,
                                                                           ),
@@ -1045,22 +1039,28 @@ class _CardAppelloState extends State<CardAppello> {
                                                               }
                                                             });
                                                           },
+                                                          child: Text(
+                                                            'Si',
+                                                            style: Constants
+                                                                .font16,
+                                                          ),
                                                         ),
                                                         TextButton(
-                                                          child: Text(
-                                                            "No",
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .redAccent),
-                                                          ),
                                                           onPressed: () {
                                                             Navigator.of(
                                                                     context)
                                                                 .pop();
                                                           },
+                                                          child: Text(
+                                                            'No',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .redAccent),
+                                                          ),
                                                         ),
                                                       ],
                                                     );
+                                                  }
                                                   return AlertDialog(
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -1069,20 +1069,11 @@ class _CardAppelloState extends State<CardAppello> {
                                                               20),
                                                     ),
                                                     title: Text(
-                                                        "Prenotazione appello"),
+                                                        'Prenotazione appello'),
                                                     content: Text(
-                                                        "Sei sicuro di volerti prenotare?"),
+                                                        'Sei sicuro di volerti prenotare?'),
                                                     actions: [
                                                       TextButton(
-                                                        child: Text(
-                                                          "SI",
-                                                          style: TextStyle(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .bodyText1
-                                                                  .color),
-                                                        ),
                                                         onPressed: () {
                                                           Navigator.of(context)
                                                               .pop();
@@ -1116,7 +1107,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                             width:
                                                                                 10),
                                                                         Text(
-                                                                          "Attendi un secondo...",
+                                                                          'Attendi un secondo...',
                                                                           style:
                                                                               TextStyle(fontStyle: FontStyle.italic),
                                                                         ),
@@ -1132,7 +1123,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                             if (result !=
                                                                     null &&
                                                                 result[
-                                                                    "success"]) {
+                                                                    'success']) {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
@@ -1142,7 +1133,6 @@ class _CardAppelloState extends State<CardAppello> {
                                                                   builder:
                                                                       (context) {
                                                                     return WillPopScope(
-
                                                                       onWillPop:
                                                                           () async =>
                                                                               null,
@@ -1163,7 +1153,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                               color: Colors.green,
                                                                             ),
                                                                             const SizedBox(width: 10),
-                                                                            Text("Prenotazione effettuata!"),
+                                                                            Text('Prenotazione effettuata!'),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -1208,7 +1198,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                               color: Colors.redAccent,
                                                                             ),
                                                                             const SizedBox(width: 10),
-                                                                            Text("Prenotazione non effettuata"),
+                                                                            Text('Prenotazione non effettuata'),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -1223,7 +1213,7 @@ class _CardAppelloState extends State<CardAppello> {
                                                                         context)
                                                                     .pop();
                                                                 if (result[
-                                                                        "error"] !=
+                                                                        'error'] !=
                                                                     null) {
                                                                   showDialog(
                                                                       context:
@@ -1244,16 +1234,16 @@ class _CardAppelloState extends State<CardAppello> {
                                                                                 Navigator.of(context).pop();
                                                                               },
                                                                               child: Text(
-                                                                                "Ok",
+                                                                                'Ok',
                                                                                 style: TextStyle(color: Theme.of(context).primaryColor),
                                                                               ),
                                                                             ),
                                                                           ],
                                                                           title:
-                                                                              Text("Questo messaggio può presentarsi se:"),
+                                                                              Text('Questo messaggio può presentarsi se:'),
                                                                           content:
                                                                               Text(
-                                                                            result["error"],
+                                                                            result['error'],
                                                                             textAlign:
                                                                                 TextAlign.left,
                                                                           ),
@@ -1264,6 +1254,15 @@ class _CardAppelloState extends State<CardAppello> {
                                                             }
                                                           });
                                                         },
+                                                        child: Text(
+                                                          'SI',
+                                                          style: TextStyle(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1
+                                                                  .color),
+                                                        ),
                                                       ),
                                                       MaterialButton(
                                                         color: Colors.redAccent,
@@ -1273,21 +1272,23 @@ class _CardAppelloState extends State<CardAppello> {
                                                               BorderRadius
                                                                   .circular(50),
                                                         ),
-                                                        child: Text("NO"),
                                                         onPressed: () {
                                                           Navigator.of(context)
                                                               .pop();
                                                         },
+                                                        child: Text('NO'),
                                                       ),
                                                     ],
                                                   );
                                                 });
-
                                           },
+                                          child: Text('PRENOTA',
+                                              style: TextStyle(
+                                                  color: Colors.white)),
                                         ),
                                       )
                                     : SizedBox.shrink(),
-                                altreInfo.data["tabellaHidden"] != null
+                                altreInfo.data['tabellaHidden'] != null
                                     ? SizedBox(width: 10)
                                     : SizedBox.shrink(),
                                 Flexible(
@@ -1297,21 +1298,13 @@ class _CardAppelloState extends State<CardAppello> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(50),
                                     ),
-                                    child: altreInfo.data["tabellaHidden"] ==
-                                            null
-                                        ? Text("IMPOSTA PROMEMORIA",
-                                            style:
-                                                TextStyle(color: Colors.white))
-                                        : Text("PROMEMORIA",
-                                            style:
-                                                TextStyle(color: Colors.white)),
                                     onPressed: () {
-                                      final Event event = Event(
+                                      final event = Event(
                                         title:
                                             'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
                                         description:
                                             "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                                        location: "Esse3",
+                                        location: 'Esse3',
                                         startDate: DateTime.parse(widget
                                                     .dataAppello
                                                     .substring(6) +
@@ -1332,6 +1325,14 @@ class _CardAppelloState extends State<CardAppello> {
                                       );
                                       Add2Calendar.addEvent2Cal(event);
                                     },
+                                    child: altreInfo.data['tabellaHidden'] ==
+                                            null
+                                        ? Text('IMPOSTA PROMEMORIA',
+                                            style:
+                                                TextStyle(color: Colors.white))
+                                        : Text('PROMEMORIA',
+                                            style:
+                                                TextStyle(color: Colors.white)),
                                   ),
                                 ),
                               ],
@@ -1339,7 +1340,7 @@ class _CardAppelloState extends State<CardAppello> {
                           ],
                         );
                       default:
-                        return Text("Errore interno");
+                        return Text('Errore interno');
                     }
                   },
                 )
@@ -1349,15 +1350,16 @@ class _CardAppelloState extends State<CardAppello> {
               _isRequestedAltreInfo
                   ? SizedBox.shrink()
                   : MaterialButton(
-                      child: Text("ALTRE INFO",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColorLight)),
                       onPressed: () {
                         setState(() {
                           _isRequestedAltreInfo = !_isRequestedAltreInfo;
                           _altreInfo = Provider.getInfoAppello(widget.linkInfo);
                         });
-                      }),
+                      },
+                      child: Text('ALTRE INFO',
+                          style: TextStyle(
+                              color: Theme.of(context).primaryColorLight)),
+                    ),
               _isRequestedAltreInfo
                   ? SizedBox.shrink()
                   : MaterialButton(
@@ -1366,15 +1368,13 @@ class _CardAppelloState extends State<CardAppello> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50),
                       ),
-                      child: Text("IMPOSTA PROMEMORIA",
-                          style: TextStyle(color: Colors.white)),
                       onPressed: () {
-                        final Event event = Event(
+                        final event = Event(
                           title:
                               'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
                           description:
                               "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                          location: "Esse3",
+                          location: 'Esse3',
                           startDate: DateTime.parse(
                                   widget.dataAppello.substring(6) +
                                       widget.dataAppello.substring(3, 5) +
@@ -1389,6 +1389,8 @@ class _CardAppelloState extends State<CardAppello> {
                         );
                         Add2Calendar.addEvent2Cal(event);
                       },
+                      child: Text('IMPOSTA PROMEMORIA',
+                          style: TextStyle(color: Colors.white)),
                     ),
             ],
           ),
@@ -1419,7 +1421,6 @@ class BottonePaginaDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return TextButton(
       onPressed: onPressed,
       child: Container(
@@ -1472,6 +1473,10 @@ class BottoneMaterialCustom extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(50)),
       ),
       height: height,
+      elevation: elevation,
+      textColor: textColor,
+      color: backgroundColor,
+      onPressed: onPressed,
       child: Padding(
         padding: EdgeInsets.all(padding),
         child: Text(
@@ -1479,10 +1484,6 @@ class BottoneMaterialCustom extends StatelessWidget {
           style: TextStyle(fontWeight: fontWeight, fontSize: fontSize),
         ),
       ),
-      elevation: elevation,
-      textColor: textColor,
-      color: backgroundColor,
-      onPressed: onPressed,
     );
   }
 }
@@ -1514,14 +1515,14 @@ class CardAppelloPrenotato extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    List<String> _nomeEsame = nomeEsame.split(" - ");
-    String numIsc = iscrizione.replaceFirst("Numero Iscrizione: ", "");
-    Map internalHiddens = new Map();
+    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    var _nomeEsame = nomeEsame.split(' - ');
+    var numIsc = iscrizione.replaceFirst('Numero Iscrizione: ', '');
+    var internalHiddens = {};
     formHiddens.forEach((key, value) {
       if (key.toString().startsWith(index.toString())) {
         internalHiddens[
-            key.toString().replaceFirst(index.toString() + "_", "")] = value;
+            key.toString().replaceFirst(index.toString() + '_', '')] = value;
       }
     });
     return Container(
@@ -1576,7 +1577,7 @@ class CardAppelloPrenotato extends StatelessWidget {
           const SizedBox(height: 10),
           RichText(
             text: TextSpan(
-                text: "Giorno: ",
+                text: 'Giorno: ',
                 style: DefaultTextStyle.of(context)
                     .style
                     .copyWith(color: Colors.white),
@@ -1593,7 +1594,7 @@ class CardAppelloPrenotato extends StatelessWidget {
           ),
           RichText(
             text: TextSpan(
-                text: "Ora: ",
+                text: 'Ora: ',
                 style: DefaultTextStyle.of(context)
                     .style
                     .copyWith(color: Colors.white),
@@ -1610,7 +1611,7 @@ class CardAppelloPrenotato extends StatelessWidget {
           ),
           RichText(
             text: TextSpan(
-                text: "Numero iscrizione: ",
+                text: 'Numero iscrizione: ',
                 style: DefaultTextStyle.of(context)
                     .style
                     .copyWith(color: Colors.white),
@@ -1628,7 +1629,7 @@ class CardAppelloPrenotato extends StatelessWidget {
           const SizedBox(height: 10),
           RichText(
             text: TextSpan(
-                text: "Docente: ",
+                text: 'Docente: ',
                 style: DefaultTextStyle.of(context)
                     .style
                     .copyWith(color: Colors.white),
@@ -1653,29 +1654,20 @@ class CardAppelloPrenotato extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: Text("CANCELLATI",
-                      style: const TextStyle(color: Colors.white)),
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        if (Platform.isAndroid)
+                        if (Platform.isAndroid) {
                           return AlertDialog(
-                            title: Text("Annulla prenotazione"),
+                            title: Text('Annulla prenotazione'),
                             content: Text(
-                                "Sei sicuro di voler cancellare la prenotazione?"),
+                                'Sei sicuro di voler cancellare la prenotazione?'),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
                             actions: [
                               TextButton(
-                                child: Text(
-                                  "SI",
-                                  style: TextStyle(
-                                      color: darkModeOn
-                                          ? Colors.white
-                                          : Colors.black87),
-                                ),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                   showDialog(
@@ -1699,7 +1691,7 @@ class CardAppelloPrenotato extends StatelessWidget {
                                                           Colors.redAccent),
                                                 ),
                                                 const SizedBox(width: 10),
-                                                Text("Aspetta un secondo..."),
+                                                Text('Aspetta un secondo...'),
                                               ],
                                             ),
                                           ),
@@ -1730,7 +1722,7 @@ class CardAppelloPrenotato extends StatelessWidget {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                      "Prenotazione cancellata!"),
+                                                      'Prenotazione cancellata!'),
                                                 ],
                                               ),
                                             ),
@@ -1763,7 +1755,7 @@ class CardAppelloPrenotato extends StatelessWidget {
                                                     color: Colors.redAccent,
                                                   ),
                                                   const SizedBox(width: 10),
-                                                  Text("Errore cancellazione!"),
+                                                  Text('Errore cancellazione!'),
                                                 ],
                                               ),
                                             ),
@@ -1776,6 +1768,13 @@ class CardAppelloPrenotato extends StatelessWidget {
                                     }
                                   });
                                 },
+                                child: Text(
+                                  'SI',
+                                  style: TextStyle(
+                                      color: darkModeOn
+                                          ? Colors.white
+                                          : Colors.black87),
+                                ),
                               ),
                               MaterialButton(
                                 elevation: 0,
@@ -1783,23 +1782,21 @@ class CardAppelloPrenotato extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
-                                child: Text("NO",
-                                    style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
+                                child: Text('NO',
+                                    style: TextStyle(color: Colors.white)),
                               ),
                             ],
                           );
+                        }
                         return CupertinoAlertDialog(
-                          title: Text("Annulla prenotazione"),
+                          title: Text('Annulla prenotazione'),
                           content: Text(
-                              "Sei sicuro di voler cancellare la prenotazione?"),
+                              'Sei sicuro di voler cancellare la prenotazione?'),
                           actions: [
                             TextButton(
-                              child: Text(
-                                "SI",
-                              ),
                               onPressed: () {
                                 Navigator.of(context).pop();
                                 showDialog(
@@ -1819,7 +1816,7 @@ class CardAppelloPrenotato extends StatelessWidget {
                                                         Colors.redAccent),
                                               ),
                                               const SizedBox(width: 10),
-                                              Text("Aspetta un secondo..."),
+                                              Text('Aspetta un secondo...'),
                                             ],
                                           ),
                                         ),
@@ -1846,7 +1843,7 @@ class CardAppelloPrenotato extends StatelessWidget {
                                                   ),
                                                   const SizedBox(width: 10),
                                                   Text(
-                                                      "Prenotazione cancellata!"),
+                                                      'Prenotazione cancellata!'),
                                                 ],
                                               ),
                                             ),
@@ -1873,7 +1870,7 @@ class CardAppelloPrenotato extends StatelessWidget {
                                                   color: Colors.redAccent,
                                                 ),
                                                 const SizedBox(width: 10),
-                                                Text("Errore cancellazione!"),
+                                                Text('Errore cancellazione!'),
                                               ],
                                             ),
                                           ),
@@ -1886,20 +1883,25 @@ class CardAppelloPrenotato extends StatelessWidget {
                                   }
                                 });
                               },
+                              child: Text(
+                                'SI',
+                              ),
                             ),
                             MaterialButton(
                               elevation: 0,
                               textColor: Colors.redAccent,
-                              child: Text("NO"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
+                              child: Text('NO'),
                             ),
                           ],
                         );
                       },
                     );
                   },
+                  child: Text('CANCELLATI',
+                      style: const TextStyle(color: Colors.white)),
                 ),
               ),
               const SizedBox(width: 10),
@@ -1911,24 +1913,19 @@ class CardAppelloPrenotato extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: Text("PROMEMORIA",
-                      style: TextStyle(
-                          color: darkModeOn
-                              ? Colors.redAccent
-                              : Constants.mainColor)),
                   onPressed: () {
                     var giornoEv = giorno.substring(0, 2);
                     var mese = giorno.substring(3, 5);
-                    int anno = int.parse(giorno.substring(6));
+                    var anno = int.parse(giorno.substring(6));
 
-                    final Event event = Event(
-                      title: "Appello ${_nomeEsame[0]} - $giorno",
+                    final event = Event(
+                      title: 'Appello ${_nomeEsame[0]} - $giorno',
                       description: _nomeEsame[2],
                       location: 'Università di Modena e Reggio Emilia',
-                      startDate: DateTime.parse("$anno-$mese-$giornoEv")
+                      startDate: DateTime.parse('$anno-$mese-$giornoEv')
                           .subtract(Duration(days: 3))
                           .add(Duration(hours: 10)),
-                      endDate: DateTime.parse("$anno-$mese-$giornoEv")
+                      endDate: DateTime.parse('$anno-$mese-$giornoEv')
                           .subtract(Duration(days: 3))
                           .add(Duration(hours: 10)),
                       allDay: true,
@@ -1936,6 +1933,11 @@ class CardAppelloPrenotato extends StatelessWidget {
 
                     Add2Calendar.addEvent2Cal(event);
                   },
+                  child: Text('PROMEMORIA',
+                      style: TextStyle(
+                          color: darkModeOn
+                              ? Colors.redAccent
+                              : Constants.mainColor)),
                 ),
               ),
             ],
@@ -1972,35 +1974,35 @@ class _TassaExpansionTileState extends State<TassaExpansionTile> {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-          accentColor: widget.stato == "IN ATTESA"
+          accentColor: widget.stato == 'IN ATTESA'
               ? Colors.yellow[700]
-              : widget.stato == "NON PAGATO"
+              : widget.stato == 'NON PAGATO'
                   ? Colors.redAccent
                   : Theme.of(context).textTheme.bodyText1.color),
       child: ExpansionTile(
         maintainState: true,
         backgroundColor: Theme.of(context).cardColor,
-        leading: widget.stato == "NON PAGATO"
+        leading: widget.stato == 'NON PAGATO'
             ? Icon(Icons.error, color: Colors.redAccent)
-            : widget.stato == "IN ATTESA"
+            : widget.stato == 'IN ATTESA'
                 ? Icon(Icons.help, color: Colors.yellow[700])
                 : null,
         childrenPadding: EdgeInsets.only(bottom: 16, left: 16, right: 16),
         tilePadding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
         title: Text(
-          widget.descTassa.substring(0, 30) + "...",
+          widget.descTassa.substring(0, 30) + '...',
           style: Constants.fontBold20.copyWith(
-            fontFamily: "SF Pro",
+            fontFamily: 'SF Pro',
           ),
         ),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(
             text: TextSpan(
-                text: "Descrizione: ",
+                text: 'Descrizione: ',
                 style: Constants.fontBold.copyWith(
                     color: Theme.of(context).textTheme.bodyText1.color,
-                    fontFamily: "SF Pro"),
+                    fontFamily: 'SF Pro'),
                 children: [
                   TextSpan(
                       text: widget.descTassa,
@@ -2011,10 +2013,10 @@ class _TassaExpansionTileState extends State<TassaExpansionTile> {
           const SizedBox(height: 15),
           RichText(
             text: TextSpan(
-                text: "Importo: ",
+                text: 'Importo: ',
                 style: Constants.font18.copyWith(
                     color: Theme.of(context).textTheme.bodyText1.color,
-                    fontFamily: "SF Pro"),
+                    fontFamily: 'SF Pro'),
                 children: [
                   TextSpan(text: widget.importo, style: Constants.fontBold18)
                 ]),
@@ -2022,10 +2024,10 @@ class _TassaExpansionTileState extends State<TassaExpansionTile> {
           const SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: "Scadenza: ",
+                text: 'Scadenza: ',
                 style: Constants.font18.copyWith(
                     color: Theme.of(context).textTheme.bodyText1.color,
-                    fontFamily: "SF Pro"),
+                    fontFamily: 'SF Pro'),
                 children: [
                   TextSpan(text: widget.scadenza, style: Constants.fontBold18)
                 ]),
@@ -2033,15 +2035,15 @@ class _TassaExpansionTileState extends State<TassaExpansionTile> {
           const SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: "Stato: ",
+                text: 'Stato: ',
                 style: Constants.font18.copyWith(
                     color: Theme.of(context).textTheme.bodyText1.color,
-                    fontFamily: "SF Pro"),
+                    fontFamily: 'SF Pro'),
                 children: [
                   TextSpan(text: widget.stato, style: Constants.fontBold18)
                 ]),
           ),
-          widget.stato == "NON PAGATO"
+          widget.stato == 'NON PAGATO'
               ? Column(
                   children: [
                     const SizedBox(height: 15),
@@ -2053,13 +2055,12 @@ class _TassaExpansionTileState extends State<TassaExpansionTile> {
                       ),
                       color: Colors.redAccent,
                       textColor: Colors.white,
-                      child: Text("AGGIUNGI PROMEMORIA"),
                       onPressed: () {
-                        final Event event = Event(
+                        final event = Event(
                           title:
                               'Pagare ${widget.descTassa.substring(0, 30)}... entro il ${widget.scadenza}!',
-                          description: "Non dimenticarti di pagare la tassa!",
-                          location: "Esse3",
+                          description: 'Non dimenticarti di pagare la tassa!',
+                          location: 'Esse3',
                           startDate: DateTime.parse(
                                   widget.scadenza.substring(6) +
                                       widget.scadenza.substring(3, 5) +
@@ -2073,6 +2074,7 @@ class _TassaExpansionTileState extends State<TassaExpansionTile> {
                         );
                         Add2Calendar.addEvent2Cal(event);
                       },
+                      child: Text('AGGIUNGI PROMEMORIA'),
                     ),
                   ],
                 )
@@ -2092,14 +2094,14 @@ class ShimmerCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
+      baseColor: Colors.grey[400],
+      highlightColor: Colors.grey[300],
       child: Container(
         width: double.infinity,
         height: height,
         decoration: BoxDecoration(
             color: Colors.black26, borderRadius: BorderRadius.circular(10)),
       ),
-      baseColor: Colors.grey[400],
-      highlightColor: Colors.grey[300],
     );
   }
 }
@@ -2137,7 +2139,7 @@ class ShimmerLoader extends StatelessWidget {
                       ),
                 SizedBox(width: 20),
                 Text(
-                  "Sto scaricando i dati...",
+                  'Sto scaricando i dati...',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               ],
@@ -2183,7 +2185,7 @@ class ConnectionError extends StatelessWidget {
             width: isTablet ? deviceWidth * 0.5 : deviceWidth / 1.7,
           ),
           SizedBox(height: isTablet ? 30 : 15),
-          Text("Errore di connessione", style: Constants.fontBold28),
+          Text('Errore di connessione', style: Constants.fontBold28),
           const SizedBox(height: 5),
           Text(
             "Sembra ci siano problemi nel recuperare i tuoi dati, riaggiorna oppure riprova tra un po'!",
@@ -2213,15 +2215,15 @@ class NoExams extends StatelessWidget {
             width: isTablet ? deviceWidth * 0.6 : deviceWidth / 1.7,
           ),
           SizedBox(height: isTablet ? 30 : 15),
-          Text("Nessun appello", style: Constants.fontBold28),
+          Text('Nessun appello', style: Constants.fontBold28),
           const SizedBox(height: 10),
           Text(
-            "Sembra non ci siano appelli, fantastico!",
+            'Sembra non ci siano appelli, fantastico!',
             style: Constants.font18,
             textAlign: TextAlign.center,
           ),
           Text(
-            "Adesso scappa finchè sei in tempo",
+            'Adesso scappa finchè sei in tempo',
             style: Constants.font14,
             textAlign: TextAlign.center,
           )
@@ -2261,7 +2263,7 @@ class ReloadAppelli extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Bacheca prenotazioni",
+                  'Bacheca prenotazioni',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 25),
                 ),
@@ -2279,13 +2281,13 @@ class ReloadAppelli extends StatelessWidget {
                         height: 20,
                       ),
                       Text(
-                        "Oops..",
+                        'Oops..',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 32),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        "Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!",
+                        'Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!',
                         softWrap: true,
                         textAlign: TextAlign.center,
                         style: TextStyle(

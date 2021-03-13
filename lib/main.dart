@@ -11,15 +11,15 @@ import 'screens/screens.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //Forzo il device ad orientarsi verticalmente
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   //Controllo se l'utente è loggato
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool version = prefs.getBool("1.2.0") ?? false;
+  var prefs = await SharedPreferences.getInstance();
+  var version = prefs.getBool('1.2.0') ?? false;
   if (!version) {
     await prefs.clear();
-    await prefs.setBool("1.2.0", true);
+    await prefs.setBool('1.2.0', true);
   }
-  bool status = prefs.getBool('isLoggedIn') ?? false;
+  var status = prefs.getBool('isLoggedIn') ?? false;
   runApp(Esse3(logged: status));
 }
 
@@ -45,7 +45,6 @@ class _Esse3State extends State<Esse3> {
       routes: {
         LoginScreen.id: (context) => LoginScreen(),
         HomeScreen.id: (context) => HomeScreen(),
-        LibrettoScreen.id: (context) => LibrettoScreen(),
         TasseScreen.id: (context) => TasseScreen(),
         BachecaPrenotazioniScreen.id: (context) => BachecaPrenotazioniScreen(),
         ProssimiAppelliScreen.id: (context) => ProssimiAppelliScreen(),
