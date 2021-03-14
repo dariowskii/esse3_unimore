@@ -24,7 +24,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
     const Color(0xff23b6e6),
     const Color(0xff02d39a),
   ];
-  List<Map<String, dynamic>> puntiGrafico = [];
+  var _puntiGrafico = [];
 
   void _initGrafico() {
     for (var i = 0; i < widget.libretto['totali']; i++) {
@@ -33,7 +33,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
         _cfu += int.parse(widget.libretto['crediti'][i]);
         if (int.tryParse(voto) != null || voto == '30 LODE') {
           if (voto == '30 LODE') voto = '30';
-          puntiGrafico.add({
+          _puntiGrafico.add({
             'voto': int.parse(voto),
             'data': widget.libretto['data_esame'][i]
           });
@@ -41,8 +41,8 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
       }
     }
 
-    if (puntiGrafico.isNotEmpty) {
-      puntiGrafico.sort((a, b) {
+    if (_puntiGrafico.isNotEmpty) {
+      _puntiGrafico.sort((a, b) {
         var ad = a['data'].toString().substring(6) +
             '-' +
             a['data'].toString().substring(3, 5) +
@@ -57,9 +57,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
       });
     }
 
-    if (puntiGrafico.length >= 8) {
-      puntiGrafico =
-          puntiGrafico.sublist(puntiGrafico.length - 8, puntiGrafico.length);
+    if (_puntiGrafico.length >= 8) {
+      _puntiGrafico =
+          _puntiGrafico.sublist(_puntiGrafico.length - 8, _puntiGrafico.length);
     }
   }
 
@@ -131,14 +131,14 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  puntiGrafico.isEmpty
+                                  _puntiGrafico.isEmpty
                                       ? SizedBox.shrink()
                                       : Text(
-                                          puntiGrafico.length == 1
+                                          _puntiGrafico.length == 1
                                               ? 'Il tuo ultimo esame'
-                                              : puntiGrafico.isEmpty
+                                              : _puntiGrafico.isEmpty
                                                   ? 'Nessun esame con voto ancora'
-                                                  : 'I tuoi ultimi ${puntiGrafico.length} esami',
+                                                  : 'I tuoi ultimi ${_puntiGrafico.length} esami',
                                           style: TextStyle(
                                               fontStyle: FontStyle.italic,
                                               fontSize: 12,
@@ -147,7 +147,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              puntiGrafico.isEmpty
+                              _puntiGrafico.isEmpty
                                   ? Text(
                                       'Non ho abbastanza elementi\nper disegnare un grafico...',
                                       style: TextStyle(
@@ -222,16 +222,16 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                             show: false,
                                           ),
                                           minX: 0,
-                                          //TODO: aggiustare qua
-                                          maxX: puntiGrafico.length.toDouble() -
-                                              1,
+                                          maxX:
+                                              _puntiGrafico.length.toDouble() -
+                                                  1,
                                           minY: 18,
                                           maxY: 30,
                                           lineBarsData: [
                                             LineChartBarData(
-                                              spots: puntiGrafico.map((punto) {
-                                                var index =
-                                                    puntiGrafico.indexOf(punto);
+                                              spots: _puntiGrafico.map((punto) {
+                                                var index = _puntiGrafico
+                                                    .indexOf(punto);
                                                 return FlSpot(index.toDouble(),
                                                     punto['voto'].toDouble());
                                               }).toList(),

@@ -48,6 +48,7 @@ class _Esse3State extends State<Esse3> {
         TasseScreen.id: (context) => TasseScreen(),
         BachecaPrenotazioniScreen.id: (context) => BachecaPrenotazioniScreen(),
         ProssimiAppelliScreen.id: (context) => ProssimiAppelliScreen(),
+        InfoApp.id: (context) => InfoApp(),
       },
     );
   }

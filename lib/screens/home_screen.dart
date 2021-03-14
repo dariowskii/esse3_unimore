@@ -119,14 +119,13 @@ class _HomeScreenState extends State<HomeScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Client Esse3',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 22),
+                        style: TextStyle(color: Colors.white, fontSize: 22),
                       ),
-                      Text(
+                      const Text(
                         'Unimore',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Colors.white,
                             fontSize: 40,
                             fontWeight: FontWeight.bold),
@@ -272,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen>
                               ],
                             ),
                       const SizedBox(height: 15),
-                      Text(
+                      const Text(
                         'Created by 145622',
                         style: TextStyle(color: Colors.white, fontSize: 10),
                       )
@@ -285,17 +284,18 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Column(
                   children: [
                     BottonePaginaDrawer(
-                        testoBottone: 'Bacheca prenotazioni',
-                        textColor: Theme.of(context).textTheme.bodyText1.color,
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed(BachecaPrenotazioniScreen.id);
-                        }),
-                    Divider(),
+                      testoBottone: 'Bacheca prenotazioni',
+                      textColor: Theme.of(context).textTheme.bodyText1.color,
+                      onPressed: () async {
+                        await Navigator.of(context)
+                            .pushNamed(BachecaPrenotazioniScreen.id);
+                      },
+                    ),
+                    const Divider(),
                   ],
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -303,18 +303,17 @@ class _HomeScreenState extends State<HomeScreen>
                     BottonePaginaDrawer(
                       testoBottone: "Info sull'applicazione",
                       textColor: Theme.of(context).textTheme.bodyText1.color,
-                      onPressed: () {
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => InfoApp()));
+                      onPressed: () async {
+                        await Navigator.of(context).pushNamed(InfoApp.id);
                       },
                     ),
                     BottoneMaterialCustom(
                       onPressed: () async {
-                        var prefs =
-                            await SharedPreferences.getInstance();
+                        var prefs = await SharedPreferences.getInstance();
                         await prefs.clear();
                         await prefs.setBool('1.2.0', true);
-                        await Navigator.pushReplacementNamed(context, LoginScreen.id);
+                        await Navigator.pushReplacementNamed(
+                            context, LoginScreen.id);
                       },
                       textButton: 'ESCI',
                       backgroundColor: Constants.mainColorDarker,
@@ -334,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen>
                 width: deviceWidth,
               ),
               Container(
-                width: double.infinity,
+                width: deviceWidth,
                 constraints: BoxConstraints(
                   minHeight: deviceHeight - 50,
                 ),

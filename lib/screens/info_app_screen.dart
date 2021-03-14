@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 /// Pagina in cui vedere alcune informazioni dell'app.
 class InfoApp extends StatelessWidget {
+  static const String id = 'infoAppScreen';
+
   @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
