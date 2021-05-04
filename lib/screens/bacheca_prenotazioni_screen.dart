@@ -103,7 +103,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                   onReload: _refreshBacheca,
                 );
               }
-              if (appello.data['success']) {
+              if (appello.data['success'] as bool) {
                 //In caso non ci siano appelli
                 if (appello.data['totali'] == 0) {
                   return LiquidPullToRefresh(
@@ -189,15 +189,16 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                                   horizontal: deviceWidth / 6)
                               : null,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: appello.data['totali'],
+                          itemCount: appello.data['totali'] as int,
                           itemBuilder: (context, index) {
                             return CardAppelloPrenotato(
-                              nomeEsame: appello.data['esame'][index],
-                              iscrizione: appello.data['iscrizione'][index],
-                              giorno: appello.data['giorno'][index],
-                              ora: appello.data['ora'][index],
-                              docente: appello.data['docente'][index],
-                              formHiddens: appello.data['formHiddens'],
+                              nomeEsame: appello.data['esame'][index] as String,
+                              iscrizione:
+                                  appello.data['iscrizione'][index] as String,
+                              giorno: appello.data['giorno'][index] as String,
+                              ora: appello.data['ora'][index] as String,
+                              docente: appello.data['docente'][index] as String,
+                              formHiddens: appello.data['formHiddens'] as Map,
                               index: index,
                               darkModeOn: darkModeOn,
                               isTablet: isTablet,

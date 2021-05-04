@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.1
+  http: ^0.13.1
   shared_preferences: ^2.0.3
   sqflite: ^2.0.0+2
   path: ^1.8.0
@@ -21,14 +21,13 @@ dependencies:
   fl_chart: ^0.20.1
   liquid_pull_to_refresh: ^2.0.0
   flutter_svg: 0.21.0-nullsafety.0
-  path_drawing: ^0.5.0-nullsafety.0
   shimmer: ^1.1.2
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.11.0
+  lint: ^1.0.0
 
 flutter:
   uses-material-design: true

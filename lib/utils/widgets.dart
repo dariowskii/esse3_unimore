@@ -68,7 +68,8 @@ class _LoginFormState extends State<LoginForm> {
     final _bytesInLatin1 = latin1.encode(_authCred);
     final _basichAuth64 = 'Basic ' + base64.encode(_bytesInLatin1);
 
-    await Provider.getAccess(_basichAuth64, _userController.value.text.trim())
+    await Provider.getAccess(
+            _userController.value.text, _passController.value.text)
         .then((response) async {
       if (response == null) {
         setState(() {
@@ -113,7 +114,8 @@ class _LoginFormState extends State<LoginForm> {
             builder: (context) => HomeScreen(user: response),
           ),
         );
-      } else if (!response['success']) {
+      } else if (!(response['success'] as bool)) {
+        print(response);
         setState(() {
           _isLoading = !_isLoading;
           _userController.clear();
@@ -397,7 +399,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                         case ConnectionState.active:
                         case ConnectionState.done:
                           if (libretto.data == null ||
-                              !libretto.data['success']) {
+                              !(libretto.data['success'] as bool)) {
                             return ErrorLibretto(libretto: _libretto);
                           }
                           return Column(
@@ -441,14 +443,18 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                                                 text:
                                                     'Che la Sbronza sia con te! 🍻',
                                               )
-                                            : libretto.data['superati'] <=
-                                                    libretto.data['totali'] / 2
+                                            : libretto.data['superati']
+                                                        as int <=
+                                                    (libretto.data['totali']
+                                                            as int) /
+                                                        2
                                                 ? TextSpan(
                                                     text: 'Continua così!',
                                                   )
-                                                : libretto.data['superati'] >
-                                                        libretto.data[
-                                                                'totali'] /
+                                                : libretto.data['superati']
+                                                            as int >
+                                                        (libretto.data['totali']
+                                                                as int) /
                                                             2
                                                     ? TextSpan(
                                                         text:
@@ -487,9 +493,11 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
                                             BoxConstraints constraints) {
                                           return Container(
                                             height: 5,
-                                            width: (constraints.maxWidth /
-                                                libretto.data['totali'] *
-                                                libretto.data['superati']),
+                                            width: constraints.maxWidth /
+                                                (libretto.data['totali']
+                                                    as int) *
+                                                (libretto.data['superati']
+                                                    as int),
                                             decoration: BoxDecoration(
                                               color: Theme.of(context)
                                                   .primaryColorLight,
@@ -1031,7 +1039,7 @@ class _CardAppelloState extends State<CardAppello> {
                         );
                       case ConnectionState.done:
                         if (altreInfo.data == null ||
-                            !altreInfo.data['success']) {
+                            !(altreInfo.data['success'] as bool)) {
                           return Text('Sembra non ci siano risultati...');
                         }
                         return Column(
@@ -1048,7 +1056,8 @@ class _CardAppelloState extends State<CardAppello> {
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data['tipo_esame'],
+                                      text: altreInfo.data['tipo_esame']
+                                          as String,
                                       style: Constants.fontBold),
                                 ],
                               ),
@@ -1064,7 +1073,8 @@ class _CardAppelloState extends State<CardAppello> {
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data['verbalizzazione'],
+                                      text: altreInfo.data['verbalizzazione']
+                                          as String,
                                       style: Constants.fontBold),
                                 ],
                               ),
@@ -1080,7 +1090,7 @@ class _CardAppelloState extends State<CardAppello> {
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data['aula'],
+                                      text: altreInfo.data['aula'] as String,
                                       style: Constants.fontBold),
                                 ],
                               ),
@@ -1096,7 +1106,8 @@ class _CardAppelloState extends State<CardAppello> {
                                         .color),
                                 children: [
                                   TextSpan(
-                                      text: altreInfo.data['num_iscritti'],
+                                      text: altreInfo.data['num_iscritti']
+                                          as String,
                                       style: Constants.fontBold),
                                 ],
                               ),
@@ -1181,8 +1192,8 @@ class _CardAppelloState extends State<CardAppello> {
                                                                 .then((result) {
                                                               if (result !=
                                                                       null &&
-                                                                  result[
-                                                                      'success']) {
+                                                                  result['success']
+                                                                      as bool) {
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop();
@@ -1275,7 +1286,8 @@ class _CardAppelloState extends State<CardAppello> {
                                                                               Text('Questo messaggio può presentarsi se:'),
                                                                           content:
                                                                               Text(
-                                                                            result['error'],
+                                                                            result['error']
+                                                                                as String,
                                                                             textAlign:
                                                                                 TextAlign.left,
                                                                           ),
@@ -1368,8 +1380,8 @@ class _CardAppelloState extends State<CardAppello> {
                                                               .then((result) {
                                                             if (result !=
                                                                     null &&
-                                                                result[
-                                                                    'success']) {
+                                                                result['success']
+                                                                    as bool) {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
@@ -1489,7 +1501,8 @@ class _CardAppelloState extends State<CardAppello> {
                                                                               Text('Questo messaggio può presentarsi se:'),
                                                                           content:
                                                                               Text(
-                                                                            result['error'],
+                                                                            result['error']
+                                                                                as String,
                                                                             textAlign:
                                                                                 TextAlign.left,
                                                                           ),
@@ -1654,7 +1667,7 @@ class BottonePaginaDrawer extends StatelessWidget {
   final IconData icona;
 
   /// Funzione del bottone quando viene premuto.
-  final Function onPressed;
+  final Function() onPressed;
   final Color textColor;
 
   const BottonePaginaDrawer({
@@ -1691,7 +1704,7 @@ class BottonePaginaDrawer extends StatelessWidget {
 
 /// Bottone custom utilizzato in [HomeScreen] nel [Drawer].
 class BottoneMaterialCustom extends StatelessWidget {
-  final Function onPressed;
+  final Function() onPressed;
   final Color textColor, backgroundColor;
   final String textButton;
   final double minWidth, height, elevation, fontSize, padding;
@@ -2482,7 +2495,7 @@ class NoExams extends StatelessWidget {
 /// Schermata di errore che appare quando la richiesta
 /// della [BachecaPrenotazioniScreen] non va a buon fine.
 class ReloadAppelli extends StatelessWidget {
-  final Function onReload;
+  final Future<void> Function() onReload;
   final double deviceHeight, deviceWidth;
 
   const ReloadAppelli(

@@ -122,7 +122,7 @@ class _TasseScreenState extends State<TasseScreen> {
                             shimmerHeight: 150);
                       case ConnectionState.active:
                       case ConnectionState.done:
-                        if (tasse.hasData && tasse.data['success']) {
+                        if (tasse.hasData && tasse.data['success'] as bool) {
                           return Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -135,13 +135,17 @@ class _TasseScreenState extends State<TasseScreen> {
                                         vertical: 32)
                                     : EdgeInsets.all(16),
                                 cacheExtent: 20,
-                                itemCount: tasse.data['totali'],
+                                itemCount: tasse.data['totali'] as int,
                                 itemBuilder: (ctx, index) {
                                   return TassaExpansionTile(
-                                    descTassa: tasse.data['desc'][index],
-                                    importo: tasse.data['importi'][index],
-                                    scadenza: tasse.data['scadenza'][index],
-                                    stato: tasse.data['stato_pagamento'][index],
+                                    descTassa:
+                                        tasse.data['desc'][index] as String,
+                                    importo:
+                                        tasse.data['importi'][index] as String,
+                                    scadenza:
+                                        tasse.data['scadenza'][index] as String,
+                                    stato: tasse.data['stato_pagamento'][index]
+                                        as String,
                                     darkModeOn: darkModeOn,
                                   );
                                 },

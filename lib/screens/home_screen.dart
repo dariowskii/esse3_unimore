@@ -67,7 +67,9 @@ class _HomeScreenState extends State<HomeScreen>
       _cdl = widget.user['corso_stud'].toString().split('] - ');
       _cdl[0] = '${_cdl[0]}]';
 
-      DBProvider.db.checkExistUser(widget.user['username']).then((data) {
+      DBProvider.db
+          .checkExistUser(widget.user['username'] as String)
+          .then((data) {
         if (data != null) {
           DBProvider.db.updateUser(widget.user);
         } else {
@@ -163,14 +165,14 @@ class _HomeScreenState extends State<HomeScreen>
                                                     'no'
                                                 ? null
                                                 : MemoryImage(base64Decode(
-                                                    userData
-                                                        .data['profile_pic'])),
+                                                    userData.data['profile_pic']
+                                                        as String)),
                                             child: userData
                                                         .data['profile_pic'] ==
                                                     'no'
                                                 ? Text(
-                                                    userData
-                                                        .data['text_avatar'],
+                                                    userData.data['text_avatar']
+                                                        as String,
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w100,
@@ -230,10 +232,12 @@ class _HomeScreenState extends State<HomeScreen>
                                         widget.user['profile_pic'] == 'no'
                                             ? null
                                             : MemoryImage(base64Decode(
-                                                widget.user['profile_pic'])),
+                                                widget.user['profile_pic']
+                                                    as String)),
                                     child: widget.user['profile_pic'] == 'no'
                                         ? Text(
-                                            widget.user['text_avatar'],
+                                            widget.user['text_avatar']
+                                                as String,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w100,
                                               fontSize: 16,
@@ -380,8 +384,12 @@ class _HomeScreenState extends State<HomeScreen>
                                           height: 100,
                                           alignment: Alignment.center,
                                           child: Container(
-                                            width: _animation.value * 100,
-                                            height: _animation.value * 100,
+                                            width:
+                                                (_animation.value as double) *
+                                                    100,
+                                            height:
+                                                (_animation.value as double) *
+                                                    100,
                                             padding: EdgeInsets.all(2.0),
                                             decoration: BoxDecoration(
                                               color: Colors.white,
@@ -390,7 +398,8 @@ class _HomeScreenState extends State<HomeScreen>
                                                 BoxShadow(
                                                   color: Colors.black12
                                                       .withOpacity(
-                                                          _animation.value *
+                                                          (_animation.value
+                                                                  as double) *
                                                               0.12),
                                                   blurRadius: 10,
                                                   offset: Offset(0, 5),
@@ -401,25 +410,30 @@ class _HomeScreenState extends State<HomeScreen>
                                             child: CircleAvatar(
                                               backgroundColor:
                                                   Constants.mainColorLighter,
-                                              radius: _animation.value * 50,
+                                              radius:
+                                                  (_animation.value as double) *
+                                                      50,
                                               backgroundImage: userData.data[
                                                           'profile_pic'] ==
                                                       'no'
                                                   ? null
                                                   : MemoryImage(base64Decode(
                                                       userData.data[
-                                                          'profile_pic'])),
+                                                              'profile_pic']
+                                                          as String)),
                                               child: userData.data[
                                                           'profile_pic'] ==
                                                       'no'
                                                   ? Text(
-                                                      userData
-                                                          .data['text_avatar'],
+                                                      userData.data[
+                                                              'text_avatar']
+                                                          as String,
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w100,
                                                         fontSize:
-                                                            _animation.value *
+                                                            (_animation.value
+                                                                    as double) *
                                                                 40,
                                                         color: Colors.white,
                                                       ),
@@ -429,7 +443,8 @@ class _HomeScreenState extends State<HomeScreen>
                                           ),
                                         ),
                                         Text(
-                                          userData.data['nome_studente'],
+                                          userData.data['nome_studente']
+                                              as String,
                                           style: Constants.fontBold28,
                                         ),
                                         const SizedBox(height: 5),
@@ -458,7 +473,8 @@ class _HomeScreenState extends State<HomeScreen>
                                     runSpacing: -5,
                                     children: <Widget>[
                                       ChipInfo(
-                                          text: userData.data['tipo_corso'],
+                                          text: userData.data['tipo_corso']
+                                              as String,
                                           textSize:
                                               deviceWidth >= 390 ? 13 : 10),
                                       ChipInfo(
@@ -511,8 +527,8 @@ class _HomeScreenState extends State<HomeScreen>
                                   width: 100,
                                   height: 100,
                                   child: Container(
-                                    width: _animation.value * 100,
-                                    height: _animation.value * 100,
+                                    width: (_animation.value as double) * 100,
+                                    height: (_animation.value as double) * 100,
                                     padding: EdgeInsets.all(2.0),
                                     decoration: BoxDecoration(
                                       color: Color(0xFFFFFFFF),
@@ -520,7 +536,8 @@ class _HomeScreenState extends State<HomeScreen>
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black12.withOpacity(
-                                              _animation.value * 0.12),
+                                              (_animation.value as double) *
+                                                  0.12),
                                           blurRadius: 10,
                                           offset: Offset(0, 5),
                                           spreadRadius: 3,
@@ -530,15 +547,17 @@ class _HomeScreenState extends State<HomeScreen>
                                     child: CircleAvatar(
                                       backgroundColor:
                                           Constants.mainColorLighter,
-                                      radius: _animation.value * 50,
+                                      radius: (_animation.value as double) * 50,
                                       backgroundImage:
                                           widget.user['profile_pic'] == 'no'
                                               ? null
                                               : MemoryImage(base64Decode(
-                                                  widget.user['profile_pic'])),
+                                                  widget.user['profile_pic']
+                                                      as String)),
                                       child: widget.user['profile_pic'] == 'no'
                                           ? Text(
-                                              widget.user['text_avatar'],
+                                              widget.user['text_avatar']
+                                                  as String,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w100,
                                                 fontSize: 40,
@@ -550,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   ),
                                 ),
                                 Text(
-                                  widget.user['nome'],
+                                  widget.user['nome'] as String,
                                   style: Constants.fontBold28,
                                 ),
                                 const SizedBox(height: 5),
@@ -573,7 +592,8 @@ class _HomeScreenState extends State<HomeScreen>
                                   runSpacing: -5,
                                   children: <Widget>[
                                     ChipInfo(
-                                        text: widget.user['tipo_corso'],
+                                        text:
+                                            widget.user['tipo_corso'] as String,
                                         textSize: deviceWidth >= 390 ? 13 : 10),
                                     ChipInfo(
                                         text:

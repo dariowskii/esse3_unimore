@@ -134,14 +134,14 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.2"
+    version: "0.13.3"
   http_parser:
     dependency: transitive
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.4"
+    version: "4.0.0"
   js:
     dependency: transitive
     description:
@@ -149,6 +149,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
+  lint:
+    dependency: "direct dev"
+    description:
+      name: lint
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.3"
   liquid_pull_to_refresh:
     dependency: "direct main"
     description:
@@ -178,7 +185,7 @@ packages:
     source: hosted
     version: "1.8.0"
   path_drawing:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path_drawing
       url: "https://pub.dartlang.org"
@@ -227,7 +234,7 @@ packages:
     source: hosted
     version: "2.0.0"
   pedantic:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: pedantic
       url: "https://pub.dartlang.org"

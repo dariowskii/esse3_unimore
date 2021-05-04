@@ -102,31 +102,31 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               deviceWidth: deviceWidth, isTablet: isTablet);
                         case ConnectionState.active:
                         case ConnectionState.done:
-
-                          print(appelli.data);
+                          //print(appelli.data);
                           if (appelli.data != null &&
-                              appelli.data['success'] &&
-                              appelli.data['totali'] > 0) {
+                              (appelli.data['success'] as bool) &&
+                              appelli.data['totali'] as int > 0) {
                             var indexImminenti = [];
-                            for (var i = 0; i < appelli.data['totali']; i++) {
+                            for (var i = 0;
+                                i < (appelli.data['totali'] as int);
+                                i++) {
                               var dataOggi = DateTime.now();
-                              var dataEsame = DateTime.parse(
-                                  appelli.data['data_appello'][i].substring(6) +
-                                      appelli.data['data_appello'][i]
-                                          .substring(3, 5) +
-                                      appelli.data['data_appello'][i]
-                                          .substring(0, 2));
-                              var diffTempo =
-                                  dataEsame.difference(dataOggi);
+                              var dataEsame = DateTime.parse((appelli
+                                          .data['data_appello'][i] as String)
+                                      .substring(6) +
+                                  (appelli.data['data_appello'][i] as String)
+                                      .substring(3, 5) +
+                                  (appelli.data['data_appello'][i] as String)
+                                      .substring(0, 2));
+                              var diffTempo = dataEsame.difference(dataOggi);
                               if (diffTempo.inDays <= 15) {
                                 indexImminenti.add(
                                     {'index': i, 'data': dataEsame.toString()});
                               }
                             }
                             indexImminenti.sort((a, b) {
-                              var adate =
-                                  a['data']; //before -> var adate = a.expiry;
-                              var bdate = b['data']; //var bdate = b.expiry;
+                              var adate = a['data'] as String;
+                              var bdate = b['data'] as String;
                               return adate.compareTo(bdate);
                             });
                             return Padding(
@@ -164,14 +164,14 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                               nomeAppello:
                                                   appelli.data['materia'][
                                                       indexImminenti[index]
-                                                          ['index']],
+                                                          ['index']] as String,
                                               dataAppello:
                                                   appelli.data['data_appello'][
                                                       indexImminenti[index]
-                                                          ['index']],
+                                                          ['index']] as String,
                                               descrizione: appelli.data['desc'][
                                                   indexImminenti[index]
-                                                      ['index']],
+                                                      ['index']] as String,
                                             ),
                                           );
                                         }),
@@ -190,21 +190,26 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                           cacheExtent: 30,
                                           physics:
                                               NeverScrollableScrollPhysics(),
-                                          itemCount: appelli.data['totali'],
+                                          itemCount:
+                                              appelli.data['totali'] as int,
                                           itemBuilder: (context, index) {
                                             return CardAppello(
-                                              nomeAppello: appelli
-                                                  .data['materia'][index],
-                                              dataAppello: appelli
-                                                  .data['data_appello'][index],
+                                              nomeAppello:
+                                                  appelli.data['materia'][index]
+                                                      as String,
+                                              dataAppello:
+                                                  appelli.data['data_appello']
+                                                      [index] as String,
                                               descrizione: appelli.data['desc']
-                                                  [index],
+                                                  [index] as String,
                                               periodoIscrizioni: appelli.data[
-                                                  'periodo_iscrizione'][index],
+                                                      'periodo_iscrizione']
+                                                  [index] as String,
                                               sessione: appelli.data['sessione']
-                                                  [index],
-                                              linkInfo: appelli
-                                                  .data['link_info'][index],
+                                                  [index] as String,
+                                              linkInfo:
+                                                  appelli.data['link_info']
+                                                      [index] as String,
                                             );
                                           },
                                         ),
@@ -215,8 +220,8 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               ),
                             );
                           } else if (appelli.data != null &&
-                              appelli.data['success'] &&
-                              appelli.data['totali'] <= 0) {
+                              appelli.data['success'] as bool &&
+                              appelli.data['totali'] as int <= 0) {
                             return NoExams(
                                 deviceWidth: deviceWidth, isTablet: isTablet);
                           }
