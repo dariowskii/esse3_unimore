@@ -62,85 +62,79 @@ class _LoginFormState extends State<LoginForm> {
         },
       );
     }
-
-    final _authCred =
-        '${_userController.value.text}:${_passController.value.text}';
-    final _bytesInLatin1 = latin1.encode(_authCred);
-    final _basichAuth64 = 'Basic ' + base64.encode(_bytesInLatin1);
-
-    await Provider.getAccess(
-            _userController.value.text, _passController.value.text)
-        .then((response) async {
-      if (response == null) {
-        setState(() {
-          _isLoading = !_isLoading;
-          _userController.clear();
-          _passController.clear();
-        });
-        await showDialog(
-          context: context,
-          builder: (BuildContext ctx) {
-            return AlertDialog(
-              title: Text('Errore di connessione'),
-              content: Text("Riprova a effettuare l'accesso fra 30 secondi."),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text(
-                    'Chiudi',
-                    style: TextStyle(color: Constants.mainColorLighter),
-                  ),
+    final responseSession =
+        await Provider.getSession(_userController.text, _passController.text);
+    if (responseSession == null) {
+      setState(() {
+        _isLoading = !_isLoading;
+        _userController.clear();
+        _passController.clear();
+      });
+      await showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text('Errore di connessione'),
+            content: Text("Riprova a effettuare l'accesso fra 30 secondi."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text(
+                  'Chiudi',
+                  style: TextStyle(color: Constants.mainColorLighter),
                 ),
-              ],
-            );
-          },
-        );
-      } else if (response['success'] == true) {
-        var prefs = await SharedPreferences.getInstance();
+              ),
+            ],
+          );
+        },
+      );
+    } else if (responseSession['success'] as bool) {
+      var prefs = await SharedPreferences.getInstance();
 
-        await prefs.setBool('isLoggedIn', true);
-        await prefs.setString('auth64Cred', _basichAuth64);
-        await prefs.setString('username', _userController.text);
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('username', _userController.text);
+      await prefs.setString('password', _passController.text);
 
-        setState(() {
-          _isLoading = !_isLoading;
-        });
+      setState(() {
+        _isLoading = !_isLoading;
+      });
 
-        await Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(user: response),
-          ),
-        );
-      } else if (!(response['success'] as bool)) {
-        print(response);
-        setState(() {
-          _isLoading = !_isLoading;
-          _userController.clear();
-          _passController.clear();
-        });
-        await showDialog(
-          context: context,
-          builder: (BuildContext ctx) {
-            return AlertDialog(
-              title: Text('Credenziali errate!'),
-              content: Text('Riprova a inserire le credenziali'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text('Chiudi',
-                      style: TextStyle(color: Constants.mainColorLighter)),
-                ),
-              ],
-            );
-          },
-        );
-      }
-    });
+      final userInfo = await Provider.getHomeInfo();
+
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(user: userInfo),
+        ),
+      );
+    } else if (!(responseSession['success'] as bool)) {
+      print(responseSession);
+      setState(() {
+        _isLoading = !_isLoading;
+        _userController.clear();
+        _passController.clear();
+      });
+      await showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            title: Text('Credenziali errate!'),
+            content: Text('Riprova a inserire le credenziali'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+                child: Text('Chiudi',
+                    style: TextStyle(color: Constants.mainColorLighter)),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
