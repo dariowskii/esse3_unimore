@@ -30,11 +30,13 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
     for (var i = 0; i < (widget.libretto['totali'] as int); i++) {
       String voto = widget.libretto['voti'][i].toString();
       if (voto != '') {
-        _cfu += widget.libretto['crediti'][i] as int;
+        _cfu += int.parse(widget.libretto['crediti'][i].toString());
         if (int.tryParse(voto) != null || voto == '30 LODE') {
           if (voto == '30 LODE') voto = '30';
-          _puntiGrafico.add(
-              {'voto': voto as int, 'data': widget.libretto['data_esame'][i]});
+          _puntiGrafico.add({
+            'voto': int.parse(voto),
+            'data': widget.libretto['data_esame'][i]
+          });
         }
       }
     }
@@ -230,8 +232,10 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                                               spots: _puntiGrafico.map((punto) {
                                                 var index = _puntiGrafico
                                                     .indexOf(punto);
-                                                return FlSpot(index.toDouble(),
-                                                    punto['voto'] as double);
+                                                return FlSpot(
+                                                    index.toDouble(),
+                                                    double.parse(punto['voto']
+                                                        .toString()));
                                               }).toList(),
                                               isCurved: true,
                                               colors: darkModeOn
@@ -268,16 +272,22 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                   widget.libretto['media_pond'] == 'NaN'
                       ? SizedBox.shrink()
                       : Positioned(
-                          bottom: (widget.libretto['media_pond'] as int >= 24)
+                          bottom: ((widget.libretto['media_pond'] as double)
+                                      .toInt() >=
+                                  24)
                               ? -22
                               : -20,
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: widget.libretto['media_pond'] as int >= 24
+                              color: (widget.libretto['media_pond'] as double)
+                                          .toInt() >=
+                                      24
                                   ? Colors.yellow[700]
-                                  : widget.libretto['media_pond'] as int >= 18
+                                  : (widget.libretto['media_pond'] as double)
+                                              .toInt() >=
+                                          18
                                       ? Colors.green[700]
                                       : Colors.yellow[700],
                               borderRadius:
@@ -285,7 +295,9 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               boxShadow: [
                                 BoxShadow(
                                   color:
-                                      widget.libretto['media_pond'] as int >= 24
+                                      (widget.libretto['media_pond'] as double)
+                                                  .toInt() >=
+                                              24
                                           ? Colors.black12
                                           : Colors.transparent,
                                   offset: Offset.zero,
@@ -295,12 +307,14 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               ],
                               border: Border.all(
                                   color:
-                                      (widget.libretto['media_pond'] as int >=
+                                      ((widget.libretto['media_pond'] as double)
+                                                  .toInt() >=
                                               24)
                                           ? Colors.white
                                           : Colors.transparent,
                                   width:
-                                      (widget.libretto['media_pond'] as int >=
+                                      ((widget.libretto['media_pond'] as double)
+                                                  .toInt() >=
                                               24)
                                           ? 2
                                           : 0),
@@ -309,17 +323,22 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
-                                    widget.libretto['media_pond'] as int >= 24
+                                    (widget.libretto['media_pond'] as double)
+                                                .toInt() >=
+                                            24
                                         ? Icons.stars
-                                        : widget.libretto['media_pond']
-                                                    as int >=
+                                        : (widget.libretto['media_pond']
+                                                        as double)
+                                                    .toInt() >=
                                                 18
                                             ? Icons.check_circle
                                             : Icons.warning,
                                     color: Colors.white),
                                 const SizedBox(width: 5),
                                 Text(
-                                  widget.libretto['media_pond'] as int >= 24
+                                  (widget.libretto['media_pond'] as double)
+                                              .toInt() >=
+                                          24
                                       ? 'fantastico!'.toUpperCase()
                                       : widget.libretto['media_pond'] as int >=
                                               18
