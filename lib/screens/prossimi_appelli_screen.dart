@@ -119,7 +119,7 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                   (appelli.data['data_appello'][i] as String)
                                       .substring(0, 2));
                               var diffTempo = dataEsame.difference(dataOggi);
-                              if (diffTempo.inDays <= 15) {
+                              if (diffTempo.inDays <= 20) {
                                 indexImminenti.add(
                                     {'index': i, 'data': dataEsame.toString()});
                               }
@@ -137,45 +137,48 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(left: 16.0, top: 16),
-                                    child: Text('Appelli imminenti',
-                                        style: Constants.fontBold24),
-                                  ),
-                                  Container(
-                                    height: 170,
-                                    child: ListView.builder(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 16),
-                                        cacheExtent: 10,
-                                        shrinkWrap: true,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: indexImminenti.length,
-                                        itemBuilder: (context, index) {
-                                          return Container(
-                                            margin: index ==
-                                                    indexImminenti.length - 1
-                                                ? null
-                                                : EdgeInsets.only(right: 10),
-                                            child: CardAppelloImminente(
-                                              deviceWidth: deviceWidth,
-                                              isTablet: isTablet,
-                                              nomeAppello:
-                                                  appelli.data['materia'][
-                                                      indexImminenti[index]
-                                                          ['index']] as String,
-                                              dataAppello:
-                                                  appelli.data['data_appello'][
-                                                      indexImminenti[index]
-                                                          ['index']] as String,
-                                              descrizione: appelli.data['desc'][
-                                                  indexImminenti[index]
-                                                      ['index']] as String,
-                                            ),
-                                          );
-                                        }),
-                                  ),
+                                  if (indexImminenti.isNotEmpty) ...[
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 16.0, top: 16),
+                                      child: Text('Appelli imminenti',
+                                          style: Constants.fontBold24),
+                                    ),
+                                    Container(
+                                      height: 170,
+                                      child: ListView.builder(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 15, horizontal: 16),
+                                          cacheExtent: 10,
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: indexImminenti.length,
+                                          itemBuilder: (context, index) {
+                                            return Container(
+                                              margin: index ==
+                                                      indexImminenti.length - 1
+                                                  ? null
+                                                  : EdgeInsets.only(right: 10),
+                                              child: CardAppelloImminente(
+                                                deviceWidth: deviceWidth,
+                                                isTablet: isTablet,
+                                                nomeAppello: appelli
+                                                        .data['materia'][
+                                                    indexImminenti[index]
+                                                        ['index']] as String,
+                                                dataAppello: appelli
+                                                        .data['data_appello'][
+                                                    indexImminenti[index]
+                                                        ['index']] as String,
+                                                descrizione: appelli
+                                                        .data['desc'][
+                                                    indexImminenti[index]
+                                                        ['index']] as String,
+                                              ),
+                                            );
+                                          }),
+                                    ),
+                                  ],
                                   Padding(
                                     padding: EdgeInsets.all(16.0),
                                     child: Column(
