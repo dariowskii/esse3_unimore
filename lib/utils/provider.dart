@@ -170,7 +170,7 @@ class Provider {
     var requestUrl = _urlJSessionCookie2;
     //Ottengo la response
     http.Response homeResponse;
-    String homeBody;
+    String homeBody, shibSessionCookie;
     try {
       var customRequest = http.Request('HEAD', Uri.parse(requestUrl));
       customRequest.followRedirects = false;
@@ -222,7 +222,7 @@ class Provider {
       customRequest.body = 'RelayState=$relayState&SAMLResponse=$samlResponse'
           .replaceAll('+', '%2B');
       final finalResponse = await client.send(customRequest);
-      final shibSessionCookie =
+      shibSessionCookie =
           finalResponse.headers['set-cookie'].toString().split(';')[0];
 
       homeResponse = await client.get(Uri.parse(requestUrl), headers: {
@@ -255,21 +255,20 @@ class Provider {
 
     //Recupero l'immagine del profilo
     mapInfo['profile_pic'] = '';
-
-    // final responsePhoto = await http.get(
-    //   'https://www.esse3.unimore.it/auth/AddressBook/DownloadFoto.do?r=' +
-    //       jsessionId.substring(3, 13),
-    //   headers: {
-    //     'Authorization': basicAuth64,
-    //     'cookie': 'JSESSIONID=' + jsessionId
-    //   },
-    // ).catchError((e) {
-    //   debugPrint('Errore response foto profilo getAccess: $e');
-    //   mapInfo['profile_pic'] = 'error';
-    // });
+    String fotoUrl =
+        documentHome.querySelector('img[alt="Foto Utente"]').attributes['src'];
+    final responsePhoto = await http.get(
+      Uri.parse('https://www.esse3.unimore.it/$fotoUrl'),
+      headers: {
+        'cookie': shibSessionCookie,
+      },
+    ).catchError((e) {
+      debugPrint('Errore response foto profilo getAccess: $e');
+      mapInfo['profile_pic'] = 'error';
+    });
 
     if (mapInfo['profile_pic'] != 'error') {
-      //mapInfo['profile_pic'] = base64Encode(responsePhoto.bodyBytes);
+      mapInfo['profile_pic'] = base64Encode(responsePhoto.bodyBytes);
     } else {
       mapInfo['profile_pic'] = 'no';
     }
