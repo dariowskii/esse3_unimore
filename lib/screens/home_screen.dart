@@ -330,9 +330,10 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     BottoneMaterialCustom(
                       onPressed: () async {
-                        var prefs = await SharedPreferences.getInstance();
+                        Provider.cleanSession();
+                        final prefs = await SharedPreferences.getInstance();
                         await prefs.clear();
-                        await prefs.setBool('1.2.0', true);
+                        await prefs.setBool('1.3.0', true);
                         await Navigator.pushReplacementNamed(
                             context, LoginScreen.id);
                       },
