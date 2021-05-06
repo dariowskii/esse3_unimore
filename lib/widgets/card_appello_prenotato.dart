@@ -36,7 +36,7 @@ class CardAppelloPrenotato extends StatelessWidget {
     var darkModeOn = Theme.of(context).brightness == Brightness.dark;
     var _nomeEsame = nomeEsame.split(' - ');
     var numIsc = iscrizione.replaceFirst('Numero Iscrizione: ', '');
-    var internalHiddens = {};
+    final Map<String, dynamic> internalHiddens = {};
     formHiddens.forEach((key, value) {
       if (key.toString().startsWith(index.toString())) {
         internalHiddens[

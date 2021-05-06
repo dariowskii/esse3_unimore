@@ -360,7 +360,7 @@ class Provider {
   }
 
   /// Serve a scaricare le informazioni del libretto universitario per [LibrettoScreen].
-  static Future<Map> getLibretto() async {
+  static Future<Map<String, dynamic>> getLibretto() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -369,7 +369,7 @@ class Provider {
       await getSession(username, password);
     }
 
-    final mapLibretto = {};
+    final Map<String, dynamic> mapLibretto = {};
 
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -486,7 +486,7 @@ class Provider {
   }
 
   /// Serve a scaricare le informazioni delle tasse per [TasseScreen].
-  static Future<Map> getTasse() async {
+  static Future<Map<String, dynamic>> getTasse() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -495,7 +495,7 @@ class Provider {
       await getSession(username, password);
     }
 
-    var mapTasse = {};
+    final Map<String, dynamic> mapTasse = {};
 
     var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -581,7 +581,7 @@ class Provider {
   }
 
   /// Serve a scaricare le informazioni dei prossimi appelli per [ProssimiAppelliScreen].
-  static Future<Map> getAppelli() async {
+  static Future<Map<String, dynamic>> getAppelli() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -590,7 +590,7 @@ class Provider {
       await getSession(username, password);
     }
 
-    var mapAppelli = {};
+    final Map<String, dynamic> mapAppelli = {};
 
     var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -772,7 +772,7 @@ class Provider {
   }
 
   /// Serve a scaricare la lista degli appelli prenotati per la [BachecaPrenotazioniScreen].
-  static Future<Map> getAppelliPrenotati() async {
+  static Future<Map<String, dynamic>> getAppelliPrenotati() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -782,7 +782,7 @@ class Provider {
     }
     var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
-    var mapPrenotati = {};
+    final Map<String, dynamic> mapPrenotati = {};
 
     var requestUrl =
         'https://www.esse3.unimore.it/auth/studente/Appelli/BachecaPrenotazioni.do;?menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
@@ -887,7 +887,8 @@ class Provider {
   }
 
   /// Serve a prenotare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
-  static Future<Map> prenotaAppello(Map<String, dynamic> infoAppello) async {
+  static Future<Map<String, dynamic>> prenotaAppello(
+      Map<String, dynamic> infoAppello) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -896,7 +897,7 @@ class Provider {
       await getSession(username, password);
     }
 
-    var mapHiddens = {};
+    final Map<String, dynamic> mapHiddens = {};
 
     var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -911,7 +912,7 @@ class Provider {
     var lunghezzaHidden = infoAppello['lunghezzaHidden'] as int;
 
     for (var i = 0; i < lunghezzaHidden; i++) {
-      mapHiddens[infoAppello['hiddens_name'][i]] =
+      mapHiddens[infoAppello['hiddens_name'][i] as String] =
           infoAppello['hiddens_value'][i];
     }
 
@@ -1004,7 +1005,7 @@ class Provider {
   }
 
   /// Serve a cancellare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
-  static Future<bool> cancellaAppello(var infoAppello) async {
+  static Future<bool> cancellaAppello(Map<String, dynamic> infoAppello) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
