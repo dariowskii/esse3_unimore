@@ -1,7 +1,9 @@
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/card_appello_prenotato.dart';
+import 'package:Esse3/widgets/loading_bacheca_prenotazioni.dart';
 import 'package:Esse3/widgets/reload_appelli_widget.dart';
+import 'package:Esse3/widgets/ricarica_bacheca_prenotazioni.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -27,7 +29,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
   /// Ricarica la bacheca.
   Future<void> _refreshBacheca() {
     return _appelli = Provider.getAppelliPrenotati().whenComplete(() {
-      Future.delayed(Duration(milliseconds: 1500), () {
+      Future.delayed(const Duration(milliseconds: 1500), () {
         setState(() {});
       });
     });
@@ -35,15 +37,15 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var deviceWidth = MediaQuery.of(context).size.width;
-    var deviceHeight = MediaQuery.of(context).size.height;
-    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    var isTablet = deviceWidth > Constants.tabletWidth;
-    Widget _svgAsset =
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
+    final darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    final isTablet = deviceWidth > Constants.tabletWidth;
+    final _svgAsset =
         SvgPicture.asset('assets/img/party.svg', width: deviceWidth * 0.7);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Esse3'),
+        title: const Text('Esse3'),
         centerTitle: true,
       ),
       body: FutureBuilder(
@@ -57,43 +59,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                 onReload: _refreshBacheca,
               );
             case ConnectionState.waiting:
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Bacheca prenotazioni',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 25),
-                    ),
-                    Divider(),
-                    Flexible(
-                      child: Container(
-                        width: double.infinity,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Constants.mainColorLighter),
-                            ),
-                            const SizedBox(height: 15),
-                            Text(
-                              'Sto scaricando i dati...',
-                              style: Constants.font16.copyWith(
-                                  color: darkModeOn
-                                      ? Colors.white
-                                      : Constants.mainColorLighter),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              );
+              return LoadingBachecaPrenotazioni(darkModeOn: darkModeOn);
             case ConnectionState.active:
             case ConnectionState.done:
               //In caso di risposta nulla..
@@ -107,61 +73,8 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
               if (appello.data['success'] as bool) {
                 //In caso non ci siano appelli
                 if (appello.data['totali'] == 0) {
-                  return LiquidPullToRefresh(
-                    animSpeedFactor: 1.5,
-                    height: 80,
-                    color: Theme.of(context).primaryColorLight,
-                    onRefresh: _refreshBacheca,
-                    showChildOpacityTransition: false,
-                    child: ListView(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Bacheca prenotazioni',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 25),
-                              ),
-                              Divider(),
-                              const SizedBox(height: 50),
-                              Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    _svgAsset,
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Nessuna prenotazione',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 32),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      'È tempo di preparare qualche esame e prenotarsi!',
-                                      softWrap: true,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 20,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return RicaricaBachecaPrenotazioni(
+                      refreshBacheca: _refreshBacheca, svgAsset: _svgAsset);
                 }
                 //In caso ci siano appelli...
                 return LiquidPullToRefresh(
@@ -176,12 +89,12 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Bacheca prenotazioni',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 25),
                         ),
-                        Divider(),
+                        const Divider(),
                         const SizedBox(height: 15),
                         ListView.builder(
                           shrinkWrap: true,
@@ -189,7 +102,7 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                               ? EdgeInsets.symmetric(
                                   horizontal: deviceWidth / 6)
                               : null,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: appello.data['totali'] as int,
                           itemBuilder: (context, index) {
                             return CardAppelloPrenotato(
