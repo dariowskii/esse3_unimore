@@ -14,35 +14,29 @@ Future<void> main() async {
   //Forzo il device ad orientarsi verticalmente
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   //Controllo se l'utente è loggato
-  var prefs = await SharedPreferences.getInstance();
-  var version = prefs.getBool('1.3.0') ?? false;
+  final prefs = await SharedPreferences.getInstance();
+  final version = prefs.getBool('1.3.0') ?? false;
   if (!version) {
     await prefs.clear();
     await prefs.setBool('1.3.0', true);
   }
-  var status = prefs.getBool('isLoggedIn') ?? false;
+  final status = prefs.getBool('isLoggedIn') ?? false;
   runApp(Esse3(logged: status));
 }
 
 /// Rappresenta la classe che avvia l'applicazione.
-class Esse3 extends StatefulWidget {
-  Esse3({@required this.logged});
+class Esse3 extends StatelessWidget {
+  const Esse3({@required this.logged}) : assert(logged != null);
 
   /// Serve per controllare se l'utente è loggato.
   final bool logged;
-
-  @override
-  _Esse3State createState() => _Esse3State();
-}
-
-class _Esse3State extends State<Esse3> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: Constants.darkTheme,
       theme: Constants.lightTheme,
-      initialRoute: widget.logged ? HomeScreen.id : LoginScreen.id,
+      initialRoute: logged ? HomeScreen.id : LoginScreen.id,
       routes: {
         LoginScreen.id: (context) => LoginScreen(),
         HomeScreen.id: (context) => HomeScreen(),
