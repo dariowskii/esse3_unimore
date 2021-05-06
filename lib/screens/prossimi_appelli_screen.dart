@@ -1,5 +1,9 @@
 import 'package:Esse3/utils/provider.dart';
-import 'package:Esse3/utils/widgets.dart';
+import 'package:Esse3/widgets/card_appello.dart';
+import 'package:Esse3/widgets/card_appello_imminente.dart';
+import 'package:Esse3/widgets/connection_error.dart';
+import 'package:Esse3/widgets/no_exams_widget.dart';
+import 'package:Esse3/widgets/shimmer_loader.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';

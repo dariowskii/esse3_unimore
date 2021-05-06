@@ -4,6 +4,7 @@ import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:Esse3/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,146 +19,127 @@ class Provider {
 
   /// Serve sostanzialmente ad estrarre l'`idStud` per mandare le
   /// request in caso di scelta carriera iniziale.
-  // static Future<Map> _isSceltaCarriera(
-  //     var tableCarriere, var jsessionId, var basicAuth64, var mapInfo) async {
-  //   mapInfo['sceltaCarriera'] = true;
+  static Future<Map<String, dynamic>> _isSceltaCarriera(
+      var tableCarriere, Map<String, dynamic> mapInfo) async {
+    mapInfo['sceltaCarriera'] = true;
 
-  //   var tableScelta = tableCarriere.querySelector('.table-1-body');
-  //   if (tableScelta == null) {
-  //     mapInfo['error'] = 'tableScelta not found';
-  //     mapInfo['success'] = false;
-  //     return mapInfo as Map;
-  //   }
+    final tableScelta = tableCarriere.querySelector('.table-1-body');
+    if (tableScelta == null) {
+      mapInfo['error'] = 'tableScelta not found';
+      mapInfo['success'] = false;
+      return mapInfo;
+    }
 
-  //   var lengthScelta = tableScelta.children.length as int;
+    final lengthScelta = tableScelta.children.length as int;
 
-  //   try {
-  //     for (var i = 0; i < lengthScelta; i++) {
-  //       if (tableScelta.children[i].children[3].text == 'Attivo') {
-  //         var idStud = tableScelta.children[i].children[4].children[0]
-  //             .children[0].attributes['href'] as String;
-  //         idStud = idStud
-  //             .replaceAll('auth/studente/SceltaCarrieraStudente.do', '')
-  //             .replaceAll('?', '?&');
+    try {
+      for (var i = 0; i < lengthScelta; i++) {
+        if (tableScelta.children[i].children[3].text == 'Attivo') {
+          var idStud = tableScelta.children[i].children[4].children[0]
+              .children[0].attributes['href'] as String;
+          idStud = idStud
+              .replaceAll('auth/studente/SceltaCarrieraStudente.do', '')
+              .replaceAll('?', '?&');
 
-  //         //Salvo idStud
-  //         var prefs = await SharedPreferences.getInstance();
-  //         await prefs.setBool('isSceltaCarriera', true);
-  //         await prefs.setString('idStud', idStud);
+          //Salvo idStud
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isSceltaCarriera', true);
+          await prefs.setString('idStud', idStud);
 
-  //         var newRequestUrl =
-  //             'https://www.esse3.unimore.it/auth/studente/AreaStudente.do;jsessionid=' +
-  //                 jsessionId +
-  //                 idStud;
-  //         //Get the response
-  //         var response;
-  //         try {
-  //           response = await http.get(
-  //             newRequestUrl,
-  //             headers: {'Authorization': basicAuth64, 'jsessionid': jsessionId},
-  //           );
-  //         } catch (e) {
-  //           mapInfo['error'] = e;
-  //           mapInfo['success'] = false;
-  //           return mapInfo;
-  //         }
-  //         ;
+          final newRequestUrl =
+              'https://www.esse3.unimore.it/auth/studente/AreaStudente.do;$idStud';
+          //Get the response
+          http.Response response;
+          try {
+            response = await http.get(
+              Uri.parse(newRequestUrl),
+              headers: {
+                'cookie': _shibSessionCookie,
+              },
+            );
+          } catch (e) {
+            mapInfo['error'] = e;
+            mapInfo['success'] = false;
+            return mapInfo;
+          }
 
-  //         mapInfo['success'] = response.statusCode == 200;
-  //         if (!mapInfo['success']) {
-  //           mapInfo['error'] =
-  //               'response isSceltaCarriera => ${response.statusCode}: ${response.reasonPhrase}';
-  //           return mapInfo;
-  //         }
+          mapInfo['success'] = response.statusCode == 200;
+          if (!(mapInfo['success'] as bool)) {
+            mapInfo['error'] =
+                'response isSceltaCarriera => ${response.statusCode}: ${response.reasonPhrase}';
+            return mapInfo;
+          }
 
-  //         var documentTmp = parser.parse(response.body);
-  //         var nomeMatricola = [];
+          final documentSceltaCarriera = parser.parse(response.body);
+          var nomeMatricola = [];
 
-  //         try {
-  //           nomeMatricola = documentTmp
-  //               .querySelector('.pagetitle_title')
-  //               .innerHtml
-  //               .replaceAll('Area Studente ', '')
-  //               .split(' - ');
-  //         } catch (e) {
-  //           mapInfo['error'] = '.pagetitle_title (isSceltaCarriera) not found';
-  //           mapInfo['success'] = false;
-  //           return mapInfo;
-  //         }
+          try {
+            nomeMatricola = documentSceltaCarriera
+                .querySelector('.pagetitle_title')
+                .innerHtml
+                .replaceAll('Area Studente ', '')
+                .split(' - ');
+          } catch (e) {
+            mapInfo['error'] = '.pagetitle_title (isSceltaCarriera) not found';
+            mapInfo['success'] = false;
+            return mapInfo;
+          }
 
-  //         var nomeStudente = nomeMatricola[0];
-  //         var matricolaStudente =
-  //             nomeMatricola[1].replaceFirst('[MAT. ', '').replaceFirst(']', '');
+          final nomeStudente = nomeMatricola[0];
+          final matricolaStudente =
+              nomeMatricola[1].replaceFirst('[MAT. ', '').replaceFirst(']', '');
 
-  //         var info = documentTmp.querySelector('.record-riga');
-  //         if (info == null) {
-  //           mapInfo['error'] = '.record-riga (isSceltaCarriera) not found';
-  //           mapInfo['success'] = false;
-  //           return mapInfo;
-  //         }
+          final info = documentSceltaCarriera.querySelector('.record-riga');
+          if (info == null) {
+            mapInfo['error'] = '.record-riga (isSceltaCarriera) not found';
+            mapInfo['success'] = false;
+            return mapInfo;
+          }
 
-  //         var lengthInfo = info.children.length;
+          final lengthInfo = info.children.length;
 
-  //         mapInfo['nome'] = nomeStudente;
-  //         var _nomeCompletoCamel = '';
-  //         mapInfo['nome'].split(' ').forEach((str) {
-  //           _nomeCompletoCamel +=
-  //               '${str.toString()[0]}${str.toString().substring(1).toLowerCase()} ';
-  //         });
-  //         mapInfo['nome'] =
-  //             _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
-  //         mapInfo['matricola'] = matricolaStudente;
-  //         var bufferNome = nomeStudente.split(' ');
-  //         mapInfo['text_avatar'] =
-  //             '${bufferNome[0].substring(0, 1)}${bufferNome[1].substring(0, 1)}';
+          mapInfo['nome'] = nomeStudente;
+          var _nomeCompletoCamel = '';
+          mapInfo['nome'].split(' ').forEach((str) {
+            _nomeCompletoCamel +=
+                '${str.toString()[0]}${str.toString().substring(1).toLowerCase()} ';
+          });
+          mapInfo['nome'] =
+              _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
+          mapInfo['matricola'] = matricolaStudente;
+          final bufferNome = nomeStudente.split(' ');
+          mapInfo['text_avatar'] =
+              '${bufferNome[0].substring(0, 1)}${bufferNome[1].substring(0, 1)}';
 
-  //         for (var i = 1; i < lengthInfo; i += 2) {
-  //           var index = info.children[i].innerHtml.indexOf('&');
-  //           var key = _getNomeInfo(i);
-  //           if (key == 'part_time') {
-  //             mapInfo[key] = info.children[i].children[0].innerHtml.trim();
-  //           } else {
-  //             mapInfo[key] = info.children[i].innerHtml
-  //                 .replaceRange(
-  //                     index, info.children[i].innerHtml.length - 1, '')
-  //                 .trim();
-  //           }
-  //         }
+          for (var i = 1; i < lengthInfo; i += 2) {
+            final index = info.children[i].innerHtml.indexOf('&');
+            final key = _getNomeInfo(i);
+            if (key == 'part_time') {
+              mapInfo[key] = info.children[i].children[0].innerHtml.trim();
+            } else {
+              mapInfo[key] = info.children[i].innerHtml
+                  .replaceRange(
+                      index, info.children[i].innerHtml.length - 1, '')
+                  .trim();
+            }
+          }
 
-  //         //Recupero l'immagine del profilo
-  //         mapInfo['profile_pic'] = '';
+          //Recupero l'immagine del profilo
+          mapInfo['profile_pic'] = await _getProfilePic(documentSceltaCarriera);
 
-  //         final responsePhoto = await http.get(
-  //           'https://www.esse3.unimore.it/auth/AddressBook/DownloadFoto.do?r=' +
-  //               jsessionId.substring(3, 13),
-  //           headers: {
-  //             'Authorization': basicAuth64,
-  //             'cookie': 'JSESSIONID=' + jsessionId
-  //           },
-  //         ).catchError((e) {
-  //           debugPrint('Errore response foto profilo getAccess: $e');
-  //           mapInfo['profile_pic'] = 'error';
-  //         });
+          return mapInfo;
+        }
+      }
+    } catch (e) {
+      mapInfo['error'] = e;
+      mapInfo['success'] = false;
+      return mapInfo;
+    }
 
-  //         if (mapInfo['profile_pic'] != 'error') {
-  //           mapInfo['profile_pic'] = base64Encode(responsePhoto.bodyBytes);
-  //         } else {
-  //           mapInfo['profile_pic'] = 'no';
-  //         }
-
-  //         return mapInfo;
-  //       }
-  //     }
-  //   } catch (e) {
-  //     mapInfo['error'] = e;
-  //     mapInfo['success'] = false;
-  //     return mapInfo;
-  //   }
-
-  //   mapInfo['error'] = 'unknown error (isSceltaCarriera)';
-  //   mapInfo['success'] = false;
-  //   return mapInfo;
-  // }
+    mapInfo['error'] = 'unknown error (isSceltaCarriera)';
+    mapInfo['success'] = false;
+    return mapInfo;
+  }
 
   /// Serve ad ottenere le prime informazioni iniziali della home.
   static Future<Map<String, dynamic>> getSession(
@@ -233,6 +215,30 @@ class Provider {
     return mapSession;
   }
 
+  static Future<String> _getProfilePic(Document document) async {
+    String photoBase64 = '';
+    final fotoUrl =
+        document.querySelector('img[alt="Foto Utente"]').attributes['src'];
+    http.Response responsePhoto;
+    try {
+      responsePhoto = await http.get(
+        Uri.parse('https://www.esse3.unimore.it/$fotoUrl'),
+        headers: {
+          'cookie': _shibSessionCookie,
+        },
+      );
+    } catch (e) {
+      debugPrint('Errore response foto profilo getAccess: $e');
+      photoBase64 = 'no';
+    }
+
+    if (photoBase64 != 'no') {
+      return base64Encode(responsePhoto.bodyBytes);
+    }
+
+    return photoBase64;
+  }
+
   static Future<Map<String, dynamic>> getHomeInfo() async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
@@ -256,34 +262,14 @@ class Provider {
     final documentHome = parser.parse(homeBody);
 
     //Controllo se hai una scelta della carriera da effettuare
-    // var sceltaCarriera = documentHome.querySelector('#gu_table_sceltacarriera');
-    // if (sceltaCarriera != null) {
-    //   return await _isSceltaCarriera(
-    //       sceltaCarriera, jsessionId, basicAuth64, mapInfo);
-    // }
+    final sceltaCarriera =
+        documentHome.querySelector('#gu_table_sceltacarriera');
+    if (sceltaCarriera != null) {
+      return _isSceltaCarriera(sceltaCarriera, mapInfo);
+    }
 
     //Recupero l'immagine del profilo
-    mapInfo['profile_pic'] = '';
-    final fotoUrl =
-        documentHome.querySelector('img[alt="Foto Utente"]').attributes['src'];
-    http.Response responsePhoto;
-    try {
-      responsePhoto = await http.get(
-        Uri.parse('https://www.esse3.unimore.it/$fotoUrl'),
-        headers: {
-          'cookie': _shibSessionCookie,
-        },
-      );
-    } catch (e) {
-      debugPrint('Errore response foto profilo getAccess: $e');
-      mapInfo['profile_pic'] = null;
-    }
-
-    if (mapInfo['profile_pic'] != null) {
-      mapInfo['profile_pic'] = base64Encode(responsePhoto.bodyBytes);
-    } else {
-      mapInfo['profile_pic'] = 'no';
-    }
+    mapInfo['profile_pic'] = await _getProfilePic(documentHome);
 
     var scrapingNomeMatricola = [];
     try {
@@ -682,7 +668,7 @@ class Provider {
   }
 
   /// Serve a scaricare le informazioni nascoste dell'appello per poter prenotarsi.
-  static Future<Map> getInfoAppello(String urlInfo) async {
+  static Future<Map<String, dynamic>> getInfoAppello(String urlInfo) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -691,7 +677,7 @@ class Provider {
       await getSession(username, password);
     }
 
-    var mapInfoAppello = {};
+    final Map<String, dynamic> mapInfoAppello = {};
 
     var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -901,7 +887,7 @@ class Provider {
   }
 
   /// Serve a prenotare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
-  static Future<Map> prenotaAppello(var infoAppello) async {
+  static Future<Map> prenotaAppello(Map<String, dynamic> infoAppello) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -929,7 +915,9 @@ class Provider {
           infoAppello['hiddens_value'][i];
     }
 
-    var response;
+    mapHiddens['btnSalva'] = "Prenotati all'appello >>";
+
+    http.Response response;
     try {
       response = await http.post(
         Uri.parse(requestUrl),
@@ -945,9 +933,12 @@ class Provider {
       return mapHiddens;
     }
 
+    print(response.statusCode);
+    print(response.headers);
+
     if (response.statusCode == 302) {
       var location =
-          'https://www.esse3.unimore.it${response.headers.values.elementAt(2)}';
+          'https://www.esse3.unimore.it${response.headers['location']}';
       if (location.endsWith('TIPO_ATTIVITA=1')) {
         location =
             location.substring(0, location.lastIndexOf('TIPO_ATTIVITA=1'));

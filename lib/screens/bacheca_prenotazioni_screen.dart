@@ -1,6 +1,7 @@
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/utils/provider.dart';
-import 'package:Esse3/utils/widgets.dart';
+import 'package:Esse3/widgets/card_appello_prenotato.dart';
+import 'package:Esse3/widgets/reload_appelli_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';

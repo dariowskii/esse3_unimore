@@ -1,13 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 
-import 'package:Esse3/utils/widgets.dart';
+import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/widgets/bottone_material_custom.dart';
+import 'package:Esse3/widgets/bottone_pagina_drawer.dart';
+import 'package:Esse3/widgets/chip_info.dart';
+import 'package:Esse3/widgets/error_home_data.dart';
+import 'package:Esse3/widgets/libretto_home_card.dart';
+import 'package:Esse3/widgets/prossimi_appelli_card.dart';
+import 'package:Esse3/widgets/tasse_home_card.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'screens.dart';
 import 'package:Esse3/utils/database.dart';
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Home screen dell'app.
@@ -42,8 +49,18 @@ class _HomeScreenState extends State<HomeScreen>
     return prefs.getString('username');
   }
 
+  Future<void> initSession() async {
+    if (Provider.shibSessionCookie.isEmpty) {
+      var prefs = await SharedPreferences.getInstance();
+      final username = prefs.getString('username');
+      final password = prefs.getString('password');
+      await Provider.getSession(username, password);
+    }
+  }
+
   @override
   void initState() {
+    initSession();
     super.initState();
     _controller = AnimationController(
       duration: Duration(milliseconds: 600),
