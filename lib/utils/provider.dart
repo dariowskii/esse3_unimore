@@ -16,6 +16,12 @@ class Provider {
 
   static String _shibSessionCookie = "";
   static String get shibSessionCookie => _shibSessionCookie;
+  static String _jSessionId = "";
+  static String get jSessionId => _jSessionId;
+  static void cleanSession() {
+    _jSessionId = '';
+    _shibSessionCookie = '';
+  }
 
   /// Serve sostanzialmente ad estrarre l'`idStud` per mandare le
   /// request in caso di scelta carriera iniziale.
@@ -164,6 +170,7 @@ class Provider {
       customRequest = http.Request('GET', Uri.parse(location));
       customRequest.headers['cookie'] = firstJsessionCookie;
       streamedResponse = await client.send(customRequest);
+
       // Mando la POST
       var documentIdp =
           parser.parse(await streamedResponse.stream.bytesToString());
@@ -201,7 +208,13 @@ class Provider {
       final finalResponse = await client.send(customRequest);
       _shibSessionCookie =
           finalResponse.headers['set-cookie'].toString().split(';')[0];
-      if (_shibSessionCookie.isEmpty) {
+      customRequest = http.Request('GET', Uri.parse(_urlLoginEsse3));
+      customRequest.followRedirects = false;
+      customRequest.headers['cookie'] = _shibSessionCookie;
+      final jSessionResponse = await client.send(customRequest);
+      _jSessionId =
+          jSessionResponse.headers['set-cookie'].toString().split(';')[0];
+      if (_shibSessionCookie.isEmpty || _jSessionId.isEmpty) {
         mapSession['success'] = false;
         mapSession['error'] = 'Non riesco a creare una sessione.';
         return mapSession;
@@ -333,7 +346,7 @@ class Provider {
       mapInfo['success'] = false;
       return mapInfo;
     }
-
+    mapInfo['success'] = true;
     return mapInfo;
   }
 
@@ -934,9 +947,6 @@ class Provider {
       return mapHiddens;
     }
 
-    print(response.statusCode);
-    print(response.headers);
-
     if (response.statusCode == 302) {
       var location =
           'https://www.esse3.unimore.it${response.headers['location']}';
@@ -960,11 +970,10 @@ class Provider {
         mapHiddens['error'] = e;
         return mapHiddens;
       }
-      ;
 
       mapHiddens['success'] = responseAppello.statusCode == 302;
       if (!(mapHiddens['success'] as bool)) {
-        var document = parser.parse(responseAppello.body);
+        final document = parser.parse(responseAppello.body);
         if (document.querySelector('#app-text_esito_pren_msg') != null) {
           try {
             mapHiddens['success'] = document
@@ -1014,26 +1023,32 @@ class Provider {
       await getSession(username, password);
     }
 
+    final client = http.Client();
+
     var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     var requestUrl =
-        'https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do';
+        'https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;$_jSessionId';
     String idStud;
 
     if (isSceltaCarriera) {
       idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
+    http.StreamedResponse response;
 
-    var response;
+    infoAppello['imageField.x'] = '21';
+    infoAppello['imageField.y'] = '8';
+
+    var customRequest = http.Request('POST', Uri.parse(requestUrl));
+    customRequest.followRedirects = false;
+
+    customRequest.headers['cookie'] = '$_shibSessionCookie, $_jSessionId';
+    customRequest.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    customRequest.body = infoAppello.toString();
+
     try {
-      response = await http.post(
-        Uri.parse(requestUrl),
-        body: infoAppello,
-        headers: {
-          'cookie': _shibSessionCookie,
-        },
-      );
+      response = await client.send(customRequest);
     } catch (e) {
       debugPrint('Errore cancellazione appello: $e');
       return false;
@@ -1053,7 +1068,6 @@ class Provider {
         debugPrint('Errore cancellazione appello: $e');
         return false;
       }
-      ;
 
       var document = parser.parse(response2.body);
       var formHiddens = document.querySelector('#esse3old');
@@ -1077,6 +1091,7 @@ class Provider {
           'https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do';
 
       if (isSceltaCarriera) {
+        idStud = prefs.getString('idStud');
         requestUrl = requestUrl + idStud;
       }
 
@@ -1093,11 +1108,10 @@ class Provider {
         debugPrint('Errore finalResponse cancellazione apppello: $e');
         return false;
       }
-      ;
 
       return finalResponse.statusCode == 302;
     } else if (response.statusCode == 200) {
-      var document = parser.parse(response.body);
+      var document = parser.parse(response.stream.bytesToString());
       var formHiddens = document.querySelector('#esse3old');
       if (formHiddens == null) return false;
 
@@ -1135,8 +1149,6 @@ class Provider {
         debugPrint('Errore finalResponse cancellazione apppello: $e');
         return false;
       }
-      ;
-
       return finalResponse.statusCode == 302;
     } else {
       return false;
