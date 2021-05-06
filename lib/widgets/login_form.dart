@@ -89,12 +89,13 @@ class _LoginFormState extends State<LoginForm> {
       await prefs.setString('username', _userController.text);
       await prefs.setString('password', _passController.text);
 
+      final userInfo = await Provider.getHomeInfo();
+      if (!(userInfo['success'] as bool)) {
+        errorSession();
+      }
       setState(() {
         _isLoading = !_isLoading;
       });
-
-      final userInfo = await Provider.getHomeInfo();
-
       await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -102,31 +103,34 @@ class _LoginFormState extends State<LoginForm> {
         ),
       );
     } else if (!(responseSession['success'] as bool)) {
-      print(responseSession);
-      setState(() {
-        _isLoading = !_isLoading;
-        _userController.clear();
-        _passController.clear();
-      });
-      await showDialog(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: Text('Credenziali errate!'),
-            content: Text('Riprova a inserire le credenziali'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-                child: Text('Chiudi',
-                    style: TextStyle(color: Constants.mainColorLighter)),
-              ),
-            ],
-          );
-        },
-      );
+      errorSession();
     }
+  }
+
+  void errorSession() {
+    setState(() {
+      _isLoading = !_isLoading;
+      _userController.clear();
+      _passController.clear();
+    });
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text('Credenziali errate!'),
+          content: Text('Riprova a inserire le credenziali'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text('Chiudi',
+                  style: TextStyle(color: Constants.mainColorLighter)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
