@@ -164,265 +164,266 @@ class CardAppelloPrenotato extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              Flexible(
-                child: MaterialButton(
-                  elevation: 2,
-                  minWidth: double.infinity,
-                  color: Colors.redAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        if (Platform.isAndroid) {
-                          return AlertDialog(
-                            title: Text('Annulla prenotazione'),
-                            content: Text(
-                                'Sei sicuro di voler cancellare la prenotazione?'),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return WillPopScope(
-                                          onWillPop: () async => null,
-                                          child: AlertDialog(
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            content: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                CircularProgressIndicator(
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          Colors.redAccent),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Text('Aspetta un secondo...'),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                  Provider.cancellaAppello(internalHiddens)
-                                      .then((value) {
-                                    if (value != null && value) {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return WillPopScope(
-                                            onWillPop: () async => null,
-                                            child: AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              content: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Icon(
-                                                    Icons.check,
-                                                    color: Colors.green,
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                      'Prenotazione cancellata!'),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                      Future.delayed(Duration(seconds: 1), () {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                      });
-                                    } else {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return WillPopScope(
-                                            onWillPop: () async => null,
-                                            child: AlertDialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              content: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Icon(
-                                                    Icons.cancel,
-                                                    color: Colors.redAccent,
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text('Errore cancellazione!'),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                      Future.delayed(Duration(seconds: 1), () {
-                                        Navigator.of(context).pop();
-                                      });
-                                    }
-                                  });
-                                },
-                                child: Text(
-                                  'SI',
-                                  style: TextStyle(
-                                      color: darkModeOn
-                                          ? Colors.white
-                                          : Colors.black87),
-                                ),
-                              ),
-                              MaterialButton(
-                                elevation: 0,
-                                color: Colors.redAccent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('NO',
-                                    style: TextStyle(color: Colors.white)),
-                              ),
-                            ],
-                          );
-                        }
-                        return CupertinoAlertDialog(
-                          title: Text('Annulla prenotazione'),
-                          content: Text(
-                              'Sei sicuro di voler cancellare la prenotazione?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return WillPopScope(
-                                        onWillPop: () async => null,
-                                        child: AlertDialog(
-                                          content: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              CircularProgressIndicator(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                            Color>(
-                                                        Colors.redAccent),
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Text('Aspetta un secondo...'),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    });
-                                Provider.cancellaAppello(internalHiddens)
-                                    .then((value) {
-                                  if (value != null && value) {
-                                    Navigator.of(context).pop();
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return WillPopScope(
-                                            onWillPop: () async => null,
-                                            child: AlertDialog(
-                                              content: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  Icon(
-                                                    Icons.check,
-                                                    color: Colors.green,
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                      'Prenotazione cancellata!'),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        });
-                                    Future.delayed(Duration(seconds: 1), () {
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                    });
-                                  } else {
-                                    Navigator.of(context).pop();
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return WillPopScope(
-                                          onWillPop: () async => null,
-                                          child: AlertDialog(
-                                            content: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                Icon(
-                                                  Icons.cancel,
-                                                  color: Colors.redAccent,
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Text('Errore cancellazione!'),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                    Future.delayed(Duration(seconds: 1), () {
-                                      Navigator.of(context).pop();
-                                    });
-                                  }
-                                });
-                              },
-                              child: Text(
-                                'SI',
-                              ),
-                            ),
-                            MaterialButton(
-                              elevation: 0,
-                              textColor: Colors.redAccent,
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('NO'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Text('CANCELLATI',
-                      style: const TextStyle(color: Colors.white)),
-                ),
-              ),
-              const SizedBox(width: 10),
+              // Flexible(
+              //   child: MaterialButton(
+              //     elevation: 2,
+              //     minWidth: double.infinity,
+              //     color: Colors.redAccent,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(50),
+              //     ),
+              //     onPressed: () {
+              //       showDialog(
+              //         context: context,
+              //         builder: (context) {
+              //           if (Platform.isAndroid) {
+              //             return AlertDialog(
+              //               title: Text('Annulla prenotazione'),
+              //               content: Text(
+              //                   'Sei sicuro di voler cancellare la prenotazione?'),
+              //               shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(20),
+              //               ),
+              //               actions: [
+              //                 TextButton(
+              //                   onPressed: () {
+              //                     Navigator.of(context).pop();
+              //                     showDialog(
+              //                         context: context,
+              //                         builder: (context) {
+              //                           return WillPopScope(
+              //                             onWillPop: () async => null,
+              //                             child: AlertDialog(
+              //                               shape: RoundedRectangleBorder(
+              //                                 borderRadius:
+              //                                     BorderRadius.circular(20),
+              //                               ),
+              //                               content: Row(
+              //                                 mainAxisAlignment:
+              //                                     MainAxisAlignment.spaceEvenly,
+              //                                 children: [
+              //                                   CircularProgressIndicator(
+              //                                     valueColor:
+              //                                         AlwaysStoppedAnimation<
+              //                                                 Color>(
+              //                                             Colors.redAccent),
+              //                                   ),
+              //                                   const SizedBox(width: 10),
+              //                                   Text('Aspetta un secondo...'),
+              //                                 ],
+              //                               ),
+              //                             ),
+              //                           );
+              //                         });
+              //                     Provider.cancellaAppello(internalHiddens)
+              //                         .then((value) {
+              //                       if (value != null && value) {
+              //                         Navigator.of(context).pop();
+              //                         showDialog(
+              //                           context: context,
+              //                           builder: (context) {
+              //                             return WillPopScope(
+              //                               onWillPop: () async => null,
+              //                               child: AlertDialog(
+              //                                 shape: RoundedRectangleBorder(
+              //                                   borderRadius:
+              //                                       BorderRadius.circular(20),
+              //                                 ),
+              //                                 content: Row(
+              //                                   mainAxisAlignment:
+              //                                       MainAxisAlignment
+              //                                           .spaceEvenly,
+              //                                   children: [
+              //                                     Icon(
+              //                                       Icons.check,
+              //                                       color: Colors.green,
+              //                                     ),
+              //                                     const SizedBox(width: 10),
+              //                                     Text(
+              //                                         'Prenotazione cancellata!'),
+              //                                   ],
+              //                                 ),
+              //                               ),
+              //                             );
+              //                           },
+              //                         );
+              //                         Future.delayed(Duration(seconds: 1), () {
+              //                           Navigator.of(context).pop();
+              //                           Navigator.of(context).pop();
+              //                         });
+              //                       } else {
+              //                         Navigator.of(context).pop();
+              //                         showDialog(
+              //                           context: context,
+              //                           builder: (context) {
+              //                             return WillPopScope(
+              //                               onWillPop: () async => null,
+              //                               child: AlertDialog(
+              //                                 shape: RoundedRectangleBorder(
+              //                                   borderRadius:
+              //                                       BorderRadius.circular(20),
+              //                                 ),
+              //                                 content: Row(
+              //                                   mainAxisAlignment:
+              //                                       MainAxisAlignment
+              //                                           .spaceEvenly,
+              //                                   children: [
+              //                                     Icon(
+              //                                       Icons.cancel,
+              //                                       color: Colors.redAccent,
+              //                                     ),
+              //                                     const SizedBox(width: 10),
+              //                                     Text('Errore cancellazione!'),
+              //                                   ],
+              //                                 ),
+              //                               ),
+              //                             );
+              //                           },
+              //                         );
+              //                         Future.delayed(Duration(seconds: 1), () {
+              //                           Navigator.of(context).pop();
+              //                         });
+              //                       }
+              //                     });
+              //                   },
+              //                   child: Text(
+              //                     'SI',
+              //                     style: TextStyle(
+              //                         color: darkModeOn
+              //                             ? Colors.white
+              //                             : Colors.black87),
+              //                   ),
+              //                 ),
+              //                 MaterialButton(
+              //                   elevation: 0,
+              //                   color: Colors.redAccent,
+              //                   shape: RoundedRectangleBorder(
+              //                     borderRadius: BorderRadius.circular(50),
+              //                   ),
+              //                   onPressed: () {
+              //                     Navigator.of(context).pop();
+              //                   },
+              //                   child: Text('NO',
+              //                       style: TextStyle(color: Colors.white)),
+              //                 ),
+              //               ],
+              //             );
+              //           }
+              //           return CupertinoAlertDialog(
+              //             title: Text('Annulla prenotazione'),
+              //             content: Text(
+              //                 'Sei sicuro di voler cancellare la prenotazione?'),
+              //             actions: [
+              //               TextButton(
+              //                 onPressed: () {
+              //                   Navigator.of(context).pop();
+              //                   showDialog(
+              //                       context: context,
+              //                       builder: (context) {
+              //                         return WillPopScope(
+              //                           onWillPop: () async => null,
+              //                           child: AlertDialog(
+              //                             content: Row(
+              //                               mainAxisAlignment:
+              //                                   MainAxisAlignment.spaceEvenly,
+              //                               children: [
+              //                                 CircularProgressIndicator(
+              //                                   valueColor:
+              //                                       AlwaysStoppedAnimation<
+              //                                               Color>(
+              //                                           Colors.redAccent),
+              //                                 ),
+              //                                 const SizedBox(width: 10),
+              //                                 Text('Aspetta un secondo...'),
+              //                               ],
+              //                             ),
+              //                           ),
+              //                         );
+              //                       });
+              //                   Provider.cancellaAppello(internalHiddens)
+              //                       .then((value) {
+              //                     if (value != null && value) {
+              //                       Navigator.of(context).pop();
+              //                       showDialog(
+              //                           context: context,
+              //                           builder: (context) {
+              //                             return WillPopScope(
+              //                               onWillPop: () async => null,
+              //                               child: AlertDialog(
+              //                                 content: Row(
+              //                                   mainAxisAlignment:
+              //                                       MainAxisAlignment
+              //                                           .spaceEvenly,
+              //                                   children: [
+              //                                     Icon(
+              //                                       Icons.check,
+              //                                       color: Colors.green,
+              //                                     ),
+              //                                     const SizedBox(width: 10),
+              //                                     Text(
+              //                                         'Prenotazione cancellata!'),
+              //                                   ],
+              //                                 ),
+              //                               ),
+              //                             );
+              //                           });
+              //                       Future.delayed(Duration(seconds: 1), () {
+              //                         Navigator.of(context).pop();
+              //                         Navigator.of(context).pop();
+              //                       });
+              //                     } else {
+              //                       Navigator.of(context).pop();
+              //                       showDialog(
+              //                         context: context,
+              //                         builder: (context) {
+              //                           return WillPopScope(
+              //                             onWillPop: () async => null,
+              //                             child: AlertDialog(
+              //                               content: Row(
+              //                                 mainAxisAlignment:
+              //                                     MainAxisAlignment.spaceEvenly,
+              //                                 children: [
+              //                                   Icon(
+              //                                     Icons.cancel,
+              //                                     color: Colors.redAccent,
+              //                                   ),
+              //                                   const SizedBox(width: 10),
+              //                                   Text('Errore cancellazione!'),
+              //                                 ],
+              //                               ),
+              //                             ),
+              //                           );
+              //                         },
+              //                       );
+              //                       Future.delayed(Duration(seconds: 1), () {
+              //                         Navigator.of(context).pop();
+              //                       });
+              //                     }
+              //                   });
+              //                 },
+              //                 child: Text(
+              //                   'SI',
+              //                 ),
+              //               ),
+              //               MaterialButton(
+              //                 elevation: 0,
+              //                 textColor: Colors.redAccent,
+              //                 onPressed: () {
+              //                   Navigator.of(context).pop();
+              //                 },
+              //                 child: Text('NO'),
+              //               ),
+              //             ],
+              //           );
+              //         },
+              //       );
+              //     },
+              //     child: Text('CANCELLATI',
+              //         style: const TextStyle(color: Colors.white)),
+              //   ),
+              // ),
+
+              // const SizedBox(width: 10),
               Flexible(
                 child: MaterialButton(
                   elevation: 3,
