@@ -13,7 +13,7 @@ class Constants {
     primaryColor: mainColorLighter,
     primaryColorLight: mainColorDarkLighter,
     disabledColor: buttonDisabled.withOpacity(0.3),
-    textTheme: TextTheme(),
+    textTheme: const TextTheme(),
   );
   //Light Theme
   static ThemeData lightTheme = ThemeData(
@@ -22,15 +22,20 @@ class Constants {
     primaryColor: mainColor,
     primaryColorLight: mainColorLighter,
     disabledColor: buttonDisabled,
-    textTheme: TextTheme(),
+    textTheme: const TextTheme(),
   );
   //Fonts
   static const TextStyle fontBold = TextStyle(fontWeight: FontWeight.bold);
-  static const TextStyle fontBold18 = TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
-  static const TextStyle fontBold20 = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-  static const TextStyle fontBold24 = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
-  static const TextStyle fontBold28 = TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
-  static const TextStyle fontBold32 = TextStyle(fontSize: 32, fontWeight: FontWeight.bold);
+  static const TextStyle fontBold18 =
+      TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
+  static const TextStyle fontBold20 =
+      TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
+  static const TextStyle fontBold24 =
+      TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
+  static const TextStyle fontBold28 =
+      TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
+  static const TextStyle fontBold32 =
+      TextStyle(fontSize: 32, fontWeight: FontWeight.bold);
   static const TextStyle font14 = TextStyle(fontSize: 14);
   static const TextStyle font16 = TextStyle(fontSize: 16);
   static const TextStyle font18 = TextStyle(fontSize: 18);
