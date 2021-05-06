@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'constants.dart';
-import 'package:flutter/material.dart';
 import 'screens/screens.dart';
 
 /// Metodo principale che avvia [Esse3].
@@ -14,10 +15,10 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   //Controllo se l'utente è loggato
   var prefs = await SharedPreferences.getInstance();
-  var version = prefs.getBool('1.2.0') ?? false;
+  var version = prefs.getBool('1.3.0') ?? false;
   if (!version) {
     await prefs.clear();
-    await prefs.setBool('1.2.0', true);
+    await prefs.setBool('1.3.0', true);
   }
   var status = prefs.getBool('isLoggedIn') ?? false;
   runApp(Esse3(logged: status));
