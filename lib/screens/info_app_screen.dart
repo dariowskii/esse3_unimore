@@ -8,31 +8,31 @@ class InfoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
-    var isTablet = deviceWidth > Constants.tabletWidth;
+    final isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Esse3'),
+        title: const Text('Esse3'),
         brightness: Brightness.light,
         centerTitle: true,
       ),
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         child: SingleChildScrollView(
           child: Padding(
             padding: isTablet
                 ? EdgeInsets.symmetric(
                     vertical: 32, horizontal: deviceWidth / 6)
-                : EdgeInsets.all(32),
+                : const EdgeInsets.all(32),
             child: Column(
-              children: <Widget>[
-                Text(
+              children: [
+                const Text(
                   'Esse3',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Text(
+                const Text(
                   'Unimore',
                   style: TextStyle(
                     fontSize: 48,
@@ -40,14 +40,14 @@ class InfoApp extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'App non (ancora) ufficiale',
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
+                  children: const [
                     Text(
                         "Quest'app estrapola i dati del sito https://esse3.unimore.it, per poterli vedere in maniera organizzata e pulita in un design moderno.\n\nL'app è stata sviluppata da uno stesso studente dell'ateneo UniMoRe, dopo tante sfide e problematiche che di certo non sono state facili da superare, ma alla fine siamo qua!\n\nEsse3 (Cineca) non mette a disposizione delle API per raccogliere facilmente i dati, perciò ne ho creata una ad hoc andando poi a manipolare e a gestire le stringhe.\n\n"),
                     Text(
@@ -68,7 +68,7 @@ class InfoApp extends StatelessWidget {
                 //TODO: Aggiornare versione!
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
+                  children: const [
                     Text(
                       'version: 1.3.0+36',
                       style: Constants.fontBold,
