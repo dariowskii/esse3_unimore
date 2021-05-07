@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 /// Classe contenente le costanti di stile dell'applicazione.
 class Constants {
-  //Var
+  // Variabili
   static const double tabletWidth = 650;
   static const double refreshDisplacement = 30;
   static const String _fontFamily = 'SF Pro';
-  //Dark Theme
+  // Dark Theme
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     fontFamily: _fontFamily,
@@ -15,7 +15,7 @@ class Constants {
     disabledColor: buttonDisabled.withOpacity(0.3),
     textTheme: const TextTheme(),
   );
-  //Light Theme
+  // Light Theme
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     fontFamily: _fontFamily,
@@ -24,7 +24,7 @@ class Constants {
     disabledColor: buttonDisabled,
     textTheme: const TextTheme(),
   );
-  //Fonts
+  // Fonts
   static const TextStyle fontBold = TextStyle(fontWeight: FontWeight.bold);
   static const TextStyle fontBold18 =
       TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
@@ -40,7 +40,7 @@ class Constants {
   static const TextStyle font16 = TextStyle(fontSize: 16);
   static const TextStyle font18 = TextStyle(fontSize: 18);
   static const TextStyle font20 = TextStyle(fontSize: 20);
-  //Colors
+  // Colors
   static const Color mainColorDarkLighter = Color(0xffFF7D38);
   static const Color mainColorLighter = Color(0xffFF600B);
   static const Color mainColor = Color(0xffFF5800);
@@ -48,4 +48,7 @@ class Constants {
   static const Color mainColorExtraDark = Color(0xffCC4700);
   static const Color buttonDisabled = Color(0xffEEEEEE);
   static const Color backgroundDark = Color(0xff323232);
+  // Widgets
+  static const SizedBox sized10H = SizedBox(height: 10);
+  static const SizedBox sized20H = SizedBox(height: 20);
 }
