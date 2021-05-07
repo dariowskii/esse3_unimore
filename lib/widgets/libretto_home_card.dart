@@ -1,6 +1,6 @@
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/utils/provider.dart';
-import 'package:Esse3/widgets/future_libretto.dart';
+import 'package:Esse3/widgets/libretto/future_libretto.dart';
 import 'package:flutter/material.dart';
 
 /// Card in cui è possibile richiedere le informazioni del libretto,
