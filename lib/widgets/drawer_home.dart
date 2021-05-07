@@ -17,8 +17,7 @@ class DrawerHome extends StatelessWidget {
   final Future<Map<String, dynamic>> userFuture;
 
   const DrawerHome({Key key, @required this.user, @required this.userFuture})
-      : assert(userFuture != null || user != null),
-        super(key: key);
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Drawer(
