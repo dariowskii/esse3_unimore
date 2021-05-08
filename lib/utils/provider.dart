@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
-import 'package:Esse3/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;

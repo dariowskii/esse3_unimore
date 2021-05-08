@@ -4,13 +4,9 @@ import 'dart:io';
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/utils/database.dart';
 import 'package:Esse3/utils/provider.dart';
-import 'package:Esse3/widgets/bottone_material_custom.dart';
-import 'package:Esse3/widgets/bottone_pagina_drawer.dart';
 import 'package:Esse3/widgets/chip_info.dart';
-import 'package:Esse3/widgets/drawer_header_home.dart';
 import 'package:Esse3/widgets/drawer_home.dart';
 import 'package:Esse3/widgets/error_home_data.dart';
-import 'package:Esse3/widgets/future_drawer_header_home.dart';
 import 'package:Esse3/widgets/libretto_home_card.dart';
 import 'package:Esse3/widgets/prossimi_appelli_card.dart';
 import 'package:Esse3/widgets/tasse_home_card.dart';
@@ -18,8 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'screens.dart';
 
 /// Home screen dell'app.
 class HomeScreen extends StatefulWidget {
