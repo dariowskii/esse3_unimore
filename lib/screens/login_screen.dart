@@ -1,5 +1,5 @@
 import 'package:Esse3/constants.dart';
-import 'package:Esse3/widgets/login_form.dart';
+import 'package:Esse3/widgets/login/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -9,11 +9,11 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var deviceWidth = MediaQuery.of(context).size.width;
-    var isTablet = deviceWidth > Constants.tabletWidth;
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final isTablet = deviceWidth > Constants.tabletWidth;
     return Stack(
       children: [
-        Scaffold(),
+        const Scaffold(),
         SvgPicture.asset(
           isTablet
               ? 'assets/img/backgroundLoginTablet.svg'
@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
               return Padding(
                 padding: isTablet
                     ? EdgeInsets.symmetric(horizontal: deviceWidth / 6)
-                    : EdgeInsets.all(32.0),
+                    : const EdgeInsets.all(32.0),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
