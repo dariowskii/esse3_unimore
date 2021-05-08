@@ -51,34 +51,8 @@ class FutureHomeScreen extends StatelessWidget {
                       : const EdgeInsets.symmetric(horizontal: 0),
                   child: Column(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 20),
-                        width: 100,
-                        height: 100,
-                        alignment: Alignment.center,
-                        child: Container(
-                          width: (animation.value as double) * 100,
-                          height: (animation.value as double) * 100,
-                          padding: const EdgeInsets.all(2.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12.withOpacity(
-                                    (animation.value as double) * 0.12),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                                spreadRadius: 3,
-                              )
-                            ],
-                          ),
-                          child: AnimatedAvatar(
-                            animation: animation,
-                            userData: userData.data,
-                          ),
-                        ),
-                      ),
+                      AnimatedAvatar(
+                          animation: animation, userData: userData.data),
                       Text(
                         userData.data['nome_studente'] as String,
                         style: Constants.fontBold28,

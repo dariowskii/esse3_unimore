@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/widgets/chip_info.dart';
+import 'package:Esse3/widgets/home/animated_avatar.dart';
 import 'package:Esse3/widgets/libretto_home_card.dart';
 import 'package:Esse3/widgets/prossimi_appelli_card.dart';
 import 'package:Esse3/widgets/tasse_home_card.dart';
@@ -30,48 +31,7 @@ class HomeScreenBuilder extends StatelessWidget {
               : const EdgeInsets.symmetric(horizontal: 0),
           child: Column(
             children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                alignment: Alignment.center,
-                width: 100,
-                height: 100,
-                child: Container(
-                  width: (animation.value as double) * 100,
-                  height: (animation.value as double) * 100,
-                  padding: const EdgeInsets.all(2.0),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12
-                            .withOpacity((animation.value as double) * 0.12),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                        spreadRadius: 3,
-                      )
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    backgroundColor: Constants.mainColorLighter,
-                    radius: (animation.value as double) * 50,
-                    backgroundImage: user['profile_pic'] == 'no'
-                        ? null
-                        : MemoryImage(
-                            base64Decode(user['profile_pic'] as String)),
-                    child: user['profile_pic'] == 'no'
-                        ? Text(
-                            user['text_avatar'] as String,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w100,
-                              fontSize: 40,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ),
-              ),
+              AnimatedAvatar(animation: animation, userData: user),
               Text(
                 user['nome'] as String,
                 style: Constants.fontBold28,
