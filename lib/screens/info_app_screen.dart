@@ -16,7 +16,7 @@ class InfoApp extends StatelessWidget {
         centerTitle: true,
       ),
       body: SizedBox(
-        width: double.infinity,
+        width: double.maxFinite,
         child: SingleChildScrollView(
           child: Padding(
             padding: isTablet
