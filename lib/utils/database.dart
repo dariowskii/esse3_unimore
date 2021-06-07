@@ -12,8 +12,7 @@ class DBProvider {
   Future<Database> get database async {
     if (_database != null) return _database;
 
-    _database = await _initDB();
-    return _database;
+    return _database = await _initDB();
   }
 
   /// Crea il [_database] con le eventuali regole SQL [batch].
@@ -38,10 +37,10 @@ class DBProvider {
 
   /// Inizializza il [_database].
   Future<Database> _initDB() async {
-    return await openDatabase(
+    return openDatabase(
       join(await getDatabasesPath(), 'esse3_unimore.db'),
       onCreate: (db, version) async {
-        var batch = db.batch();
+        final batch = db.batch();
         _createDB(batch);
         await batch.commit();
       },
@@ -54,7 +53,7 @@ class DBProvider {
   Future<int> newUser(Map newUser) async {
     final db = await database;
 
-    var res = await db.rawInsert('''
+    final res = await db.rawInsert('''
       INSERT INTO users (
         username, 
         nome_studente, 
@@ -89,7 +88,7 @@ class DBProvider {
   Future<int> updateUser(Map newUser) async {
     final db = await database;
 
-    var res = await db.rawUpdate('''
+    final res = await db.rawUpdate('''
       UPDATE users
       SET username = ?, 
         nome_studente = ?, 
@@ -124,7 +123,7 @@ class DBProvider {
   /// Ritorna un utente dal [_database].
   Future<Map<String, dynamic>> getUser(String username) async {
     final db = await database;
-    List<Map<String, dynamic>> res =
+    final List<Map<String, dynamic>> res =
         await db.rawQuery("SELECT * FROM 'users' WHERE username = $username");
 
     if (res.isEmpty) {
@@ -137,7 +136,7 @@ class DBProvider {
   /// Controlla se un utente esiste già nel [_database] grazie allo [username].
   Future<Map<String, dynamic>> checkExistUser(String username) async {
     final db = await database;
-    List<Map<String, dynamic>> res = await db
+    final List<Map<String, dynamic>> res = await db
         .rawQuery("SELECT username FROM 'users' WHERE username = $username");
 
     if (res.isEmpty) {

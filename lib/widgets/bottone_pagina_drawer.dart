@@ -24,21 +24,19 @@ class BottonePaginaDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icona != null
-                ? Icon(icona, color: textColor, size: 15)
-                : SizedBox.shrink(),
-            icona != null ? SizedBox(width: 10) : SizedBox.shrink(),
-            Text(
-              testoBottone,
-              textAlign: TextAlign.center,
-              style: Constants.fontBold.copyWith(color: textColor),
-            ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icona != null) ...[
+            Icon(icona, color: textColor, size: 15),
+            const SizedBox(width: 10),
           ],
-        ),
+          Text(
+            testoBottone,
+            textAlign: TextAlign.center,
+            style: Constants.fontBold.copyWith(color: textColor),
+          ),
+        ],
       ),
     );
   }

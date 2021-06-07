@@ -26,14 +26,13 @@ class CardAppelloImminente extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       width: isTablet ? 350 : deviceWidth - 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
-            offset: Offset.zero,
             blurRadius: 5,
             spreadRadius: 2,
           )
@@ -45,12 +44,12 @@ class CardAppelloImminente extends StatelessWidget {
         children: [
           Text(
             nomeAppello.length > 30
-                ? nomeAppello.substring(0, 28) + '...'
+                ? '${nomeAppello.substring(0, 28)}...'
                 : nomeAppello,
             style: Constants.fontBold20
                 .copyWith(color: Theme.of(context).primaryColorLight),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           RichText(
             text: TextSpan(
                 text: 'Data appello: ',
@@ -62,7 +61,7 @@ class CardAppelloImminente extends StatelessWidget {
                   TextSpan(text: dataAppello, style: Constants.fontBold18)
                 ]),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           RichText(
             text: TextSpan(
                 text: 'Descrizione: ',

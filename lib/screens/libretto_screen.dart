@@ -55,8 +55,8 @@ class LibrettoScreen extends StatelessWidget {
     final darkModeOn = Theme.of(context).brightness == Brightness.dark;
     final isTablet = deviceWidth > Constants.tabletWidth;
     _initGrafico();
-    final media = double.tryParse(libretto['media_pond'].toString());
-    _votoLaurea = media != null ? ((media * 110) / 30) : 0;
+    final mediaPonderata = libretto['media_pond'];
+    _votoLaurea = mediaPonderata is double ? ((mediaPonderata * 110) / 30) : 0;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Esse3'),
@@ -95,10 +95,8 @@ class LibrettoScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (libretto['media_pond'] == 'NaN')
-                    const SizedBox.shrink()
-                  else
-                    BadgeLibretto(libretto: libretto)
+                  if (libretto['media_pond'] != 'NaN')
+                    BadgeLibretto(mediaPonderata: mediaPonderata as double),
                 ],
               ),
               Padding(

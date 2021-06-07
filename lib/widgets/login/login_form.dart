@@ -165,40 +165,43 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
           const SizedBox(height: 20),
-          Column(
-            children: [
-              TextField(
-                enabled: !_isLoading,
-                controller: _userController,
-                maxLength: 15,
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: Constants.mainColor,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  counterText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+          Theme(
+            data: ThemeData(
+              focusColor: Constants.mainColor,
+            ),
+            child: Column(
+              children: [
+                TextField(
+                  enabled: !_isLoading,
+                  controller: _userController,
+                  maxLength: 15,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                    counterText: '',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
                   ),
+                  onSubmitted: (_) => _passFocus.requestFocus(),
                 ),
-                onSubmitted: (_) => _passFocus.requestFocus(),
-              ),
-              const SizedBox(height: 15),
-              TextField(
-                enabled: !_isLoading,
-                obscureText: true,
-                focusNode: _passFocus,
-                controller: _passController,
-                cursorColor: Constants.mainColor,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                const SizedBox(height: 15),
+                TextField(
+                  enabled: !_isLoading,
+                  obscureText: true,
+                  focusNode: _passFocus,
+                  controller: _passController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                    ),
                   ),
+                  onSubmitted: (_) => _login(),
                 ),
-                onSubmitted: (_) => _login(),
-              ),
-            ],
+              ],
+            ),
           ),
           Visibility(
               visible: _isLoading,

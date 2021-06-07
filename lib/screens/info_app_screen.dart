@@ -70,7 +70,7 @@ class InfoApp extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'version: 1.3.0+36',
+                      'version: 1.3.0+37',
                       style: Constants.fontBold,
                     ),
                   ],

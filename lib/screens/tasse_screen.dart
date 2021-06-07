@@ -42,11 +42,11 @@ class _TasseScreenState extends State<TasseScreen> {
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
-    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    var isTablet = deviceWidth > Constants.tabletWidth;
+    final darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    final isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Esse3'),
+        title: const Text('Esse3'),
         centerTitle: true,
         backgroundColor:
             darkModeOn ? Theme.of(context).cardColor : Colors.redAccent,
@@ -60,7 +60,7 @@ class _TasseScreenState extends State<TasseScreen> {
           });
         },
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           child: Container(
             constraints: BoxConstraints(minHeight: deviceHeight - 100),
             child: Column(
@@ -68,8 +68,8 @@ class _TasseScreenState extends State<TasseScreen> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(20)),
+                    borderRadius: const BorderRadius.vertical(
+                        bottom: Radius.circular(20)),
                     color: darkModeOn
                         ? Theme.of(context).cardColor
                         : Colors.redAccent,
@@ -101,8 +101,8 @@ class _TasseScreenState extends State<TasseScreen> {
                             ],
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.0),
                           child: Icon(Icons.attach_money, color: Colors.white),
                         )
                       ],
@@ -126,16 +126,15 @@ class _TasseScreenState extends State<TasseScreen> {
                       case ConnectionState.done:
                         if (tasse.hasData && tasse.data['success'] as bool) {
                           return Column(
-                            mainAxisSize: MainAxisSize.max,
                             children: [
                               ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 padding: isTablet
                                     ? EdgeInsets.symmetric(
                                         horizontal: deviceWidth / 6,
                                         vertical: 32)
-                                    : EdgeInsets.all(16),
+                                    : const EdgeInsets.all(16),
                                 cacheExtent: 20,
                                 itemCount: tasse.data['totali'] as int,
                                 itemBuilder: (ctx, index) {
@@ -158,12 +157,13 @@ class _TasseScreenState extends State<TasseScreen> {
                                         left: deviceWidth / 6,
                                         right: deviceWidth / 6,
                                         bottom: 32)
-                                    : EdgeInsets.only(
+                                    : const EdgeInsets.only(
                                         left: 32, bottom: 32, right: 32),
                                 child: Text(
                                   _citTasse[_rand.nextInt(_citTasse.length)],
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                  style: const TextStyle(
+                                      fontStyle: FontStyle.italic),
                                 ),
                               )
                             ],

@@ -26,7 +26,7 @@ class BottoneMaterialCustom extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       minWidth: minWidth,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(50)),
       ),
       height: height,

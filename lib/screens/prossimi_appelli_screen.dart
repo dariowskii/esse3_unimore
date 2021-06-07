@@ -35,11 +35,11 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
-    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    var isTablet = deviceWidth > Constants.tabletWidth;
+    final darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    final isTablet = deviceWidth > Constants.tabletWidth;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Esse3'),
+        title: const Text('Esse3'),
         centerTitle: true,
         backgroundColor: darkModeOn
             ? Theme.of(context).cardColor
@@ -56,7 +56,7 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
             });
           },
           child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             child: Container(
               constraints: BoxConstraints(minHeight: deviceHeight - 100),
               child: Column(
@@ -64,8 +64,8 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(20)),
+                      borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(20)),
                       color: darkModeOn
                           ? Theme.of(context).cardColor
                           : Constants.mainColorLighter,
@@ -110,48 +110,48 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                           if (appelli.data != null &&
                               (appelli.data['success'] as bool) &&
                               appelli.data['totali'] as int > 0) {
-                            var indexImminenti = [];
+                            final indexImminenti = [];
                             for (var i = 0;
                                 i < (appelli.data['totali'] as int);
                                 i++) {
-                              var dataOggi = DateTime.now();
-                              var dataEsame = DateTime.parse((appelli
+                              final dataOggi = DateTime.now();
+                              final dataEsame = DateTime.parse((appelli
                                           .data['data_appello'][i] as String)
                                       .substring(6) +
                                   (appelli.data['data_appello'][i] as String)
                                       .substring(3, 5) +
                                   (appelli.data['data_appello'][i] as String)
                                       .substring(0, 2));
-                              var diffTempo = dataEsame.difference(dataOggi);
+                              final diffTempo = dataEsame.difference(dataOggi);
                               if (diffTempo.inDays <= 20) {
                                 indexImminenti.add(
                                     {'index': i, 'data': dataEsame.toString()});
                               }
                             }
                             indexImminenti.sort((a, b) {
-                              var adate = a['data'] as String;
-                              var bdate = b['data'] as String;
+                              final adate = a['data'] as String;
+                              final bdate = b['data'] as String;
                               return adate.compareTo(bdate);
                             });
                             return Padding(
                               padding: isTablet
                                   ? EdgeInsets.symmetric(
                                       horizontal: deviceWidth / 6)
-                                  : EdgeInsets.all(0),
+                                  : const EdgeInsets.all(0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (indexImminenti.isNotEmpty) ...[
-                                    Padding(
+                                    const Padding(
                                       padding:
                                           EdgeInsets.only(left: 16.0, top: 16),
                                       child: Text('Appelli imminenti',
                                           style: Constants.fontBold24),
                                     ),
-                                    Container(
+                                    SizedBox(
                                       height: 170,
                                       child: ListView.builder(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               vertical: 15, horizontal: 16),
                                           cacheExtent: 10,
                                           shrinkWrap: true,
@@ -162,7 +162,8 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                               margin: index ==
                                                       indexImminenti.length - 1
                                                   ? null
-                                                  : EdgeInsets.only(right: 10),
+                                                  : const EdgeInsets.only(
+                                                      right: 10),
                                               child: CardAppelloImminente(
                                                 deviceWidth: deviceWidth,
                                                 isTablet: isTablet,
@@ -184,19 +185,19 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                     ),
                                   ],
                                   Padding(
-                                    padding: EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('Tutti gli appelli',
+                                        const Text('Tutti gli appelli',
                                             style: Constants.fontBold24),
                                         const SizedBox(height: 15),
                                         ListView.builder(
                                           shrinkWrap: true,
                                           cacheExtent: 30,
                                           physics:
-                                              NeverScrollableScrollPhysics(),
+                                              const NeverScrollableScrollPhysics(),
                                           itemCount:
                                               appelli.data['totali'] as int,
                                           itemBuilder: (context, index) {

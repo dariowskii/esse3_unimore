@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:Esse3/constants.dart';
-import 'package:Esse3/utils/provider.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,29 +30,28 @@ class CardAppelloPrenotato extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    var _nomeEsame = nomeEsame.split(' - ');
-    var numIsc = iscrizione.replaceFirst('Numero Iscrizione: ', '');
+    final darkModeOn = Theme.of(context).brightness == Brightness.dark;
+    final _nomeEsame = nomeEsame.split(' - ');
+    final numIsc = iscrizione.replaceFirst('Numero Iscrizione: ', '');
     final Map<String, dynamic> internalHiddens = {};
     formHiddens.forEach((key, value) {
       if (key.toString().startsWith(index.toString())) {
-        internalHiddens[
-            key.toString().replaceFirst(index.toString() + '_', '')] = value;
+        internalHiddens[key.toString().replaceFirst('${index}_', '')] = value;
       }
     });
     return Container(
-      margin: EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
         gradient: darkModeOn
             ? null
-            : LinearGradient(
+            : const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
                     Constants.mainColorDarker,
                     Constants.mainColorLighter
                   ]),
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: darkModeOn ? Theme.of(context).cardColor : null,
       ),
       width: double.infinity,
@@ -433,20 +429,20 @@ class CardAppelloPrenotato extends StatelessWidget {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   onPressed: () {
-                    var giornoEv = giorno.substring(0, 2);
-                    var mese = giorno.substring(3, 5);
-                    var anno = int.parse(giorno.substring(6));
+                    final giornoEv = giorno.substring(0, 2);
+                    final mese = giorno.substring(3, 5);
+                    final anno = int.parse(giorno.substring(6));
 
                     final event = Event(
                       title: 'Appello ${_nomeEsame[0]} - $giorno',
                       description: _nomeEsame[2],
                       location: 'Università di Modena e Reggio Emilia',
                       startDate: DateTime.parse('$anno-$mese-$giornoEv')
-                          .subtract(Duration(days: 3))
-                          .add(Duration(hours: 10)),
+                          .subtract(const Duration(days: 3))
+                          .add(const Duration(hours: 10)),
                       endDate: DateTime.parse('$anno-$mese-$giornoEv')
-                          .subtract(Duration(days: 3))
-                          .add(Duration(hours: 10)),
+                          .subtract(const Duration(days: 3))
+                          .add(const Duration(hours: 10)),
                       allDay: true,
                     );
 

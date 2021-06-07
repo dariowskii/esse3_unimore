@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:Esse3/constants.dart';
-import 'package:Esse3/screens/home_screen.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class _RichiediAltreInfo extends StatefulWidget {
   _RichiediAltreInfo(
       {Key key,
@@ -38,17 +36,17 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
               children: [
                 Row(
                   children: <Widget>[
-                    Icon(
+                    const Icon(
                       Icons.error,
                       color: Colors.redAccent,
                     ),
-                    SizedBox(width: 5),
-                    Text(
+                    const SizedBox(width: 5),
+                    const Text(
                       'Errore nel recuperare i dati!',
                     ),
                     Expanded(child: Container()),
                     IconButton(
-                        icon: Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh),
                         onPressed: () {
                           setState(() {
                             widget.altreInfo =
@@ -74,16 +72,16 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                               widget.dataAppello.substring(6) +
                                   widget.dataAppello.substring(3, 5) +
                                   widget.dataAppello.substring(0, 2))
-                          .subtract(Duration(days: 7))
-                          .add(Duration(hours: 10)),
+                          .subtract(const Duration(days: 7))
+                          .add(const Duration(hours: 10)),
                       endDate: DateTime.parse(widget.dataAppello.substring(6) +
                               widget.dataAppello.substring(3, 5) +
                               widget.dataAppello.substring(0, 2))
-                          .subtract(Duration(days: 6)),
+                          .subtract(const Duration(days: 6)),
                     );
                     Add2Calendar.addEvent2Cal(event);
                   },
-                  child: Text('IMPOSTA PROMEMORIA',
+                  child: const Text('IMPOSTA PROMEMORIA',
                       style: TextStyle(color: Colors.white)),
                 )
               ],
@@ -92,12 +90,12 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
           case ConnectionState.waiting:
             return Column(
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     CupertinoActivityIndicator(),
                     SizedBox(width: 10),
                     Text(
@@ -106,7 +104,7 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 MaterialButton(
@@ -126,16 +124,16 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                               widget.dataAppello.substring(6) +
                                   widget.dataAppello.substring(3, 5) +
                                   widget.dataAppello.substring(0, 2))
-                          .subtract(Duration(days: 7))
-                          .add(Duration(hours: 10)),
+                          .subtract(const Duration(days: 7))
+                          .add(const Duration(hours: 10)),
                       endDate: DateTime.parse(widget.dataAppello.substring(6) +
                               widget.dataAppello.substring(3, 5) +
                               widget.dataAppello.substring(0, 2))
-                          .subtract(Duration(days: 6)),
+                          .subtract(const Duration(days: 6)),
                     );
                     Add2Calendar.addEvent2Cal(event);
                   },
-                  child: Text('IMPOSTA PROMEMORIA',
+                  child: const Text('IMPOSTA PROMEMORIA',
                       style: TextStyle(color: Colors.white)),
                 )
               ],
@@ -143,7 +141,7 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
           case ConnectionState.done:
             if (altreInfo.data == null ||
                 !(altreInfo.data['success'] as bool)) {
-              return Text('Sembra non ci siano risultati...');
+              return const Text('Sembra non ci siano risultati...');
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +198,7 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Text(
@@ -208,7 +206,7 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                   style: Constants.fontBold,
                   textAlign: TextAlign.left,
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Row(
                   children: [
                     // if (altreInfo.data['tabellaHidden'] != null) ...[
@@ -260,20 +258,20 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                                     widget.dataAppello.substring(6) +
                                         widget.dataAppello.substring(3, 5) +
                                         widget.dataAppello.substring(0, 2))
-                                .subtract(Duration(days: 7))
-                                .add(Duration(hours: 10)),
+                                .subtract(const Duration(days: 7))
+                                .add(const Duration(hours: 10)),
                             endDate: DateTime.parse(
                                     widget.dataAppello.substring(6) +
                                         widget.dataAppello.substring(3, 5) +
                                         widget.dataAppello.substring(0, 2))
-                                .subtract(Duration(days: 6)),
+                                .subtract(const Duration(days: 6)),
                           );
                           Add2Calendar.addEvent2Cal(event);
                         },
                         child: altreInfo.data['tabellaHidden'] == null
-                            ? Text('IMPOSTA PROMEMORIA',
+                            ? const Text('IMPOSTA PROMEMORIA',
                                 style: TextStyle(color: Colors.white))
-                            : Text('PROMEMORIA',
+                            : const Text('PROMEMORIA',
                                 style: TextStyle(color: Colors.white)),
                       ),
                     ),
@@ -282,340 +280,340 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
               ],
             );
           default:
-            return Text('Errore interno');
+            return const Text('Errore interno');
         }
       },
     );
   }
 }
 
-class _PrenotaEsameAndroid extends StatelessWidget {
-  final Map<String, dynamic> altreInfo;
-  const _PrenotaEsameAndroid({
-    Key key,
-    this.altreInfo,
-  }) : super(key: key);
+// class _PrenotaEsameAndroid extends StatelessWidget {
+//   final Map<String, dynamic> altreInfo;
+//   const _PrenotaEsameAndroid({
+//     Key key,
+//     this.altreInfo,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      title: Text('Prenotazione appello'),
-      content: Text('Sei sicuro di volerti prenotare?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            showDialog(
-              context: context,
-              builder: (context) {
-                return WillPopScope(
-                  onWillPop: () async => null,
-                  child: AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Constants.mainColorLighter),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Attendi un secondo...',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-            Provider.prenotaAppello(altreInfo).then(
-              (result) {
-                if (result != null && result['success'] as bool) {
-                  Navigator.of(context).pop();
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return WillPopScope(
-                        onWillPop: () async => null,
-                        child: AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          content: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.check,
-                                color: Colors.green,
-                              ),
-                              const SizedBox(width: 10),
-                              Text('Prenotazione effettuata!'),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                  Future.delayed(Duration(seconds: 1), () {
-                    Navigator.of(context).pushNamed(HomeScreen.id);
-                  });
-                } else {
-                  Navigator.of(context).pop();
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return WillPopScope(
-                          onWillPop: () async => null,
-                          child: AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            content: Row(
-                              children: [
-                                Icon(
-                                  Icons.error,
-                                  color: Colors.redAccent,
-                                ),
-                                const SizedBox(width: 10),
-                                Text('Prenotazione non effettuata'),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                  Future.delayed(
-                    Duration(seconds: 1),
-                    () {
-                      Navigator.of(context).pop();
-                      if (result['error'] != null) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              scrollable: true,
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text(
-                                    'Ok',
-                                    style: TextStyle(
-                                        color: Theme.of(context).primaryColor),
-                                  ),
-                                ),
-                              ],
-                              title:
-                                  Text('Questo messaggio può presentarsi se:'),
-                              content: Text(
-                                result['error'] as String,
-                                textAlign: TextAlign.left,
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                  );
-                }
-              },
-            );
-          },
-          child: Text(
-            'SI',
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
-          ),
-        ),
-        MaterialButton(
-          color: Colors.redAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('NO'),
-        ),
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return AlertDialog(
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       title: Text('Prenotazione appello'),
+//       content: Text('Sei sicuro di volerti prenotare?'),
+//       actions: [
+//         TextButton(
+//           onPressed: () {
+//             Navigator.of(context).pop();
+//             showDialog(
+//               context: context,
+//               builder: (context) {
+//                 return WillPopScope(
+//                   onWillPop: () async => null,
+//                   child: AlertDialog(
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(20),
+//                     ),
+//                     content: Row(
+//                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                       children: [
+//                         CircularProgressIndicator(
+//                           valueColor: AlwaysStoppedAnimation<Color>(
+//                               Constants.mainColorLighter),
+//                         ),
+//                         const SizedBox(width: 10),
+//                         Text(
+//                           'Attendi un secondo...',
+//                           style: TextStyle(fontStyle: FontStyle.italic),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             );
+//             Provider.prenotaAppello(altreInfo).then(
+//               (result) {
+//                 if (result != null && result['success'] as bool) {
+//                   Navigator.of(context).pop();
+//                   showDialog(
+//                     context: context,
+//                     builder: (context) {
+//                       return WillPopScope(
+//                         onWillPop: () async => null,
+//                         child: AlertDialog(
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(20),
+//                           ),
+//                           content: Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                             children: [
+//                               Icon(
+//                                 Icons.check,
+//                                 color: Colors.green,
+//                               ),
+//                               const SizedBox(width: 10),
+//                               Text('Prenotazione effettuata!'),
+//                             ],
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   );
+//                   Future.delayed(Duration(seconds: 1), () {
+//                     Navigator.of(context).pushNamed(HomeScreen.id);
+//                   });
+//                 } else {
+//                   Navigator.of(context).pop();
+//                   showDialog(
+//                       context: context,
+//                       builder: (context) {
+//                         return WillPopScope(
+//                           onWillPop: () async => null,
+//                           child: AlertDialog(
+//                             shape: RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(20),
+//                             ),
+//                             content: Row(
+//                               children: [
+//                                 Icon(
+//                                   Icons.error,
+//                                   color: Colors.redAccent,
+//                                 ),
+//                                 const SizedBox(width: 10),
+//                                 Text('Prenotazione non effettuata'),
+//                               ],
+//                             ),
+//                           ),
+//                         );
+//                       });
+//                   Future.delayed(
+//                     Duration(seconds: 1),
+//                     () {
+//                       Navigator.of(context).pop();
+//                       if (result['error'] != null) {
+//                         showDialog(
+//                           context: context,
+//                           builder: (context) {
+//                             return AlertDialog(
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(20),
+//                               ),
+//                               scrollable: true,
+//                               actions: [
+//                                 TextButton(
+//                                   onPressed: () {
+//                                     Navigator.of(context).pop();
+//                                   },
+//                                   child: Text(
+//                                     'Ok',
+//                                     style: TextStyle(
+//                                         color: Theme.of(context).primaryColor),
+//                                   ),
+//                                 ),
+//                               ],
+//                               title:
+//                                   Text('Questo messaggio può presentarsi se:'),
+//                               content: Text(
+//                                 result['error'] as String,
+//                                 textAlign: TextAlign.left,
+//                               ),
+//                             );
+//                           },
+//                         );
+//                       }
+//                     },
+//                   );
+//                 }
+//               },
+//             );
+//           },
+//           child: Text(
+//             'SI',
+//             style:
+//                 TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
+//           ),
+//         ),
+//         MaterialButton(
+//           color: Colors.redAccent,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(50),
+//           ),
+//           onPressed: () {
+//             Navigator.of(context).pop();
+//           },
+//           child: Text('NO'),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
-class _PrenotaEsameIOS extends StatelessWidget {
-  final Map<String, dynamic> altreInfo;
-  const _PrenotaEsameIOS({
-    Key key,
-    this.altreInfo,
-  }) : super(key: key);
+// class _PrenotaEsameIOS extends StatelessWidget {
+//   final Map<String, dynamic> altreInfo;
+//   const _PrenotaEsameIOS({
+//     Key key,
+//     this.altreInfo,
+//   }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoAlertDialog(
-      title: Text(
-        'Prenotazione appello',
-        style: TextStyle(fontFamily: 'SF Pro'),
-      ),
-      content: Text(
-        'Sei sicuro di volerti prenotare?',
-        style: TextStyle(fontFamily: 'SF Pro'),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            NavigatorState navigatorState;
-            showDialog(
-              context: context,
-              builder: (ctx) {
-                navigatorState = Navigator.of(ctx);
-                return WillPopScope(
-                  onWillPop: () async => null,
-                  child: CupertinoAlertDialog(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CupertinoActivityIndicator(),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Attendi un secondo...',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-            Provider.prenotaAppello(altreInfo).then(
-              (result) {
-                if (result != null && result['success'] as bool) {
-                  navigatorState.pop();
-                  showDialog(
-                    context: context,
-                    builder: (ctx) {
-                      navigatorState = Navigator.of(ctx);
-                      return WillPopScope(
-                        onWillPop: () async => null,
-                        child: AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          content: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.check,
-                                color: Colors.green,
-                              ),
-                              const SizedBox(width: 10),
-                              Text('Prenotazione effettuata!'),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                  Future.delayed(Duration(seconds: 1), () {
-                    Navigator.of(context).pushNamed(HomeScreen.id);
-                  });
-                } else {
-                  navigatorState.pop();
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        navigatorState = Navigator.of(context);
-                        Future.delayed(
-                          Duration(seconds: 1),
-                          () {
-                            print('here');
-                            navigatorState.pop();
+//   @override
+//   Widget build(BuildContext context) {
+//     return CupertinoAlertDialog(
+//       title: Text(
+//         'Prenotazione appello',
+//         style: TextStyle(fontFamily: 'SF Pro'),
+//       ),
+//       content: Text(
+//         'Sei sicuro di volerti prenotare?',
+//         style: TextStyle(fontFamily: 'SF Pro'),
+//       ),
+//       actions: [
+//         TextButton(
+//           onPressed: () {
+//             Navigator.of(context).pop();
+//             NavigatorState navigatorState;
+//             showDialog(
+//               context: context,
+//               builder: (ctx) {
+//                 navigatorState = Navigator.of(ctx);
+//                 return WillPopScope(
+//                   onWillPop: () async => null,
+//                   child: CupertinoAlertDialog(
+//                     content: Row(
+//                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                       children: [
+//                         CupertinoActivityIndicator(),
+//                         const SizedBox(width: 10),
+//                         Text(
+//                           'Attendi un secondo...',
+//                           style: TextStyle(fontStyle: FontStyle.italic),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             );
+//             Provider.prenotaAppello(altreInfo).then(
+//               (result) {
+//                 if (result != null && result['success'] as bool) {
+//                   navigatorState.pop();
+//                   showDialog(
+//                     context: context,
+//                     builder: (ctx) {
+//                       navigatorState = Navigator.of(ctx);
+//                       return WillPopScope(
+//                         onWillPop: () async => null,
+//                         child: AlertDialog(
+//                           shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(20),
+//                           ),
+//                           content: Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                             children: [
+//                               Icon(
+//                                 Icons.check,
+//                                 color: Colors.green,
+//                               ),
+//                               const SizedBox(width: 10),
+//                               Text('Prenotazione effettuata!'),
+//                             ],
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   );
+//                   Future.delayed(Duration(seconds: 1), () {
+//                     Navigator.of(context).pushNamed(HomeScreen.id);
+//                   });
+//                 } else {
+//                   navigatorState.pop();
+//                   showDialog(
+//                       context: context,
+//                       builder: (context) {
+//                         navigatorState = Navigator.of(context);
+//                         Future.delayed(
+//                           Duration(seconds: 1),
+//                           () {
+//                             print('here');
+//                             navigatorState.pop();
 
-                            if (result['error'] != null) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    scrollable: true,
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          'Ok',
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .primaryColor),
-                                        ),
-                                      ),
-                                    ],
-                                    title: Text(
-                                        'Questo messaggio può presentarsi se:'),
-                                    content: Text(
-                                      result['error'] as String,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          },
-                        );
-                        return WillPopScope(
-                          onWillPop: () async => null,
-                          child: AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            content: Row(
-                              children: [
-                                Icon(
-                                  Icons.error,
-                                  color: Colors.redAccent,
-                                ),
-                                const SizedBox(width: 10),
-                                Text('Prenotazione non effettuata'),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                }
-              },
-            );
-          },
-          child: Text(
-            'Si',
-            style: Constants.font16,
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(
-            'No',
-            style: TextStyle(color: Colors.redAccent),
-          ),
-        ),
-      ],
-    );
-  }
-}
+//                             if (result['error'] != null) {
+//                               showDialog(
+//                                 context: context,
+//                                 builder: (context) {
+//                                   return AlertDialog(
+//                                     shape: RoundedRectangleBorder(
+//                                       borderRadius: BorderRadius.circular(20),
+//                                     ),
+//                                     scrollable: true,
+//                                     actions: [
+//                                       TextButton(
+//                                         onPressed: () {
+//                                           Navigator.of(context).pop();
+//                                         },
+//                                         child: Text(
+//                                           'Ok',
+//                                           style: TextStyle(
+//                                               color: Theme.of(context)
+//                                                   .primaryColor),
+//                                         ),
+//                                       ),
+//                                     ],
+//                                     title: Text(
+//                                         'Questo messaggio può presentarsi se:'),
+//                                     content: Text(
+//                                       result['error'] as String,
+//                                       textAlign: TextAlign.left,
+//                                     ),
+//                                   );
+//                                 },
+//                               );
+//                             }
+//                           },
+//                         );
+//                         return WillPopScope(
+//                           onWillPop: () async => null,
+//                           child: AlertDialog(
+//                             shape: RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(20),
+//                             ),
+//                             content: Row(
+//                               children: [
+//                                 Icon(
+//                                   Icons.error,
+//                                   color: Colors.redAccent,
+//                                 ),
+//                                 const SizedBox(width: 10),
+//                                 Text('Prenotazione non effettuata'),
+//                               ],
+//                             ),
+//                           ),
+//                         );
+//                       });
+//                 }
+//               },
+//             );
+//           },
+//           child: Text(
+//             'Si',
+//             style: Constants.font16,
+//           ),
+//         ),
+//         TextButton(
+//           onPressed: () {
+//             Navigator.of(context).pop();
+//           },
+//           child: Text(
+//             'No',
+//             style: TextStyle(color: Colors.redAccent),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 /// Card dell'appello con tutte le informazioni necessarie per prenotarsi,
 /// utilizzata in [ProssimiAppelliScreen].
@@ -650,15 +648,14 @@ class _CardAppelloState extends State<CardAppello> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black12,
-            offset: Offset.zero,
             blurRadius: 5,
             spreadRadius: 2,
           ),
@@ -673,7 +670,7 @@ class _CardAppelloState extends State<CardAppello> {
             style: Constants.fontBold20
                 .copyWith(color: Theme.of(context).primaryColorLight),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           RichText(
             text: TextSpan(
               text: 'Data appello: ',
@@ -686,7 +683,7 @@ class _CardAppelloState extends State<CardAppello> {
               ],
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           RichText(
             text: TextSpan(
               text: 'Descrizione: ',
@@ -724,7 +721,7 @@ class _CardAppelloState extends State<CardAppello> {
               ],
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           if (_isRequestedAltreInfo)
             _RichiediAltreInfo(
               altreInfo: _altreInfo,
@@ -734,11 +731,11 @@ class _CardAppelloState extends State<CardAppello> {
               descrizione: widget.descrizione,
             )
           else
-            SizedBox.shrink(),
+            const SizedBox.shrink(),
           Column(
             children: [
               if (_isRequestedAltreInfo)
-                SizedBox.shrink()
+                const SizedBox.shrink()
               else
                 MaterialButton(
                   onPressed: () {
@@ -752,7 +749,7 @@ class _CardAppelloState extends State<CardAppello> {
                           color: Theme.of(context).primaryColorLight)),
                 ),
               if (_isRequestedAltreInfo)
-                SizedBox.shrink()
+                const SizedBox.shrink()
               else
                 MaterialButton(
                   minWidth: double.infinity,
@@ -771,16 +768,16 @@ class _CardAppelloState extends State<CardAppello> {
                               widget.dataAppello.substring(6) +
                                   widget.dataAppello.substring(3, 5) +
                                   widget.dataAppello.substring(0, 2))
-                          .subtract(Duration(days: 7))
-                          .add(Duration(hours: 10)),
+                          .subtract(const Duration(days: 7))
+                          .add(const Duration(hours: 10)),
                       endDate: DateTime.parse(widget.dataAppello.substring(6) +
                               widget.dataAppello.substring(3, 5) +
                               widget.dataAppello.substring(0, 2))
-                          .subtract(Duration(days: 6)),
+                          .subtract(const Duration(days: 6)),
                     );
                     Add2Calendar.addEvent2Cal(event);
                   },
-                  child: Text('IMPOSTA PROMEMORIA',
+                  child: const Text('IMPOSTA PROMEMORIA',
                       style: TextStyle(color: Colors.white)),
                 ),
             ],

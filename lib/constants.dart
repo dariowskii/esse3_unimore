@@ -13,7 +13,10 @@ class Constants {
     primaryColor: mainColorLighter,
     primaryColorLight: mainColorDarkLighter,
     disabledColor: buttonDisabled.withOpacity(0.3),
-    textTheme: const TextTheme(),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: Constants.mainColorLighter,
+    ),
+    // textTheme: const TextTheme(),
   );
   // Light Theme
   static ThemeData lightTheme = ThemeData(
@@ -22,7 +25,10 @@ class Constants {
     primaryColor: mainColor,
     primaryColorLight: mainColorLighter,
     disabledColor: buttonDisabled,
-    textTheme: const TextTheme(),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: Constants.mainColor,
+    ),
+    // textTheme: const TextTheme(),
   );
   // Fonts
   static const TextStyle fontBold = TextStyle(fontWeight: FontWeight.bold);

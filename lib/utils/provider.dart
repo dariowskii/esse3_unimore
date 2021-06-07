@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:html/dom.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -149,18 +149,14 @@ class Provider {
   /// Serve ad ottenere le prime informazioni iniziali della home.
   static Future<Map<String, dynamic>> getSession(
       String username, String password) async {
-    Map<String, dynamic> mapSession = {};
+    final Map<String, dynamic> mapSession = {};
     //Ottengo il cookie di sessione per la request
     final client = http.Client();
-    var requestUrl = _urlLoginEsse3;
-    //Ottengo la response
-    http.Response homeResponse;
+    const requestUrl = _urlLoginEsse3;
     try {
       var customRequest = http.Request('HEAD', Uri.parse(requestUrl));
       customRequest.followRedirects = false;
       var streamedResponse = await client.send(customRequest);
-      final shibStateCookie =
-          streamedResponse.headers['set-cookie'].toString().split(';')[0];
       final location = streamedResponse.headers['location'];
       customRequest = http.Request('HEAD', Uri.parse(location));
       streamedResponse = await client.send(customRequest);
@@ -171,7 +167,7 @@ class Provider {
       streamedResponse = await client.send(customRequest);
 
       // Mando la POST
-      var documentIdp =
+      final documentIdp =
           parser.parse(await streamedResponse.stream.bytesToString());
       final formAction = documentIdp.querySelector('form').attributes['action'];
       final newRequestUrl = 'https://idp.unimore.it$formAction';
@@ -184,7 +180,7 @@ class Provider {
           'j_username=$username&j_password=$password&_eventId_proceed=';
       final responsePost = await client.send(customRequest);
 
-      var documentLogin =
+      final documentLogin =
           parser.parse(await responsePost.stream.bytesToString());
       final relayState = documentLogin
           .querySelector('input[name="RelayState"]')
@@ -227,7 +223,7 @@ class Provider {
     return mapSession;
   }
 
-  static Future<String> _getProfilePic(Document document) async {
+  static Future<String> _getProfilePic(dom.Document document) async {
     String photoBase64 = '';
     final fotoUrl =
         document.querySelector('img[alt="Foto Utente"]').attributes['src'];
@@ -422,16 +418,18 @@ class Provider {
     try {
       if (boxMedie != null) {
         mapLibretto['media_arit'] = boxMedie.children[0].children[0].innerHtml
-            .split('&nbsp;​')[1]
-            .replaceAll(' / 30', '');
+            .split('&nbsp;')[1]
+            .replaceFirst(' / 30', '')
+            .substring(1);
         mapLibretto['media_pond'] = boxMedie.children[0].children[1].innerHtml
-            .split('&nbsp;​')[1]
-            .replaceAll(' / 30', '');
+            .split('&nbsp;')[1]
+            .replaceFirst(' / 30', '')
+            .substring(1);
         mapLibretto['media_arit'] =
-            double.tryParse(mapLibretto['media_arit'].toString()) ??
+            double.tryParse(mapLibretto['media_arit'] as String) ??
                 mapLibretto['media_arit'];
         mapLibretto['media_pond'] =
-            double.tryParse(mapLibretto['media_pond'].toString()) ??
+            double.tryParse(mapLibretto['media_pond'] as String) ??
                 mapLibretto['media_pond'];
       } else {
         mapLibretto['media_arit'] = 'NaN';
@@ -509,17 +507,17 @@ class Provider {
 
     final Map<String, dynamic> mapTasse = {};
 
-    var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
+    final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     //Tasse
     var requestUrl =
         'https://www.esse3.unimore.it/auth/studente/Tasse/ListaFatture.do;menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      var idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
-    var response;
+    http.Response response;
     try {
       response = await http.get(
         Uri.parse(requestUrl),
@@ -541,7 +539,7 @@ class Provider {
       return mapTasse;
     }
 
-    var document = parser.parse(response.body);
+    final document = parser.parse(response.body);
 
     var tableTasse = document.querySelector('#tasse-tableFatt');
     if (tableTasse == null) {
@@ -555,7 +553,7 @@ class Provider {
       mapTasse['error'] = '.table-1-body = null';
       return mapTasse;
     }
-    var lenghtTasse = tableTasse.children.length;
+    final lenghtTasse = tableTasse.children.length;
 
     mapTasse['importi'] = {};
     mapTasse['scadenza'] = {};
@@ -573,7 +571,7 @@ class Provider {
             .substring(2);
         mapTasse['scadenza'][i] = tableTasse.children[i].children[4].innerHtml;
         mapTasse['importi'][i] = tableTasse.children[i].children[5].innerHtml;
-        var buff = tableTasse.children[i].children[6].innerHtml;
+        final buff = tableTasse.children[i].children[6].innerHtml;
         if (buff.contains('non')) {
           mapTasse['stato_pagamento'][i] = 'NON PAGATO';
           mapTasse['da_pagare']++;
@@ -604,15 +602,17 @@ class Provider {
 
     final Map<String, dynamic> mapAppelli = {};
 
-    var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
+    final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     var requestUrl =
         'https://www.esse3.unimore.it/auth/studente/Appelli/AppelliF.do;&menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      var idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
+    // ignore: prefer_typing_uninitialized_variables
+    // ignore: prefer_typing_uninitialized_variables
     var response;
     try {
       response = await http.get(
@@ -636,8 +636,8 @@ class Provider {
       return mapAppelli;
     }
 
-    var document = parser.parse(response.body);
-    var tableAppelli = document.querySelector('tbody.table-1-body');
+    final document = parser.parse(response.body);
+    final tableAppelli = document.querySelector('tbody.table-1-body');
 
     if (tableAppelli == null) {
       mapAppelli['success'] = true;
@@ -646,7 +646,7 @@ class Provider {
       return mapAppelli;
     }
 
-    var lenghtAppelli = tableAppelli.children.length;
+    final lenghtAppelli = tableAppelli.children.length;
     mapAppelli['totali'] = lenghtAppelli;
 
     mapAppelli['materia'] = {};
@@ -691,8 +691,9 @@ class Provider {
 
     final Map<String, dynamic> mapInfoAppello = {};
 
-    var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
+    final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
+    // ignore: parameter_assignments
     urlInfo = urlInfo.replaceAll(
         'auth/studente/Appelli/DatiPrenotazioneAppello.do?', '');
 
@@ -701,10 +702,10 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Appelli/DatiPrenotazioneAppello.do;?$urlInfo';
 
     if (isSceltaCarriera) {
-      var idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
-    var response;
+    http.Response response;
     try {
       response = await http.get(
         Uri.parse(requestUrl),
@@ -718,7 +719,6 @@ class Provider {
       mapInfoAppello['error'] = e;
       return mapInfoAppello;
     }
-    ;
 
     mapInfoAppello['success'] = response.statusCode == 200;
     if (!(mapInfoAppello['success'] as bool)) {
@@ -727,11 +727,11 @@ class Provider {
       return mapInfoAppello;
     }
 
-    var document = parser.parse(response.body);
+    final document = parser.parse(response.body);
 
-    var tableAppello;
-    var tabellaTurni;
-    var tabellaHidden;
+    dom.Element tableAppello;
+    dom.Element tabellaTurni;
+    dom.Element tabellaHidden;
 
     try {
       tableAppello = document.querySelector('#app-box_dati_pren');
@@ -746,7 +746,7 @@ class Provider {
     }
 
     mapInfoAppello['tabellaHidden'] = true;
-    var lunghezzaHidden = tabellaHidden.children.length as int;
+    final lunghezzaHidden = tabellaHidden.children.length;
     mapInfoAppello['lunghezzaHidden'] = lunghezzaHidden;
     mapInfoAppello['hiddens_name'] = {};
     mapInfoAppello['hiddens_value'] = {};
@@ -792,7 +792,7 @@ class Provider {
     if (_shibSessionCookie.isEmpty) {
       await getSession(username, password);
     }
-    var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
+    final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     final Map<String, dynamic> mapPrenotati = {};
 
@@ -800,11 +800,11 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Appelli/BachecaPrenotazioni.do;?menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      var idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
 
-    var response;
+    http.Response response;
     try {
       response = await http.get(
         Uri.parse(requestUrl),
@@ -818,7 +818,6 @@ class Provider {
       mapPrenotati['error'] = e;
       return mapPrenotati;
     }
-    ;
 
     mapPrenotati['success'] = response.statusCode == 200;
     if (!(mapPrenotati['success'] as bool)) {
@@ -826,9 +825,9 @@ class Provider {
       return mapPrenotati;
     }
 
-    var document = parser.parse(response.body);
+    final document = parser.parse(response.body);
 
-    var divPrenotati = document.querySelector('#esse3old');
+    final divPrenotati = document.querySelector('#esse3old');
 
     if (divPrenotati == null) {
       mapPrenotati['success'] = false;
@@ -836,14 +835,14 @@ class Provider {
       return mapPrenotati;
     }
 
-    var arrayPrenotati = divPrenotati.querySelectorAll('table.detail_table');
+    final arrayPrenotati = divPrenotati.querySelectorAll('table.detail_table');
 
     if (arrayPrenotati == null) {
       mapPrenotati['totali'] = 0;
       return mapPrenotati;
     }
 
-    var lengthPrenotati = arrayPrenotati.length;
+    final lengthPrenotati = arrayPrenotati.length;
     mapPrenotati['totali'] = 0;
     mapPrenotati['esame'] = {};
     mapPrenotati['iscrizione'] = {};
@@ -855,7 +854,7 @@ class Provider {
 
     try {
       for (var i = 0; i < lengthPrenotati; i++) {
-        var tablePrenotazione = arrayPrenotati[i].children[0];
+        final tablePrenotazione = arrayPrenotati[i].children[0];
         if (tablePrenotazione == null ||
             tablePrenotazione.children.length < 2) {
           break;
@@ -874,23 +873,21 @@ class Provider {
         mapPrenotati['ora'][mapPrenotati['totali']] =
             tablePrenotazione.children[6].children[1].text;
         mapPrenotati['docente'][mapPrenotati['totali']] =
-            tablePrenotazione.children[6].children[6].text;
+            tablePrenotazione.children[6].children[7].text;
 
-        var lenHiddens = tablePrenotazione
-            .children[6].children[7].children[0].children.length;
+        final lenHiddens = tablePrenotazione
+            .children[6].children[9].children[0].children.length;
         mapPrenotati['lenHiddens'] = lenHiddens - 1;
-        var hiddens = tablePrenotazione.children[6].children[7].children[0];
+        final hiddens = tablePrenotazione.children[6].children[9].children[0];
         for (var j = 1; j < lenHiddens; j++) {
-          var key = mapPrenotati['totali'].toString() +
-              '_' +
-              hiddens.children[j].attributes['name'].toString();
+          final key =
+              '${mapPrenotati['totali']}_${hiddens.children[j].attributes['name']}';
           mapPrenotati['formHiddens'][key] =
               hiddens.children[j].attributes['value'];
         }
         mapPrenotati['totali']++;
       }
     } catch (e) {
-      print(e);
       mapPrenotati['success'] = false;
       mapPrenotati['error'] = e;
       return mapPrenotati;
@@ -911,17 +908,17 @@ class Provider {
 
     final Map<String, dynamic> mapHiddens = {};
 
-    var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
+    final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     var requestUrl =
         'https://www.esse3.unimore.it/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;TIPO_ATTIVITA=1';
 
     if (isSceltaCarriera) {
-      var idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
 
-    var lunghezzaHidden = infoAppello['lunghezzaHidden'] as int;
+    final lunghezzaHidden = infoAppello['lunghezzaHidden'] as int;
 
     for (var i = 0; i < lunghezzaHidden; i++) {
       mapHiddens[infoAppello['hiddens_name'][i] as String] =
@@ -954,7 +951,7 @@ class Provider {
             location.substring(0, location.lastIndexOf('TIPO_ATTIVITA=1'));
       }
 
-      var responseAppello;
+      http.Response responseAppello;
       try {
         responseAppello = await http.post(
           Uri.parse(location),
@@ -964,7 +961,6 @@ class Provider {
           },
         );
       } catch (e) {
-        print('error: $e');
         mapHiddens['success'] = false;
         mapHiddens['error'] = e;
         return mapHiddens;
@@ -1024,7 +1020,7 @@ class Provider {
 
     final client = http.Client();
 
-    var isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
+    final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     var requestUrl =
         'https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;$_jSessionId';
@@ -1039,7 +1035,7 @@ class Provider {
     infoAppello['imageField.x'] = '21';
     infoAppello['imageField.y'] = '8';
 
-    var customRequest = http.Request('POST', Uri.parse(requestUrl));
+    final customRequest = http.Request('POST', Uri.parse(requestUrl));
     customRequest.followRedirects = false;
 
     customRequest.headers['cookie'] = '$_shibSessionCookie, $_jSessionId';
@@ -1054,7 +1050,7 @@ class Provider {
     }
 
     if (response.statusCode == 302) {
-      var response2;
+      http.Response response2;
       try {
         response2 = await http.post(
           Uri.parse(requestUrl),
@@ -1068,14 +1064,14 @@ class Provider {
         return false;
       }
 
-      var document = parser.parse(response2.body);
+      final document = parser.parse(response2.body);
       var formHiddens = document.querySelector('#esse3old');
       if (formHiddens == null) return false;
 
       formHiddens = formHiddens.querySelector('form').children[0];
 
-      var newBodyRequest = {};
-      var lenBody = formHiddens.children.length - 1;
+      final newBodyRequest = {};
+      final lenBody = formHiddens.children.length - 1;
 
       try {
         for (var i = 0; i < lenBody; i++) {
@@ -1094,7 +1090,7 @@ class Provider {
         requestUrl = requestUrl + idStud;
       }
 
-      var finalResponse;
+      http.Response finalResponse;
       try {
         finalResponse = await http.post(
           Uri.parse(requestUrl),
@@ -1110,14 +1106,14 @@ class Provider {
 
       return finalResponse.statusCode == 302;
     } else if (response.statusCode == 200) {
-      var document = parser.parse(response.stream.bytesToString());
+      final document = parser.parse(response.stream.bytesToString());
       var formHiddens = document.querySelector('#esse3old');
       if (formHiddens == null) return false;
 
       formHiddens = formHiddens.querySelector('form').children[0];
 
-      var newBodyRequest = {};
-      var lenBody = formHiddens.children.length - 1;
+      final newBodyRequest = {};
+      final lenBody = formHiddens.children.length - 1;
 
       try {
         for (var i = 0; i < lenBody; i++) {
@@ -1135,7 +1131,7 @@ class Provider {
         requestUrl = requestUrl + idStud;
       }
 
-      var finalResponse;
+      http.Response finalResponse;
       try {
         finalResponse = await http.post(
           Uri.parse(requestUrl),

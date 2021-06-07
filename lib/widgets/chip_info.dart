@@ -8,7 +8,7 @@ class ChipInfo extends StatelessWidget {
   /// Grandezza del font della chip.
   final double textSize;
 
-  ChipInfo({this.text = 'null', this.textSize = 14});
+  const ChipInfo({this.text = 'null', this.textSize = 14});
 
   @override
   Widget build(BuildContext context) {
