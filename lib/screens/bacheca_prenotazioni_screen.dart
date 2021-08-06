@@ -18,7 +18,7 @@ class BachecaPrenotazioniScreen extends StatefulWidget {
 
 class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
   /// Future degli appelli per il [FutureBuilder].
-  Future<Map> _appelli;
+  Future<Map<String, dynamic>> _appelli;
 
   @override
   void initState() {
@@ -48,10 +48,10 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
         title: const Text('Esse3'),
         centerTitle: true,
       ),
-      body: FutureBuilder(
+      body: FutureBuilder<Map<String, dynamic>>(
         future: _appelli,
-        builder: (context, appello) {
-          switch (appello.connectionState) {
+        builder: (context, appelli) {
+          switch (appelli.connectionState) {
             case ConnectionState.none:
               return ReloadAppelli(
                 deviceWidth: deviceWidth,
@@ -63,20 +63,21 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
             case ConnectionState.active:
             case ConnectionState.done:
               //In caso di risposta nulla..
-              if (appello.data == null) {
+              if (appelli.data == null) {
                 return ReloadAppelli(
                   deviceWidth: deviceWidth,
                   deviceHeight: deviceHeight,
                   onReload: _refreshBacheca,
                 );
               }
-              if (appello.data['success'] as bool) {
+              if (appelli.data['success'] as bool) {
                 //In caso non ci siano appelli
-                if (appello.data['totali'] == 0) {
+                if (appelli.data['totali'] == 0) {
                   return RicaricaBachecaPrenotazioni(
                       refreshBacheca: _refreshBacheca, svgAsset: _svgAsset);
                 }
                 //In caso ci siano appelli...
+                final appello = appelli.data;
                 return LiquidPullToRefresh(
                   animSpeedFactor: 1.5,
                   height: 80,
@@ -103,17 +104,24 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                                   horizontal: deviceWidth / 6)
                               : null,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: appello.data['totali'] as int,
+                          itemCount: appello['totali'] as int,
                           itemBuilder: (context, index) {
                             return CardAppelloPrenotato(
-                              nomeEsame: appello.data['esame'][index] as String,
-                              iscrizione:
-                                  appello.data['iscrizione'][index] as String,
-                              giorno: appello.data['giorno'][index] as String,
-                              ora: appello.data['ora'][index] as String,
-                              docente: appello.data['docente'][index] as String,
-                              formHiddens: appello.data['formHiddens'] as Map,
-                              index: index,
+                              nomeEsame:
+                                  (appello['esame'] as List<String>)[index],
+                              iscrizione: (appello['iscrizione']
+                                  as List<String>)[index],
+                              giorno:
+                                  (appello['giorno'] as List<String>)[index],
+                              ora: (appello['ora'] as List<String>)[index],
+                              docente:
+                                  (appello['docente'] as List<String>)[index],
+                              linkCancellazione: (appello['linkCancellazione']
+                                  as List<String>)[index],
+                              tipoEsame: (appello['tipo_esame']
+                                  as List<String>)[index],
+                              svolgimento: (appello['svolgimento']
+                                  as List<String>)[index],
                               darkModeOn: darkModeOn,
                               isTablet: isTablet,
                             );

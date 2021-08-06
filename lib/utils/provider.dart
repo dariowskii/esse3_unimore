@@ -827,15 +827,16 @@ class Provider {
 
     final document = parser.parse(response.body);
 
-    final divPrenotati = document.querySelector('#esse3old');
+    final divPrenotati = document.querySelector('#esse3');
 
     if (divPrenotati == null) {
       mapPrenotati['success'] = false;
-      mapPrenotati['error'] = 'div#esse3old not found';
+      mapPrenotati['error'] = 'div#esse3 not found';
       return mapPrenotati;
     }
 
-    final arrayPrenotati = divPrenotati.querySelectorAll('table.detail_table');
+    final arrayPrenotati = divPrenotati.querySelectorAll('#boxPrenotazione');
+    final arrayAzioni = divPrenotati.querySelectorAll('#toolbarAzioni');
 
     if (arrayPrenotati == null) {
       mapPrenotati['totali'] = 0;
@@ -844,47 +845,77 @@ class Provider {
 
     final lengthPrenotati = arrayPrenotati.length;
     mapPrenotati['totali'] = 0;
-    mapPrenotati['esame'] = {};
-    mapPrenotati['iscrizione'] = {};
-    mapPrenotati['tipo_esame'] = {};
-    mapPrenotati['giorno'] = {};
-    mapPrenotati['ora'] = {};
-    mapPrenotati['docente'] = {};
-    mapPrenotati['formHiddens'] = {};
+    mapPrenotati['esame'] = <String>[];
+    mapPrenotati['iscrizione'] = <String>[];
+    mapPrenotati['tipo_esame'] = <String>[];
+    mapPrenotati['svolgimento'] = <String>[];
+    mapPrenotati['giorno'] = <String>[];
+    mapPrenotati['ora'] = <String>[];
+    mapPrenotati['docente'] = <String>[];
+    mapPrenotati['linkCancellazione'] = <String>[];
 
     try {
-      for (var i = 0; i < lengthPrenotati; i++) {
-        final tablePrenotazione = arrayPrenotati[i].children[0];
-        if (tablePrenotazione == null ||
-            tablePrenotazione.children.length < 2) {
+      for (int i = 0; i < lengthPrenotati; i++) {
+        final nomeEsame = arrayPrenotati[i].querySelector('h2.record-h2').text;
+        mapPrenotati['esame'].add(nomeEsame);
+
+        final dataEsame = arrayPrenotati[i]
+            .querySelector('dt.app-box_dati_data_esame')
+            .innerHtml
+            .split('&nbsp;');
+
+        final data = dataEsame[0];
+        final ora = dataEsame[1].trim();
+
+        mapPrenotati['giorno'].add(data);
+        mapPrenotati['ora'].add(ora);
+
+        final tablePrenotazione =
+            arrayPrenotati[i].querySelector('dl.record-riga');
+
+        if (tablePrenotazione == null) {
           break;
         }
 
-        mapPrenotati['esame'][mapPrenotati['totali']] =
-            tablePrenotazione.children[0].children[0].text;
-        mapPrenotati['iscrizione'][mapPrenotati['totali']] =
-            tablePrenotazione.children[2].children[0].text;
+        final arrayInfo = tablePrenotazione.querySelectorAll('dd');
+        arrayInfo.removeAt(0);
 
-        mapPrenotati['tipo_esame'][mapPrenotati['totali']] =
-            tablePrenotazione.children[3].children[0].text;
+        final numeroIscrizione = arrayInfo[2]
+            .innerHtml
+            .replaceFirst('&nbsp;', '')
+            .trim()
+            .replaceFirst('<br>', '');
+        mapPrenotati['iscrizione'].add(numeroIscrizione);
 
-        mapPrenotati['giorno'][mapPrenotati['totali']] =
-            tablePrenotazione.children[6].children[0].text;
-        mapPrenotati['ora'][mapPrenotati['totali']] =
-            tablePrenotazione.children[6].children[1].text;
-        mapPrenotati['docente'][mapPrenotati['totali']] =
-            tablePrenotazione.children[6].children[7].text;
+        final tipoEsame = arrayInfo[3].innerHtml.split('&nbsp;')[0];
+        mapPrenotati['tipo_esame'].add(tipoEsame);
 
-        final lenHiddens = tablePrenotazione
-            .children[6].children[9].children[0].children.length;
-        mapPrenotati['lenHiddens'] = lenHiddens - 1;
-        final hiddens = tablePrenotazione.children[6].children[9].children[0];
-        for (var j = 1; j < lenHiddens; j++) {
-          final key =
-              '${mapPrenotati['totali']}_${hiddens.children[j].attributes['name']}';
-          mapPrenotati['formHiddens'][key] =
-              hiddens.children[j].attributes['value'];
+        final svolgimento = arrayInfo[4]
+            .innerHtml
+            .replaceFirst('&nbsp;', '')
+            .trim()
+            .replaceFirst('<br>', '');
+        mapPrenotati['svolgimento'].add(svolgimento);
+
+        final docenti = arrayInfo[10].innerHtml.split('<br>');
+        docenti.removeLast();
+
+        var nomeDocentiComposto = "";
+
+        docenti.forEach((docente) {
+          nomeDocentiComposto += "${docente.replaceFirst('&nbsp;', '')}, ";
+        });
+        nomeDocentiComposto =
+            nomeDocentiComposto.substring(0, nomeDocentiComposto.length - 3);
+
+        mapPrenotati['docente'].add(nomeDocentiComposto);
+        final btnCancella = arrayAzioni[i].querySelector('#btnCancella');
+        if (btnCancella != null) {
+          mapPrenotati['linkCancellazione'].add(btnCancella.attributes['href']);
+        } else {
+          mapPrenotati['linkCancellazione'].add(null);
         }
+
         mapPrenotati['totali']++;
       }
     } catch (e) {

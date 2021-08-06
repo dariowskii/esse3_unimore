@@ -3,15 +3,16 @@ import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// Card rappresentativa dell'appello prenotato in [BachecaPrenotazioniScreen].
+/// Card rappresentativa dell'appello prenotato in `BachecaPrenotazioniScreen`.
 class CardAppelloPrenotato extends StatelessWidget {
   final String nomeEsame;
   final String iscrizione;
   final String giorno;
   final String ora;
   final String docente;
-  final Map formHiddens;
-  final int index;
+  final String linkCancellazione;
+  final String tipoEsame;
+  final String svolgimento;
   final bool darkModeOn;
   final bool isTablet;
 
@@ -22,8 +23,9 @@ class CardAppelloPrenotato extends StatelessWidget {
       this.giorno,
       this.ora,
       this.docente,
-      this.formHiddens,
-      this.index,
+      this.linkCancellazione,
+      this.tipoEsame,
+      this.svolgimento,
       this.darkModeOn,
       this.isTablet})
       : super(key: key);
@@ -31,14 +33,7 @@ class CardAppelloPrenotato extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Theme.of(context).brightness == Brightness.dark;
-    final _nomeEsame = nomeEsame.split(' - ');
-    final numIsc = iscrizione.replaceFirst('Numero Iscrizione: ', '');
-    final Map<String, dynamic> internalHiddens = {};
-    formHiddens.forEach((key, value) {
-      if (key.toString().startsWith(index.toString())) {
-        internalHiddens[key.toString().replaceFirst('${index}_', '')] = value;
-      }
-    });
+    final _nomeEsame = nomeEsame.split(' [');
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
@@ -48,9 +43,10 @@ class CardAppelloPrenotato extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                    Constants.mainColorDarker,
-                    Constants.mainColorLighter
-                  ]),
+                  Constants.mainColorDarker,
+                  Constants.mainColorDarkLighter,
+                ],
+              ),
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: darkModeOn ? Theme.of(context).cardColor : null,
       ),
@@ -67,12 +63,18 @@ class CardAppelloPrenotato extends StatelessWidget {
                 child: Text(
                   _nomeEsame[0],
                   style: isTablet
-                      ? Constants.fontBold28.copyWith(color: Colors.white)
-                      : Constants.fontBold20.copyWith(color: Colors.white),
+                      ? Constants.fontBold28.copyWith(
+                          color: darkModeOn
+                              ? Constants.mainColorDarkLighter
+                              : Colors.white)
+                      : Constants.fontBold20.copyWith(
+                          color: darkModeOn
+                              ? Constants.mainColorDarkLighter
+                              : Colors.white),
                 ),
               ),
               Text(
-                _nomeEsame[1],
+                "[${_nomeEsame[1]}",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 15,
@@ -80,12 +82,11 @@ class CardAppelloPrenotato extends StatelessWidget {
               ),
             ],
           ),
-          Text(
-            _nomeEsame[2],
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontStyle: FontStyle.italic,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Text(
+              svolgimento,
+              style: const TextStyle(fontStyle: FontStyle.italic),
             ),
           ),
           const SizedBox(height: 10),
@@ -131,7 +132,24 @@ class CardAppelloPrenotato extends StatelessWidget {
                     .copyWith(color: Colors.white),
                 children: [
                   TextSpan(
-                    text: numIsc,
+                    text: iscrizione,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  )
+                ]),
+          ),
+          RichText(
+            text: TextSpan(
+                text: 'Tipologia: ',
+                style: DefaultTextStyle.of(context)
+                    .style
+                    .copyWith(color: Colors.white),
+                children: [
+                  TextSpan(
+                    text: tipoEsame,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -423,8 +441,10 @@ class CardAppelloPrenotato extends StatelessWidget {
               Flexible(
                 child: MaterialButton(
                   elevation: 3,
-                  minWidth: double.infinity,
-                  color: Colors.white,
+                  minWidth: double.maxFinite,
+                  color: darkModeOn
+                      ? Constants.mainColorDarkLighter
+                      : Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
@@ -434,15 +454,14 @@ class CardAppelloPrenotato extends StatelessWidget {
                     final anno = int.parse(giorno.substring(6));
 
                     final event = Event(
-                      title: 'Appello ${_nomeEsame[0]} - $giorno',
-                      description: _nomeEsame[2],
+                      title: '${_nomeEsame[0]} - $giorno',
                       location: 'Università di Modena e Reggio Emilia',
                       startDate: DateTime.parse('$anno-$mese-$giornoEv')
-                          .subtract(const Duration(days: 3))
-                          .add(const Duration(hours: 10)),
+                          .subtract(const Duration(days: 3)),
                       endDate: DateTime.parse('$anno-$mese-$giornoEv')
-                          .subtract(const Duration(days: 3))
-                          .add(const Duration(hours: 10)),
+                          .subtract(const Duration(days: 3)),
+                      description:
+                          'Appello di ${_nomeEsame[0]} per il giorno $giorno alle ore $ora',
                       allDay: true,
                     );
 
@@ -450,9 +469,8 @@ class CardAppelloPrenotato extends StatelessWidget {
                   },
                   child: Text('PROMEMORIA',
                       style: TextStyle(
-                          color: darkModeOn
-                              ? Colors.redAccent
-                              : Constants.mainColor)),
+                          color:
+                              darkModeOn ? Colors.white : Constants.mainColor)),
                 ),
               ),
             ],
