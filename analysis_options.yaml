@@ -5,3 +5,4 @@ linter:
     prefer_final_fields: false
     prefer_const_constructor: true
     avoid_classes_with_only_static_members: false
+    must_be_immutable: false

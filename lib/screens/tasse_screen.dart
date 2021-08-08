@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/tasse_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/connection_error.dart';
 import 'package:Esse3/widgets/shimmer_loader.dart';
@@ -15,7 +16,7 @@ class TasseScreen extends StatefulWidget {
 
 class _TasseScreenState extends State<TasseScreen> {
   /// Future delle tasse per il [FutureBuilder].
-  Future<Map> _tasse;
+  Future<Map<String, dynamic>> _tasse;
 
   /// Lista di citazioni sulle tasse.
   final List<String> _citTasse = [
@@ -77,42 +78,114 @@ class _TasseScreenState extends State<TasseScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 32, horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
                       children: [
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Tasse',
-                                style: Constants.fontBold32.copyWith(
-                                    color: darkModeOn
-                                        ? Colors.redAccent
-                                        : Colors.white),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Tasse',
+                                    style: Constants.fontBold32.copyWith(
+                                        color: darkModeOn
+                                            ? Colors.redAccent
+                                            : Colors.white),
+                                  ),
+                                  Text(
+                                    'Qui puoi vedere lo storico delle tue tasse universitarie.',
+                                    style: darkModeOn
+                                        ? Constants.font16
+                                        : Constants.font16
+                                            .copyWith(color: Colors.white),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                'Qui puoi vedere lo storico delle tue tasse universitarie.',
-                                style: darkModeOn
-                                    ? Constants.font16
-                                    : Constants.font16
-                                        .copyWith(color: Colors.white),
-                              ),
-                            ],
-                          ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                              child:
+                                  Icon(Icons.attach_money, color: Colors.white),
+                            )
+                          ],
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Icon(Icons.attach_money, color: Colors.white),
-                        )
+                        FutureBuilder<Map<String, dynamic>>(
+                          future: _tasse,
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.done:
+                                if (snapshot.hasData &&
+                                    (snapshot.data['success'] as bool) &&
+                                    snapshot.data['item'] != null) {
+                                  final _tasseDaPagare =
+                                      snapshot.data['da_pagare'] as int;
+                                  if (_tasseDaPagare > 0) {
+                                    return Column(
+                                      children: [
+                                        Constants.sized20H,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.warning,
+                                              color: darkModeOn
+                                                  ? Colors.redAccent
+                                                  : Colors.white,
+                                            ),
+                                            const SizedBox(width: 5),
+                                            RichText(
+                                              text: TextSpan(
+                                                text: 'Hai ancora ',
+                                                style: const TextStyle(
+                                                  fontFamily: 'SF Pro',
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                ),
+                                                children: [
+                                                  TextSpan(
+                                                    text: '$_tasseDaPagare',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: darkModeOn
+                                                            ? Colors.redAccent
+                                                            : Colors.white,
+                                                        decoration: darkModeOn
+                                                            ? null
+                                                            : TextDecoration
+                                                                .underline),
+                                                  ),
+                                                  TextSpan(
+                                                      text:
+                                                          ' ${_tasseDaPagare > 1 ? "tasse" : "tassa"} da pagare!'),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                }
+                                return const SizedBox.shrink();
+                                break;
+
+                              default:
+                                return const SizedBox.shrink();
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
                 ),
-                FutureBuilder<Map>(
+                FutureBuilder<Map<String, dynamic>>(
                   future: _tasse,
-                  builder: (context, tasse) {
-                    switch (tasse.connectionState) {
+                  builder: (context, tasseSnap) {
+                    switch (tasseSnap.connectionState) {
                       case ConnectionState.none:
                         return ConnectionError(
                             deviceWidth: deviceWidth, isTablet: isTablet);
@@ -124,10 +197,14 @@ class _TasseScreenState extends State<TasseScreen> {
                             shimmerHeight: 150);
                       case ConnectionState.active:
                       case ConnectionState.done:
-                        if (tasse.hasData && tasse.data['success'] as bool) {
+                        if (tasseSnap.hasData &&
+                            (tasseSnap.data['success'] as bool) &&
+                            tasseSnap.data['item'] != null) {
+                          final tasse =
+                              tasseSnap.data['item'] as List<TassaModel>;
                           return Column(
                             children: [
-                              ListView.builder(
+                              ListView.separated(
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 padding: isTablet
@@ -136,19 +213,15 @@ class _TasseScreenState extends State<TasseScreen> {
                                         vertical: 32)
                                     : const EdgeInsets.all(16),
                                 cacheExtent: 20,
-                                itemCount: tasse.data['totali'] as int,
-                                itemBuilder: (ctx, index) {
+                                itemCount: tasse.length,
+                                itemBuilder: (context, index) {
                                   return TassaExpansionTile(
-                                    descTassa:
-                                        tasse.data['desc'][index] as String,
-                                    importo:
-                                        tasse.data['importi'][index] as String,
-                                    scadenza:
-                                        tasse.data['scadenza'][index] as String,
-                                    stato: tasse.data['stato_pagamento'][index]
-                                        as String,
+                                    tassa: tasse[index],
                                     darkModeOn: darkModeOn,
                                   );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(height: 5);
                                 },
                               ),
                               Padding(

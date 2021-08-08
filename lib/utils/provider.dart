@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Esse3/models/tasse_model.dart';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:flutter/material.dart';
@@ -506,6 +507,7 @@ class Provider {
     }
 
     final Map<String, dynamic> mapTasse = {};
+    mapTasse['item'] = null;
 
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -554,33 +556,47 @@ class Provider {
       return mapTasse;
     }
     final lenghtTasse = tableTasse.children.length;
-
-    mapTasse['importi'] = {};
-    mapTasse['scadenza'] = {};
-    mapTasse['desc'] = {};
-    mapTasse['stato_pagamento'] = {};
-    mapTasse['totali'] = lenghtTasse;
     mapTasse['da_pagare'] = 0;
 
     //Scraping tasse
     try {
+      final List<TassaModel> tasse = [];
+
       for (var i = 0; i < lenghtTasse; i++) {
-        mapTasse['desc'][i] = tableTasse.children[i].children[3].children[0]
+        final descrizioneTassa = tableTasse.children[i].children[3].children[0]
             .children[0].children[1].innerHtml
             .replaceAll('&nbsp;', '')
             .substring(2);
-        mapTasse['scadenza'][i] = tableTasse.children[i].children[4].innerHtml;
-        mapTasse['importi'][i] = tableTasse.children[i].children[5].innerHtml;
-        final buff = tableTasse.children[i].children[6].innerHtml;
-        if (buff.contains('non')) {
-          mapTasse['stato_pagamento'][i] = 'NON PAGATO';
+
+        final scadenza = tableTasse.children[i].children[4].innerHtml;
+        final importo = tableTasse.children[i].children[5].innerHtml;
+        final temp = tableTasse.children[i].children[6].innerHtml;
+
+        StatoPagamento stato;
+
+        if (temp.contains('non')) {
+          stato = StatoPagamento.nonPagato;
           mapTasse['da_pagare']++;
-        } else if (buff.contains('pagato')) {
-          mapTasse['stato_pagamento'][i] = 'PAGATO';
-        } else if (buff.contains('pagamen')) {
-          mapTasse['stato_pagamento'][i] = 'IN ATTESA';
+        } else if (temp.contains('pagato')) {
+          stato = StatoPagamento.pagato;
+        } else if (temp.contains('pagamen')) {
+          stato = StatoPagamento.inAttesa;
         }
+
+        final tassa = TassaModel(
+          titolo: descrizioneTassa.length > 30
+              ? '${descrizioneTassa.substring(0, 30)}...'
+              : descrizioneTassa,
+          descrizione: descrizioneTassa,
+          importo: importo,
+          scadenza: scadenza,
+          stato: stato,
+        );
+
+        tasse.add(tassa);
       }
+
+      mapTasse['item'] = tasse;
     } catch (e) {
       mapTasse['success'] = false;
       mapTasse['error'] = e;
