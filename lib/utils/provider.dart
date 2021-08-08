@@ -469,22 +469,19 @@ class Provider {
 
         final tempVoto = tableLibretto.children[i].children[5].innerHtml;
         String dataEsame = "";
+        String altroVoto;
         int votoEsame = 0;
         if (tempVoto != '') {
           final box = tempVoto.split('&nbsp;-&nbsp;');
           dataEsame = box[1];
           libretto.aggiungiCfuAlTotale(cfu: crediti);
           libretto.incrementaEsamiSuperati();
-          if (box[0].contains('ID', 0)) {
-            votoEsame = -2;
-          } else if ((box[0].contains('30L', 0)) ||
-              (box[0].contains('30 L', 0))) {
+          if ((box[0].contains('30L', 0)) || (box[0].contains('30 L', 0))) {
             votoEsame = 31;
           } else {
-            votoEsame = int.tryParse(box[0]);
+            votoEsame = int.tryParse(box[0]) ?? 0;
+            altroVoto = box[0];
           }
-        } else {
-          dataEsame = '';
         }
 
         final esame = EsameModel(
@@ -493,6 +490,7 @@ class Provider {
           dataEsame: dataEsame,
           crediti: crediti,
           voto: votoEsame,
+          altroVoto: altroVoto,
         );
 
         libretto.esami.add(esame);

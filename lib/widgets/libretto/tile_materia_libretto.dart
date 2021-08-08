@@ -18,14 +18,14 @@ class TileMateriaLibretto extends StatelessWidget {
       child: ListTileTheme(
         dense: true,
         child: IgnorePointer(
-          ignoring: !esame.superato,
+          ignoring: !esame.esameIdoneo,
           child: ExpansionTile(
             key: UniqueKey(),
             iconColor: Theme.of(context).textTheme.bodyText1.color,
-            trailing: esame.superato ? null : const SizedBox.shrink(),
-            leading: esame.superato
+            trailing: esame.esameIdoneo ? null : const SizedBox.shrink(),
+            leading: esame.esameIdoneo
                 ? Padding(
-                    padding: const EdgeInsets.only(right: 0),
+                    padding: EdgeInsets.zero,
                     child: Icon(Icons.star, color: Colors.yellow[700]),
                   )
                 : null,
@@ -41,7 +41,7 @@ class TileMateriaLibretto extends StatelessWidget {
             ),
             backgroundColor: Theme.of(context).cardColor,
             children: [
-              if (esame.superato)
+              if (esame.esameIdoneo)
                 Container(
                   padding: const EdgeInsets.only(left: 16, right: 16),
                   width: double.maxFinite,
@@ -57,7 +57,7 @@ class TileMateriaLibretto extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: "${esame.voto}",
+                              text: "${esame.altroVoto ?? esame.voto}",
                               style: Constants.fontBold18.copyWith(
                                 color:
                                     Theme.of(context).textTheme.bodyText1.color,

@@ -8,27 +8,22 @@ import 'package:flutter/material.dart';
 
 /// Pagina in cui visualizzare il libretto universitario.
 // ignore: must_be_immutable
-class LibrettoScreen extends StatefulWidget {
+class LibrettoScreen extends StatelessWidget {
   static const id = 'librettoScreen';
 
   /// Map del libretto passatto da [Provider.getLibretto()].
   final LibrettoModel libretto;
 
-  const LibrettoScreen({@required this.libretto}) : assert(libretto != null);
+  LibrettoScreen({@required this.libretto}) : assert(libretto != null);
 
-  @override
-  _LibrettoScreenState createState() => _LibrettoScreenState();
-}
-
-class _LibrettoScreenState extends State<LibrettoScreen> {
   double _votoLaurea = 0;
-
   var _puntiGrafico = [];
 
   void _initGrafico() {
-    for (var i = 0; i < widget.libretto.esamiTotali; i++) {
-      final esame = widget.libretto.esami[i];
-      if (esame.superato) {
+    if (_puntiGrafico.isNotEmpty) return;
+    for (var i = 0; i < libretto.esamiTotali; i++) {
+      final esame = libretto.esami[i];
+      if (esame.esameIdoneo && esame.voto > 0) {
         _puntiGrafico.add({
           'voto': esame.voto > 30 ? esame.voto - 1 : esame.voto,
           'data': esame.dataEsame
@@ -53,17 +48,12 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _initGrafico();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final deviceWidth = MediaQuery.of(context).size.width;
     final darkModeOn = Theme.of(context).brightness == Brightness.dark;
     final isTablet = deviceWidth > Constants.tabletWidth;
-    final mediaPonderata = widget.libretto.mediaPonderataDouble;
+    _initGrafico();
+    final mediaPonderata = libretto.mediaPonderataDouble;
     _votoLaurea = mediaPonderata is double ? ((mediaPonderata * 110) / 30) : 0;
     return Scaffold(
       appBar: AppBar(
@@ -103,7 +93,7 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                       ),
                     ),
                   ),
-                  if (widget.libretto.mediaPonderata != 'NaN')
+                  if (libretto.mediaPonderata != 'NaN')
                     BadgeLibretto(mediaPonderata: mediaPonderata),
                 ],
               ),
@@ -117,18 +107,18 @@ class _LibrettoScreenState extends State<LibrettoScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AndamentoLibretto(
-                        mediaAritmetica: widget.libretto.mediaAritmetica,
-                        mediaPonderata: widget.libretto.mediaPonderata,
-                        cfu: widget.libretto.cfuTotali,
+                        mediaAritmetica: libretto.mediaAritmetica,
+                        mediaPonderata: libretto.mediaPonderata,
+                        cfu: libretto.cfuTotali,
                         votoLaurea: _votoLaurea),
                     const SizedBox(height: 20),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       cacheExtent: 30,
-                      itemCount: widget.libretto.esamiTotali,
+                      itemCount: libretto.esamiTotali,
                       itemBuilder: (context, index) {
-                        final esame = widget.libretto.esami[index];
+                        final esame = libretto.esami[index];
                         return TileMateriaLibretto(esame: esame);
                       },
                     ),

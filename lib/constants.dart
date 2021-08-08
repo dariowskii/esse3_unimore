@@ -54,6 +54,19 @@ class Constants {
   static const Color mainColorExtraDark = Color(0xffCC4700);
   static const Color buttonDisabled = Color(0xffEEEEEE);
   static const Color backgroundDark = Color(0xff323232);
+
+  static Map<int, Color> mapMainSwatch = {
+    50: Colors.grey,
+    100: mainColorLighter.withOpacity(0.1),
+    200: mainColorLighter.withOpacity(0.2),
+    300: mainColorLighter.withOpacity(0.3),
+    400: mainColorLighter.withOpacity(0.4),
+    500: mainColorLighter.withOpacity(0.5),
+    600: mainColorLighter.withOpacity(0.7),
+    700: mainColorLighter.withOpacity(0.8),
+    800: mainColorLighter.withOpacity(0.9),
+    900: mainColorLighter,
+  };
   // Widgets
   static const SizedBox sized10H = SizedBox(height: 10);
   static const SizedBox sized20H = SizedBox(height: 20);

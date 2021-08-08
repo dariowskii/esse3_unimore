@@ -167,7 +167,11 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 20),
           Theme(
             data: ThemeData(
-              focusColor: Constants.mainColor,
+              primarySwatch: MaterialColor(
+                  Constants.mainColorLighter.value, Constants.mapMainSwatch),
+              textSelectionTheme: const TextSelectionThemeData(
+                cursorColor: Constants.mainColor,
+              ),
             ),
             child: Column(
               children: [
@@ -179,8 +183,18 @@ class _LoginFormState extends State<LoginForm> {
                   decoration: const InputDecoration(
                     labelText: 'Username',
                     counterText: '',
-                    border: OutlineInputBorder(
+                    focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(
+                        color: Constants.mainColor,
+                        width: 2,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   onSubmitted: (_) => _passFocus.requestFocus(),
@@ -193,9 +207,18 @@ class _LoginFormState extends State<LoginForm> {
                   controller: _passController,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    border: OutlineInputBorder(
+                    focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Colors.redAccent, width: 2),
+                      borderSide: BorderSide(
+                        color: Constants.mainColor,
+                        width: 2,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   onSubmitted: (_) => _login(),
