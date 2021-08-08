@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:Esse3/models/esame_model.dart';
+import 'package:Esse3/models/libretto_model.dart';
 import 'package:Esse3/models/tasse_model.dart';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
@@ -379,6 +381,7 @@ class Provider {
     }
 
     final Map<String, dynamic> mapLibretto = {};
+    mapLibretto['item'] = null;
 
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -426,12 +429,6 @@ class Provider {
             .split('&nbsp;')[1]
             .replaceFirst(' / 30', '')
             .substring(1);
-        mapLibretto['media_arit'] =
-            double.tryParse(mapLibretto['media_arit'] as String) ??
-                mapLibretto['media_arit'];
-        mapLibretto['media_pond'] =
-            double.tryParse(mapLibretto['media_pond'] as String) ??
-                mapLibretto['media_pond'];
       } else {
         mapLibretto['media_arit'] = 'NaN';
         mapLibretto['media_pond'] = 'NaN';
@@ -452,41 +449,55 @@ class Provider {
     tableLibretto = tableLibretto.querySelector('.table-1-body');
     final lengthLibretto = tableLibretto.children.length;
 
-    mapLibretto['materie'] = {};
-    mapLibretto['crediti'] = {};
-    mapLibretto['voti'] = {};
-    mapLibretto['data_esame'] = {};
-    mapLibretto['cod_materia'] = {};
-    mapLibretto['superati'] = 0;
-    mapLibretto['totali'] = lengthLibretto;
-
     //Scraping libretto
+
+    final libretto = LibrettoModel(
+      mediaAritmetica: mapLibretto['media_arit'] as String,
+      mediaPonderata: mapLibretto['media_pond'] as String,
+      esamiTotali: lengthLibretto,
+    );
+
     try {
       for (var i = 0; i < lengthLibretto; i++) {
         final materia =
             tableLibretto.children[i].children[0].children[0].text.split(' - ');
-        mapLibretto['cod_materia'][i] = materia[0];
-        mapLibretto['materie'][i] = materia[1];
-        mapLibretto['crediti'][i] =
-            tableLibretto.children[i].children[2].innerHtml;
-        mapLibretto['voti'][i] =
-            tableLibretto.children[i].children[5].innerHtml;
+        final codiceEsame = materia[0];
+        final nomeEsame = materia[1];
 
-        if (mapLibretto['voti'][i] != '') {
-          final tempVoto = mapLibretto['voti'][i].split('&nbsp;-&nbsp;');
-          mapLibretto['voti'][i] = tempVoto[0];
-          mapLibretto['data_esame'][i] = tempVoto[1];
-          mapLibretto['superati']++;
-          if (tempVoto[0].contains('ID', 0) as bool) {
-            mapLibretto['voti'][i] = 'IDONEO';
-          } else if ((tempVoto[0].contains('30L', 0) as bool) ||
-              (tempVoto[0].contains('30 L', 0) as bool)) {
-            mapLibretto['voti'][i] = '30 LODE';
+        final crediti =
+            int.tryParse(tableLibretto.children[i].children[2].innerHtml) ?? 0;
+
+        final tempVoto = tableLibretto.children[i].children[5].innerHtml;
+        String dataEsame = "";
+        int votoEsame = 0;
+        if (tempVoto != '') {
+          final box = tempVoto.split('&nbsp;-&nbsp;');
+          dataEsame = box[1];
+          libretto.aggiungiCfuAlTotale(cfu: crediti);
+          libretto.incrementaEsamiSuperati();
+          if (box[0].contains('ID', 0)) {
+            votoEsame = -2;
+          } else if ((box[0].contains('30L', 0)) ||
+              (box[0].contains('30 L', 0))) {
+            votoEsame = 31;
+          } else {
+            votoEsame = int.tryParse(box[0]);
           }
         } else {
-          mapLibretto['data_esame'][i] = '';
+          dataEsame = '';
         }
+
+        final esame = EsameModel(
+          nome: nomeEsame,
+          codiceEsame: codiceEsame,
+          dataEsame: dataEsame,
+          crediti: crediti,
+          voto: votoEsame,
+        );
+
+        libretto.esami.add(esame);
       }
+      mapLibretto['item'] = libretto;
     } catch (e) {
       mapLibretto['success'] = false;
       mapLibretto['error'] = e;
@@ -584,14 +595,13 @@ class Provider {
         }
 
         final tassa = TassaModel(
-          titolo: descrizioneTassa.length > 30
-              ? '${descrizioneTassa.substring(0, 30)}...'
-              : descrizioneTassa,
-          descrizione: descrizioneTassa,
-          importo: importo,
-          scadenza: scadenza,
-          stato: stato,
-        );
+            titolo: descrizioneTassa.length > 30
+                ? '${descrizioneTassa.substring(0, 30)}...'
+                : descrizioneTassa,
+            descrizione: descrizioneTassa,
+            importo: importo,
+            scadenza: scadenza,
+            stato: stato);
 
         tasse.add(tassa);
       }

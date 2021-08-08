@@ -1,25 +1,20 @@
-import 'package:Esse3/utils/provider.dart';
 import 'package:flutter/material.dart';
 
 /// Widget di errore in caso in cui non si riesca a caricare il libretto
 /// in [LibrettoHomeCard].
-class ErrorLibretto extends StatefulWidget {
+class ErrorLibretto extends StatelessWidget {
   /// Future del libretto da ricaricare.
-  Future<Map> libretto;
+  final Function() onPressed;
 
-  ErrorLibretto({Key key, this.libretto}) : super(key: key);
-  @override
-  _ErrorLibrettoState createState() => _ErrorLibrettoState();
-}
+  const ErrorLibretto({Key key, this.onPressed}) : super(key: key);
 
-class _ErrorLibrettoState extends State<ErrorLibretto> {
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Row(
-          children: [
+          children: const [
             Icon(
               Icons.error,
               color: Colors.redAccent,
@@ -31,12 +26,9 @@ class _ErrorLibrettoState extends State<ErrorLibretto> {
           ],
         ),
         IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {
-                widget.libretto = Provider.getLibretto();
-              });
-            })
+          icon: const Icon(Icons.refresh),
+          onPressed: onPressed,
+        ),
       ],
     );
   }

@@ -2,17 +2,18 @@ import 'package:Esse3/constants.dart';
 import 'package:flutter/material.dart';
 
 class AndamentoLibretto extends StatelessWidget {
-  final Map<String, dynamic> libretto;
+  final String mediaAritmetica;
+  final String mediaPonderata;
   final int cfu;
   final double votoLaurea;
 
   const AndamentoLibretto({
     Key key,
-    @required this.libretto,
+    @required this.mediaAritmetica,
+    @required this.mediaPonderata,
     @required this.cfu,
     @required this.votoLaurea,
-  })  : assert(libretto != null),
-        assert(cfu != null),
+  })  : assert(cfu != null),
         assert(votoLaurea != null),
         super(key: key);
   @override
@@ -45,7 +46,7 @@ class AndamentoLibretto extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                              text: libretto['media_arit'].toString(),
+                              text: mediaAritmetica,
                               style: Constants.fontBold20)
                         ],
                       ),
@@ -59,8 +60,7 @@ class AndamentoLibretto extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                              text: libretto['media_pond'].toString(),
-                              style: Constants.fontBold20)
+                              text: mediaPonderata, style: Constants.fontBold20)
                         ],
                       ),
                     ),

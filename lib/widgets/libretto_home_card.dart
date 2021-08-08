@@ -59,7 +59,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
             const SizedBox(height: 20),
             if (_isRequestedLibretto)
               FutureLibretto(
-                libretto: _libretto,
+                futureLibretto: _libretto,
                 onPressed: () {
                   setState(() {
                     _libretto = Provider.getLibretto();

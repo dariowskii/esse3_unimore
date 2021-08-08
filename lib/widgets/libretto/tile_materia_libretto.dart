@@ -1,16 +1,16 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/esame_model.dart';
 import 'package:flutter/material.dart';
 
 class TileMateriaLibretto extends StatelessWidget {
+  final EsameModel esame;
+
   const TileMateriaLibretto({
     Key key,
-    @required this.libretto,
-    @required this.index,
-  })  : assert(libretto != null),
-        assert(index != null),
+    @required this.esame,
+  })  : assert(esame != null),
         super(key: key);
-  final Map<String, dynamic> libretto;
-  final int index;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,33 +18,33 @@ class TileMateriaLibretto extends StatelessWidget {
       child: ListTileTheme(
         dense: true,
         child: IgnorePointer(
-          ignoring: libretto['voti'][index] == '',
+          ignoring: !esame.superato,
           child: ExpansionTile(
             key: UniqueKey(),
-            trailing:
-                libretto['voti'][index] != '' ? null : const SizedBox.shrink(),
-            leading: libretto['voti'][index] != ''
+            iconColor: Theme.of(context).textTheme.bodyText1.color,
+            trailing: esame.superato ? null : const SizedBox.shrink(),
+            leading: esame.superato
                 ? Padding(
                     padding: const EdgeInsets.only(right: 0),
                     child: Icon(Icons.star, color: Colors.yellow[700]),
                   )
                 : null,
             title: Text(
-              libretto['materie'][index] as String,
+              esame.nome,
               style: Constants.fontBold20
                   .copyWith(color: Theme.of(context).primaryColorLight),
             ),
             subtitle: Text(
-              'CFU: ${libretto['crediti'][index]}',
+              'CFU: ${esame.crediti}',
               style: Constants.fontBold
                   .copyWith(color: Theme.of(context).textTheme.bodyText1.color),
             ),
             backgroundColor: Theme.of(context).cardColor,
             children: [
-              if (libretto['voti'][index] != '')
+              if (esame.superato)
                 Container(
                   padding: const EdgeInsets.only(left: 16, right: 16),
-                  width: double.infinity,
+                  width: double.maxFinite,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -57,7 +57,7 @@ class TileMateriaLibretto extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: libretto['voti'][index] as String,
+                              text: "${esame.voto}",
                               style: Constants.fontBold18.copyWith(
                                 color:
                                     Theme.of(context).textTheme.bodyText1.color,
@@ -76,7 +76,7 @@ class TileMateriaLibretto extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: libretto['data_esame'][index] as String,
+                              text: esame.dataEsame,
                               style: Constants.fontBold.copyWith(
                                 color:
                                     Theme.of(context).textTheme.bodyText1.color,
