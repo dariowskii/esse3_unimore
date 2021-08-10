@@ -1,3 +1,4 @@
+import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/card_appello.dart';
 import 'package:Esse3/widgets/card_appello_imminente.dart';
@@ -17,11 +18,11 @@ class ProssimiAppelliScreen extends StatefulWidget {
 
 class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
   ///Future dei prossimi appelli per il [FutureBuilder].
-  Future<Map> _proxAppelli;
+  Future<Map<String, dynamic>> _prossimiAppelli;
 
   void _initAppelli() {
     setState(() {
-      _proxAppelli = Provider.getAppelli();
+      _prossimiAppelli = Provider.getAppelli();
     });
   }
 
@@ -52,7 +53,7 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
           color: Theme.of(context).primaryColorLight,
           onRefresh: () async {
             setState(() {
-              _proxAppelli = Provider.getAppelli();
+              _prossimiAppelli = Provider.getAppelli();
             });
           },
           child: SingleChildScrollView(
@@ -94,10 +95,10 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                       ),
                     ),
                   ),
-                  FutureBuilder<Map>(
-                    future: _proxAppelli,
-                    builder: (context, appelli) {
-                      switch (appelli.connectionState) {
+                  FutureBuilder<Map<String, dynamic>>(
+                    future: _prossimiAppelli,
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
                         case ConnectionState.none:
                           return ConnectionError(
                               deviceWidth: deviceWidth, isTablet: isTablet);
@@ -106,33 +107,17 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               deviceWidth: deviceWidth, isTablet: isTablet);
                         case ConnectionState.active:
                         case ConnectionState.done:
-                          //print(appelli.data);
-                          if (appelli.data != null &&
-                              (appelli.data['success'] as bool) &&
-                              appelli.data['totali'] as int > 0) {
-                            final indexImminenti = [];
-                            for (var i = 0;
-                                i < (appelli.data['totali'] as int);
-                                i++) {
-                              final dataOggi = DateTime.now();
-                              final dataEsame = DateTime.parse((appelli
-                                          .data['data_appello'][i] as String)
-                                      .substring(6) +
-                                  (appelli.data['data_appello'][i] as String)
-                                      .substring(3, 5) +
-                                  (appelli.data['data_appello'][i] as String)
-                                      .substring(0, 2));
-                              final diffTempo = dataEsame.difference(dataOggi);
-                              if (diffTempo.inDays <= 20) {
-                                indexImminenti.add(
-                                    {'index': i, 'data': dataEsame.toString()});
-                              }
+                          if (snapshot.data != null &&
+                              (snapshot.data['success'] as bool) &&
+                              snapshot.data['item'] != null) {
+                            final appelliWrapper =
+                                snapshot.data['item'] as AppelliWrapper;
+                            // In caso non ci siano appelli
+                            if (appelliWrapper.totaleApelli <= 0) {
+                              return NoExams(
+                                  deviceWidth: deviceWidth, isTablet: isTablet);
                             }
-                            indexImminenti.sort((a, b) {
-                              final adate = a['data'] as String;
-                              final bdate = b['data'] as String;
-                              return adate.compareTo(bdate);
-                            });
+                            // In caso ci siano appelli
                             return Padding(
                               padding: isTablet
                                   ? EdgeInsets.symmetric(
@@ -141,7 +126,8 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (indexImminenti.isNotEmpty) ...[
+                                  if (appelliWrapper
+                                      .appelliImminenti.isNotEmpty) ...[
                                     const Padding(
                                       padding:
                                           EdgeInsets.only(left: 16.0, top: 16),
@@ -150,38 +136,28 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                     ),
                                     SizedBox(
                                       height: 170,
-                                      child: ListView.builder(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 15, horizontal: 16),
-                                          cacheExtent: 10,
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: indexImminenti.length,
-                                          itemBuilder: (context, index) {
-                                            return Container(
-                                              margin: index ==
-                                                      indexImminenti.length - 1
-                                                  ? null
-                                                  : const EdgeInsets.only(
-                                                      right: 10),
-                                              child: CardAppelloImminente(
-                                                deviceWidth: deviceWidth,
-                                                isTablet: isTablet,
-                                                nomeAppello: appelli
-                                                        .data['materia'][
-                                                    indexImminenti[index]
-                                                        ['index']] as String,
-                                                dataAppello: appelli
-                                                        .data['data_appello'][
-                                                    indexImminenti[index]
-                                                        ['index']] as String,
-                                                descrizione: appelli
-                                                        .data['desc'][
-                                                    indexImminenti[index]
-                                                        ['index']] as String,
-                                              ),
-                                            );
-                                          }),
+                                      child: ListView.separated(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 15, horizontal: 16),
+                                        cacheExtent: 10,
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: appelliWrapper
+                                            .appelliImminenti.length,
+                                        itemBuilder: (context, index) {
+                                          final appello = appelliWrapper
+                                              .appelliImminenti[index];
+                                          return CardAppelloImminente(
+                                            deviceWidth: deviceWidth,
+                                            isTablet: isTablet,
+                                            nomeAppello: appello.nomeMateria,
+                                            dataAppello: appello.dataAppello,
+                                            descrizione: appello.descrizione,
+                                          );
+                                        },
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(width: 10),
+                                      ),
                                     ),
                                   ],
                                   Padding(
@@ -199,26 +175,13 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                           physics:
                                               const NeverScrollableScrollPhysics(),
                                           itemCount:
-                                              appelli.data['totali'] as int,
+                                              appelliWrapper.totaleApelli,
                                           itemBuilder: (context, index) {
-                                            return CardAppello(
-                                              nomeAppello:
-                                                  appelli.data['materia'][index]
-                                                      as String,
-                                              dataAppello:
-                                                  appelli.data['data_appello']
-                                                      [index] as String,
-                                              descrizione: appelli.data['desc']
-                                                  [index] as String,
-                                              periodoIscrizioni: appelli.data[
-                                                      'periodo_iscrizione']
-                                                  [index] as String,
-                                              sessione: appelli.data['sessione']
-                                                  [index] as String,
-                                              linkInfo:
-                                                  appelli.data['link_info']
-                                                      [index] as String,
-                                            );
+                                            final appello =
+                                                appelliWrapper.appelli[index];
+
+                                            return CardAppello.fromAppelloModel(
+                                                appello);
                                           },
                                         ),
                                       ],
@@ -227,11 +190,6 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                 ],
                               ),
                             );
-                          } else if (appelli.data != null &&
-                              appelli.data['success'] as bool &&
-                              appelli.data['totali'] as int <= 0) {
-                            return NoExams(
-                                deviceWidth: deviceWidth, isTablet: isTablet);
                           }
                           return ConnectionError(
                               deviceWidth: deviceWidth, isTablet: isTablet);

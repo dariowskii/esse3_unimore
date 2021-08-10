@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/models/esame_model.dart';
 import 'package:Esse3/models/libretto_model.dart';
-import 'package:Esse3/models/tasse_model.dart';
+import 'package:Esse3/models/tassa_model.dart';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:flutter/material.dart';
@@ -381,7 +382,6 @@ class Provider {
     }
 
     final Map<String, dynamic> mapLibretto = {};
-    mapLibretto['item'] = null;
 
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -516,7 +516,6 @@ class Provider {
     }
 
     final Map<String, dynamic> mapTasse = {};
-    mapTasse['item'] = null;
 
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -579,27 +578,28 @@ class Provider {
 
         final scadenza = tableTasse.children[i].children[4].innerHtml;
         final importo = tableTasse.children[i].children[5].innerHtml;
-        final temp = tableTasse.children[i].children[6].innerHtml;
+        final tempStatoString = tableTasse.children[i].children[6].innerHtml;
 
         StatoPagamento stato;
 
-        if (temp.contains('non')) {
+        if (tempStatoString.contains('non')) {
           stato = StatoPagamento.nonPagato;
           mapTasse['da_pagare']++;
-        } else if (temp.contains('pagato')) {
+        } else if (tempStatoString.contains('pagato')) {
           stato = StatoPagamento.pagato;
-        } else if (temp.contains('pagamen')) {
+        } else if (tempStatoString.contains('pagamen')) {
           stato = StatoPagamento.inAttesa;
         }
 
         final tassa = TassaModel(
-            titolo: descrizioneTassa.length > 30
-                ? '${descrizioneTassa.substring(0, 30)}...'
-                : descrizioneTassa,
-            descrizione: descrizioneTassa,
-            importo: importo,
-            scadenza: scadenza,
-            stato: stato);
+          titolo: descrizioneTassa.length > 30
+              ? '${descrizioneTassa.substring(0, 30)}...'
+              : descrizioneTassa,
+          descrizione: descrizioneTassa,
+          importo: importo,
+          scadenza: scadenza,
+          stato: stato,
+        );
 
         tasse.add(tassa);
       }
@@ -635,9 +635,8 @@ class Provider {
       final idStud = prefs.getString('idStud');
       requestUrl = requestUrl + idStud;
     }
-    // ignore: prefer_typing_uninitialized_variables
-    // ignore: prefer_typing_uninitialized_variables
-    var response;
+
+    http.Response response;
     try {
       response = await http.get(
         Uri.parse(requestUrl),
@@ -666,34 +665,45 @@ class Provider {
     if (tableAppelli == null) {
       mapAppelli['success'] = true;
       mapAppelli['error'] = 'tbody.table-1-body = null';
-      mapAppelli['totali'] = 0;
+      mapAppelli['item'] = AppelliWrapper(totaleApelli: 0);
       return mapAppelli;
     }
 
     final lenghtAppelli = tableAppelli.children.length;
-    mapAppelli['totali'] = lenghtAppelli;
-
-    mapAppelli['materia'] = {};
-    mapAppelli['data_appello'] = {};
-    mapAppelli['periodo_iscrizione'] = {};
-    mapAppelli['desc'] = {};
-    mapAppelli['sessione'] = {};
-    mapAppelli['link_info'] = {};
 
     try {
+      final appelliWrapper = AppelliWrapper(totaleApelli: lenghtAppelli);
+
       for (var i = 0; i < lenghtAppelli; i++) {
-        mapAppelli['link_info'][i] = tableAppelli
+        final linkInfo = tableAppelli
             .children[i].children[0].children[0].children[0].attributes['href'];
-        mapAppelli['materia'][i] = tableAppelli.children[i].children[1].text;
-        mapAppelli['data_appello'][i] =
+
+        final nomeMateria = tableAppelli.children[i].children[1].text;
+
+        final dataAppello =
             tableAppelli.children[i].children[2].text.substring(0, 10);
-        mapAppelli['periodo_iscrizione'][i] = tableAppelli
-            .children[i].children[3].innerHtml
+
+        final periodoIscrizione = tableAppelli.children[i].children[3].innerHtml
             .replaceAll('<br>', ' - ');
-        mapAppelli['desc'][i] = tableAppelli.children[i].children[4].text;
-        mapAppelli['sessione'][i] =
+
+        final descrizione = tableAppelli.children[i].children[4].text;
+
+        final sessione =
             tableAppelli.children[i].children[6].innerHtml.substring(0, 9);
+
+        final appello = AppelloModel(
+          nomeMateria: nomeMateria,
+          dataAppello: dataAppello,
+          periodoIscrizione: periodoIscrizione,
+          descrizione: descrizione,
+          sessione: sessione,
+          linkInfo: linkInfo,
+        );
+
+        appelliWrapper.appelli.add(appello);
       }
+
+      mapAppelli['item'] = appelliWrapper;
     } catch (e) {
       mapAppelli['success'] = false;
       mapAppelli['error'] = e;

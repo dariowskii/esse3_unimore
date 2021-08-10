@@ -1,4 +1,5 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
@@ -627,15 +628,26 @@ class CardAppello extends StatefulWidget {
   /// Serve poi per richiedere i parametri per la prenotazione dell'appello.
   final String linkInfo;
 
-  const CardAppello(
-      {Key key,
-      this.nomeAppello,
-      this.dataAppello,
-      this.descrizione,
-      this.periodoIscrizioni,
-      this.sessione,
-      this.linkInfo})
-      : super(key: key);
+  const CardAppello({
+    Key key,
+    this.nomeAppello,
+    this.dataAppello,
+    this.descrizione,
+    this.periodoIscrizioni,
+    this.sessione,
+    this.linkInfo,
+  }) : super(key: key);
+
+  factory CardAppello.fromAppelloModel(AppelloModel appello) {
+    return CardAppello(
+      nomeAppello: appello.nomeMateria,
+      dataAppello: appello.dataAppello,
+      descrizione: appello.descrizione,
+      periodoIscrizioni: appello.periodoIscrizione,
+      sessione: appello.sessione,
+      linkInfo: appello.linkInfo,
+    );
+  }
 
   @override
   _CardAppelloState createState() => _CardAppelloState();

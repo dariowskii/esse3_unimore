@@ -23,7 +23,7 @@ class LibrettoScreen extends StatelessWidget {
     if (_puntiGrafico.isNotEmpty) return;
     for (var i = 0; i < libretto.esamiTotali; i++) {
       final esame = libretto.esami[i];
-      if (esame.esameIdoneo && esame.voto > 0) {
+      if (esame.voto > 0) {
         _puntiGrafico.add({
           'voto': esame.voto > 30 ? esame.voto - 1 : esame.voto,
           'data': esame.dataEsame

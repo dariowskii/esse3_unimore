@@ -1,5 +1,5 @@
 import 'package:Esse3/constants.dart';
-import 'package:Esse3/models/tasse_model.dart';
+import 'package:Esse3/models/tassa_model.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 

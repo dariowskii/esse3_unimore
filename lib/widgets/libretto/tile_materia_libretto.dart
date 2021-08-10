@@ -20,7 +20,6 @@ class TileMateriaLibretto extends StatelessWidget {
         child: IgnorePointer(
           ignoring: !esame.esameIdoneo,
           child: ExpansionTile(
-            key: UniqueKey(),
             iconColor: Theme.of(context).textTheme.bodyText1.color,
             trailing: esame.esameIdoneo ? null : const SizedBox.shrink(),
             leading: esame.esameIdoneo

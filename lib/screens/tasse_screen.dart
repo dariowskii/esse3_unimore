@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:Esse3/constants.dart';
-import 'package:Esse3/models/tasse_model.dart';
+import 'package:Esse3/models/tassa_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/connection_error.dart';
 import 'package:Esse3/widgets/shimmer_loader.dart';
