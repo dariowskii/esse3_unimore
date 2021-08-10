@@ -5,6 +5,8 @@ import 'package:Esse3/widgets/login/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'login_text_field.dart';
+
 class LoginForm extends StatefulWidget {
   @override
   _LoginFormState createState() => _LoginFormState();
@@ -175,53 +177,22 @@ class _LoginFormState extends State<LoginForm> {
             ),
             child: Column(
               children: [
-                TextField(
+                LoginTextField(
                   enabled: !_isLoading,
-                  controller: _userController,
-                  maxLength: 15,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    counterText: '',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        color: Constants.mainColor,
-                        width: 2,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
                   onSubmitted: (_) => _passFocus.requestFocus(),
+                  labelText: 'Username',
+                  maxLenght: 15,
+                  controller: _userController,
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 15),
-                TextField(
+                LoginTextField(
                   enabled: !_isLoading,
+                  onSubmitted: (_) => _login(),
+                  labelText: 'Password',
                   obscureText: true,
                   focusNode: _passFocus,
                   controller: _passController,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        color: Constants.mainColor,
-                        width: 2,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  onSubmitted: (_) => _login(),
                 ),
               ],
             ),
@@ -239,7 +210,7 @@ class _LoginFormState extends State<LoginForm> {
                 ],
               )),
           const SizedBox(height: 20),
-          LoginButton(onPressed: !_isLoading ? () => _login() : null),
+          LoginButton(onPressed: !_isLoading ? _login : null),
         ],
       ),
     );
