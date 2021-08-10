@@ -1,4 +1,5 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/appello_model.dart';
 import 'package:flutter/material.dart';
 
 /// Card con poche informazioni sull'appello, utilizzata per gli appelli
@@ -14,14 +15,22 @@ class CardAppelloImminente extends StatelessWidget {
   /// Larghezza del dispositivo. Serve per gestire il layout del tablet.
   final double deviceWidth;
 
-  const CardAppelloImminente(
-      {Key key,
-      this.nomeAppello,
-      this.dataAppello,
-      this.descrizione,
-      this.isTablet,
-      this.deviceWidth})
-      : super(key: key);
+  const CardAppelloImminente({
+    Key key,
+    this.nomeAppello,
+    this.dataAppello,
+    this.descrizione,
+    this.isTablet = false,
+    this.deviceWidth = 0,
+  }) : super(key: key);
+
+  factory CardAppelloImminente.fromAppello(AppelloModel appello) {
+    return CardAppelloImminente(
+      nomeAppello: appello.nomeMateria,
+      dataAppello: appello.dataAppello,
+      descrizione: appello.descrizione,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,35 +52,35 @@ class CardAppelloImminente extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            nomeAppello.length > 30
-                ? '${nomeAppello.substring(0, 28)}...'
-                : nomeAppello,
+            nomeAppello,
             style: Constants.fontBold20
                 .copyWith(color: Theme.of(context).primaryColorLight),
           ),
           const SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: 'Data appello: ',
-                style: TextStyle(
-                  fontFamily: 'SF Pro',
-                  color: Theme.of(context).textTheme.bodyText1.color,
-                ),
-                children: [
-                  TextSpan(text: dataAppello, style: Constants.fontBold18)
-                ]),
+              text: 'Data appello: ',
+              style: TextStyle(
+                fontFamily: 'SF Pro',
+                color: Theme.of(context).textTheme.bodyText1.color,
+              ),
+              children: [
+                TextSpan(text: dataAppello, style: Constants.fontBold18),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           RichText(
             text: TextSpan(
-                text: 'Descrizione: ',
-                style: TextStyle(
-                  fontFamily: 'SF Pro',
-                  color: Theme.of(context).textTheme.bodyText1.color,
-                ),
-                children: [
-                  TextSpan(text: descrizione, style: Constants.fontBold)
-                ]),
+              text: 'Descrizione: ',
+              style: TextStyle(
+                fontFamily: 'SF Pro',
+                color: Theme.of(context).textTheme.bodyText1.color,
+              ),
+              children: [
+                TextSpan(text: descrizione, style: Constants.fontBold),
+              ],
+            ),
           ),
         ],
       ),
