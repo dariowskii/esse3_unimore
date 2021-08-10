@@ -1,5 +1,7 @@
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/models/appello_model.dart';
+import 'package:Esse3/widgets/box_info.dart';
+import 'package:Esse3/widgets/info_rich_text.dart';
 import 'package:flutter/material.dart';
 
 /// Card con poche informazioni sull'appello, utilizzata per gli appelli
@@ -34,52 +36,54 @@ class CardAppelloImminente extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       width: isTablet ? 350 : deviceWidth - 70,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            spreadRadius: 2,
-          )
+            color: Colors.black12.withOpacity(0.05),
+            offset: const Offset(0, 3),
+            blurRadius: 3,
+            spreadRadius: 3,
+          ),
         ],
         color: Theme.of(context).cardColor,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            nomeAppello,
-            style: Constants.fontBold20
-                .copyWith(color: Theme.of(context).primaryColorLight),
-          ),
-          const SizedBox(height: 5),
-          RichText(
-            text: TextSpan(
-              text: 'Data appello: ',
-              style: TextStyle(
-                fontFamily: 'SF Pro',
-                color: Theme.of(context).textTheme.bodyText1.color,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  nomeAppello,
+                  style: Constants.fontBold20
+                      .copyWith(color: Theme.of(context).primaryColorLight),
+                ),
               ),
-              children: [
-                TextSpan(text: dataAppello, style: Constants.fontBold18),
-              ],
-            ),
+              const SizedBox(width: 10),
+              BoxInfo(
+                darkModeOn: darkModeOn,
+                minWidth: null,
+                backgroundColor: Theme.of(context).primaryColorLight,
+                child: Text(
+                  dataAppello,
+                  style: Constants.fontBold.copyWith(color: Colors.white),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
-          RichText(
-            text: TextSpan(
+          BoxInfo(
+            darkModeOn: darkModeOn,
+            child: InfoRichText(
               text: 'Descrizione: ',
-              style: TextStyle(
-                fontFamily: 'SF Pro',
-                color: Theme.of(context).textTheme.bodyText1.color,
-              ),
-              children: [
-                TextSpan(text: descrizione, style: Constants.fontBold),
-              ],
+              value: descrizione,
             ),
           ),
         ],

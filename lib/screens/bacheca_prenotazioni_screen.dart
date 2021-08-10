@@ -81,45 +81,42 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                   onRefresh: _refreshBacheca,
                   showChildOpacityTransition: false,
                   child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
                       child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Bacheca prenotazioni',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 25),
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          height: deviceHeight,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Bacheca prenotazioni',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 25),
+                              ),
+                              const Divider(),
+                              const SizedBox(height: 15),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                padding: isTablet
+                                    ? EdgeInsets.symmetric(
+                                        horizontal: deviceWidth / 6)
+                                    : null,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: appelliWrapper.appelliTotali,
+                                itemBuilder: (context, index) {
+                                  final appello = appelliWrapper.appelli[index];
+                                  return CardAppelloPrenotato(
+                                    appello: appello,
+                                    darkModeOn: darkModeOn,
+                                    isTablet: isTablet,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        const Divider(),
-                        const SizedBox(height: 15),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          padding: isTablet
-                              ? EdgeInsets.symmetric(
-                                  horizontal: deviceWidth / 6)
-                              : null,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: appelliWrapper.appelliTotali,
-                          itemBuilder: (context, index) {
-                            final appello = appelliWrapper.appelli[index];
-                            return CardAppelloPrenotato(
-                              nomeEsame: appello.nomeMateria,
-                              iscrizione: appello.iscrizione,
-                              giorno: appello.dataAppello,
-                              ora: appello.oraAppello,
-                              docente: appello.docenti,
-                              linkCancellazione: appello.linkCancellazione,
-                              tipoEsame: appello.tipoEsame,
-                              svolgimento: appello.svolgimento,
-                              darkModeOn: darkModeOn,
-                              isTablet: isTablet,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  )),
+                      )),
                 );
               } else {
                 return ReloadAppelli(

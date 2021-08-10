@@ -1,26 +1,35 @@
+import 'dart:io';
+
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/models/appello_model.dart';
+import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:Esse3/utils/provider.dart';
+import 'package:Esse3/widgets/box_info.dart';
+import 'package:Esse3/widgets/info_rich_text.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class _RichiediAltreInfo extends StatefulWidget {
-  _RichiediAltreInfo(
-      {Key key,
-      this.altreInfo,
-      this.linkInfo,
-      this.nomeAppello,
-      this.dataAppello,
-      this.descrizione})
-      : super(key: key);
+  _RichiediAltreInfo({
+    Key key,
+    this.altreInfo,
+    this.linkInfo,
+    this.nomeAppello,
+    this.dataAppello,
+    this.descrizione,
+    this.prenotaEsame,
+    this.darkModeOn,
+  }) : super(key: key);
 
   Future<Map<String, dynamic>> altreInfo;
   final String linkInfo;
   final String nomeAppello;
   final String dataAppello;
   final String descrizione;
+  final bool darkModeOn;
+  final PrenotaEsame prenotaEsame;
   @override
   __RichiediAltreInfoState createState() => __RichiediAltreInfoState();
 }
@@ -147,100 +156,74 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RichText(
-                  text: TextSpan(
-                    text: 'Tipo esame: ',
-                    style: TextStyle(
-                        fontFamily: 'SF Pro',
-                        color: Theme.of(context).textTheme.bodyText1.color),
+                BoxInfo(
+                  darkModeOn: widget.darkModeOn,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextSpan(
-                          text: altreInfo.data['tipo_esame'] as String,
-                          style: Constants.fontBold),
+                      InfoRichText(
+                        text: 'Tipo esame: ',
+                        value: altreInfo.data['tipo_esame'] as String,
+                        fontSize: 14,
+                      ),
+                      InfoRichText(
+                        text: 'Verbalizzazione: ',
+                        value: altreInfo.data['verbalizzazione'] as String,
+                        fontSize: 14,
+                      ),
+                      InfoRichText(
+                        text: 'Aula: ',
+                        value: altreInfo.data['aula'] as String,
+                        fontSize: 14,
+                      ),
+                      InfoRichText(
+                        text: 'Numero iscritti: ',
+                        value: altreInfo.data['num_iscritti'] as String,
+                        fontSize: 14,
+                      ),
                     ],
                   ),
                 ),
-                RichText(
-                  text: TextSpan(
-                    text: 'Verbalizzazione: ',
-                    style: TextStyle(
-                        fontFamily: 'SF Pro',
-                        color: Theme.of(context).textTheme.bodyText1.color),
-                    children: [
-                      TextSpan(
-                          text: altreInfo.data['verbalizzazione'] as String,
-                          style: Constants.fontBold),
-                    ],
+                const SizedBox(height: 10),
+                BoxInfo(
+                  darkModeOn: widget.darkModeOn,
+                  child: InfoRichText(
+                    text: 'Docente: ',
+                    value: altreInfo.data['docente'] as String,
+                    fontSize: 14,
                   ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: 'Aula: ',
-                    style: TextStyle(
-                        fontFamily: 'SF Pro',
-                        color: Theme.of(context).textTheme.bodyText1.color),
-                    children: [
-                      TextSpan(
-                          text: altreInfo.data['aula'] as String,
-                          style: Constants.fontBold),
-                    ],
-                  ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: 'Numero iscritti: ',
-                    style: TextStyle(
-                        fontFamily: 'SF Pro',
-                        color: Theme.of(context).textTheme.bodyText1.color),
-                    children: [
-                      TextSpan(
-                          text: altreInfo.data['num_iscritti'] as String,
-                          style: Constants.fontBold),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Docente: ${altreInfo.data['docente']}',
-                  style: Constants.fontBold,
-                  textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
-                    // if (altreInfo.data['tabellaHidden'] != null) ...[
-                    //   Flexible(
-                    //     child: MaterialButton(
-                    //       padding: const EdgeInsets.all(0),
-                    //       minWidth: double.infinity,
-                    //       color: Colors.green,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(50),
-                    //       ),
-                    //       onPressed: () {
-                    //         showDialog(
-                    //           context: context,
-                    //           builder: (context) {
-                    //             if (Platform.isIOS) {
-                    //               return _PrenotaEsameIOS(
-                    //                 altreInfo: altreInfo.data,
-                    //               );
-                    //             }
-                    //             return _PrenotaEsameAndroid(
-                    //               altreInfo: altreInfo.data,
-                    //             );
-                    //           },
-                    //         );
-                    //       },
-                    //       child: Text('PRENOTA',
-                    //           style: TextStyle(color: Colors.white)),
-                    //     ),
-                    //   ),
-                    //   SizedBox(width: 10),
-                    // ],
-
+                    if (altreInfo.data['tabellaHidden'] != null) ...[
+                      Flexible(
+                        child: MaterialButton(
+                          padding: const EdgeInsets.all(0),
+                          minWidth: double.infinity,
+                          color: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20)),
+                              ),
+                              builder: (context) {
+                                widget.prenotaEsame.altreInfo = altreInfo.data;
+                                return widget.prenotaEsame;
+                              },
+                            );
+                          },
+                          child: const Text('PRENOTA',
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
                     Flexible(
                       child: MaterialButton(
                         minWidth: double.infinity,
@@ -288,334 +271,6 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
   }
 }
 
-// class _PrenotaEsameAndroid extends StatelessWidget {
-//   final Map<String, dynamic> altreInfo;
-//   const _PrenotaEsameAndroid({
-//     Key key,
-//     this.altreInfo,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(20),
-//       ),
-//       title: Text('Prenotazione appello'),
-//       content: Text('Sei sicuro di volerti prenotare?'),
-//       actions: [
-//         TextButton(
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//             showDialog(
-//               context: context,
-//               builder: (context) {
-//                 return WillPopScope(
-//                   onWillPop: () async => null,
-//                   child: AlertDialog(
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(20),
-//                     ),
-//                     content: Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                       children: [
-//                         CircularProgressIndicator(
-//                           valueColor: AlwaysStoppedAnimation<Color>(
-//                               Constants.mainColorLighter),
-//                         ),
-//                         const SizedBox(width: 10),
-//                         Text(
-//                           'Attendi un secondo...',
-//                           style: TextStyle(fontStyle: FontStyle.italic),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               },
-//             );
-//             Provider.prenotaAppello(altreInfo).then(
-//               (result) {
-//                 if (result != null && result['success'] as bool) {
-//                   Navigator.of(context).pop();
-//                   showDialog(
-//                     context: context,
-//                     builder: (context) {
-//                       return WillPopScope(
-//                         onWillPop: () async => null,
-//                         child: AlertDialog(
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(20),
-//                           ),
-//                           content: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                             children: [
-//                               Icon(
-//                                 Icons.check,
-//                                 color: Colors.green,
-//                               ),
-//                               const SizedBox(width: 10),
-//                               Text('Prenotazione effettuata!'),
-//                             ],
-//                           ),
-//                         ),
-//                       );
-//                     },
-//                   );
-//                   Future.delayed(Duration(seconds: 1), () {
-//                     Navigator.of(context).pushNamed(HomeScreen.id);
-//                   });
-//                 } else {
-//                   Navigator.of(context).pop();
-//                   showDialog(
-//                       context: context,
-//                       builder: (context) {
-//                         return WillPopScope(
-//                           onWillPop: () async => null,
-//                           child: AlertDialog(
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(20),
-//                             ),
-//                             content: Row(
-//                               children: [
-//                                 Icon(
-//                                   Icons.error,
-//                                   color: Colors.redAccent,
-//                                 ),
-//                                 const SizedBox(width: 10),
-//                                 Text('Prenotazione non effettuata'),
-//                               ],
-//                             ),
-//                           ),
-//                         );
-//                       });
-//                   Future.delayed(
-//                     Duration(seconds: 1),
-//                     () {
-//                       Navigator.of(context).pop();
-//                       if (result['error'] != null) {
-//                         showDialog(
-//                           context: context,
-//                           builder: (context) {
-//                             return AlertDialog(
-//                               shape: RoundedRectangleBorder(
-//                                 borderRadius: BorderRadius.circular(20),
-//                               ),
-//                               scrollable: true,
-//                               actions: [
-//                                 TextButton(
-//                                   onPressed: () {
-//                                     Navigator.of(context).pop();
-//                                   },
-//                                   child: Text(
-//                                     'Ok',
-//                                     style: TextStyle(
-//                                         color: Theme.of(context).primaryColor),
-//                                   ),
-//                                 ),
-//                               ],
-//                               title:
-//                                   Text('Questo messaggio può presentarsi se:'),
-//                               content: Text(
-//                                 result['error'] as String,
-//                                 textAlign: TextAlign.left,
-//                               ),
-//                             );
-//                           },
-//                         );
-//                       }
-//                     },
-//                   );
-//                 }
-//               },
-//             );
-//           },
-//           child: Text(
-//             'SI',
-//             style:
-//                 TextStyle(color: Theme.of(context).textTheme.bodyText1.color),
-//           ),
-//         ),
-//         MaterialButton(
-//           color: Colors.redAccent,
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(50),
-//           ),
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//           },
-//           child: Text('NO'),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class _PrenotaEsameIOS extends StatelessWidget {
-//   final Map<String, dynamic> altreInfo;
-//   const _PrenotaEsameIOS({
-//     Key key,
-//     this.altreInfo,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return CupertinoAlertDialog(
-//       title: Text(
-//         'Prenotazione appello',
-//         style: TextStyle(fontFamily: 'SF Pro'),
-//       ),
-//       content: Text(
-//         'Sei sicuro di volerti prenotare?',
-//         style: TextStyle(fontFamily: 'SF Pro'),
-//       ),
-//       actions: [
-//         TextButton(
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//             NavigatorState navigatorState;
-//             showDialog(
-//               context: context,
-//               builder: (ctx) {
-//                 navigatorState = Navigator.of(ctx);
-//                 return WillPopScope(
-//                   onWillPop: () async => null,
-//                   child: CupertinoAlertDialog(
-//                     content: Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                       children: [
-//                         CupertinoActivityIndicator(),
-//                         const SizedBox(width: 10),
-//                         Text(
-//                           'Attendi un secondo...',
-//                           style: TextStyle(fontStyle: FontStyle.italic),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               },
-//             );
-//             Provider.prenotaAppello(altreInfo).then(
-//               (result) {
-//                 if (result != null && result['success'] as bool) {
-//                   navigatorState.pop();
-//                   showDialog(
-//                     context: context,
-//                     builder: (ctx) {
-//                       navigatorState = Navigator.of(ctx);
-//                       return WillPopScope(
-//                         onWillPop: () async => null,
-//                         child: AlertDialog(
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(20),
-//                           ),
-//                           content: Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                             children: [
-//                               Icon(
-//                                 Icons.check,
-//                                 color: Colors.green,
-//                               ),
-//                               const SizedBox(width: 10),
-//                               Text('Prenotazione effettuata!'),
-//                             ],
-//                           ),
-//                         ),
-//                       );
-//                     },
-//                   );
-//                   Future.delayed(Duration(seconds: 1), () {
-//                     Navigator.of(context).pushNamed(HomeScreen.id);
-//                   });
-//                 } else {
-//                   navigatorState.pop();
-//                   showDialog(
-//                       context: context,
-//                       builder: (context) {
-//                         navigatorState = Navigator.of(context);
-//                         Future.delayed(
-//                           Duration(seconds: 1),
-//                           () {
-//                             print('here');
-//                             navigatorState.pop();
-
-//                             if (result['error'] != null) {
-//                               showDialog(
-//                                 context: context,
-//                                 builder: (context) {
-//                                   return AlertDialog(
-//                                     shape: RoundedRectangleBorder(
-//                                       borderRadius: BorderRadius.circular(20),
-//                                     ),
-//                                     scrollable: true,
-//                                     actions: [
-//                                       TextButton(
-//                                         onPressed: () {
-//                                           Navigator.of(context).pop();
-//                                         },
-//                                         child: Text(
-//                                           'Ok',
-//                                           style: TextStyle(
-//                                               color: Theme.of(context)
-//                                                   .primaryColor),
-//                                         ),
-//                                       ),
-//                                     ],
-//                                     title: Text(
-//                                         'Questo messaggio può presentarsi se:'),
-//                                     content: Text(
-//                                       result['error'] as String,
-//                                       textAlign: TextAlign.left,
-//                                     ),
-//                                   );
-//                                 },
-//                               );
-//                             }
-//                           },
-//                         );
-//                         return WillPopScope(
-//                           onWillPop: () async => null,
-//                           child: AlertDialog(
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(20),
-//                             ),
-//                             content: Row(
-//                               children: [
-//                                 Icon(
-//                                   Icons.error,
-//                                   color: Colors.redAccent,
-//                                 ),
-//                                 const SizedBox(width: 10),
-//                                 Text('Prenotazione non effettuata'),
-//                               ],
-//                             ),
-//                           ),
-//                         );
-//                       });
-//                 }
-//               },
-//             );
-//           },
-//           child: Text(
-//             'Si',
-//             style: Constants.font16,
-//           ),
-//         ),
-//         TextButton(
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//           },
-//           child: Text(
-//             'No',
-//             style: TextStyle(color: Colors.redAccent),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
 /// Card dell'appello con tutte le informazioni necessarie per prenotarsi,
 /// utilizzata in [ProssimiAppelliScreen].
 class CardAppello extends StatefulWidget {
@@ -624,6 +279,7 @@ class CardAppello extends StatefulWidget {
   final String descrizione;
   final String periodoIscrizioni;
   final String sessione;
+  final PrenotaEsame prenotaEsame;
 
   /// Serve poi per richiedere i parametri per la prenotazione dell'appello.
   final String linkInfo;
@@ -636,9 +292,11 @@ class CardAppello extends StatefulWidget {
     this.periodoIscrizioni,
     this.sessione,
     this.linkInfo,
+    this.prenotaEsame,
   }) : super(key: key);
 
-  factory CardAppello.fromAppelloModel(AppelloModel appello) {
+  factory CardAppello.fromAppelloModel(
+      AppelloModel appello, PrenotaEsame prenotaEsame) {
     return CardAppello(
       nomeAppello: appello.nomeMateria,
       dataAppello: appello.dataAppello,
@@ -646,6 +304,7 @@ class CardAppello extends StatefulWidget {
       periodoIscrizioni: appello.periodoIscrizione,
       sessione: appello.sessione,
       linkInfo: appello.linkInfo,
+      prenotaEsame: prenotaEsame,
     );
   }
 
@@ -659,17 +318,20 @@ class _CardAppelloState extends State<CardAppello> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            spreadRadius: 2,
+            color: Colors.black12.withOpacity(0.05),
+            offset: const Offset(0, 3),
+            blurRadius: 3,
+            spreadRadius: 3,
           ),
         ],
         color: Theme.of(context).cardColor,
@@ -677,59 +339,49 @@ class _CardAppelloState extends State<CardAppello> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.nomeAppello,
-            style: Constants.fontBold20
-                .copyWith(color: Theme.of(context).primaryColorLight),
-          ),
-          const SizedBox(height: 5),
-          RichText(
-            text: TextSpan(
-              text: 'Data appello: ',
-              style: TextStyle(
-                fontFamily: 'SF Pro',
-                color: Theme.of(context).textTheme.bodyText1.color,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  widget.nomeAppello,
+                  style: Constants.fontBold20
+                      .copyWith(color: Theme.of(context).primaryColorLight),
+                ),
               ),
-              children: [
-                TextSpan(text: widget.dataAppello, style: Constants.fontBold18)
-              ],
-            ),
+              const SizedBox(width: 10),
+              BoxInfo(
+                darkModeOn: darkModeOn,
+                minWidth: null,
+                backgroundColor: Theme.of(context).primaryColorLight,
+                child: Text(
+                  widget.dataAppello,
+                  style: Constants.fontBold.copyWith(color: Colors.white),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
-          RichText(
-            text: TextSpan(
-              text: 'Descrizione: ',
-              style: TextStyle(
-                fontFamily: 'SF Pro',
-                color: Theme.of(context).textTheme.bodyText1.color,
-              ),
+          BoxInfo(
+            darkModeOn: darkModeOn,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextSpan(text: widget.descrizione, style: Constants.fontBold)
-              ],
-            ),
-          ),
-          RichText(
-            text: TextSpan(
-              text: 'Periodo iscrizioni: ',
-              style: TextStyle(
-                fontFamily: 'SF Pro',
-                color: Theme.of(context).textTheme.bodyText1.color,
-              ),
-              children: [
-                TextSpan(
-                    text: widget.periodoIscrizioni, style: Constants.fontBold)
-              ],
-            ),
-          ),
-          RichText(
-            text: TextSpan(
-              text: 'Sessione: ',
-              style: TextStyle(
-                fontFamily: 'SF Pro',
-                color: Theme.of(context).textTheme.bodyText1.color,
-              ),
-              children: [
-                TextSpan(text: widget.sessione, style: Constants.fontBold)
+                InfoRichText(
+                  text: 'Descrizione: ',
+                  value: widget.descrizione,
+                  fontSize: 14,
+                ),
+                InfoRichText(
+                  text: 'Periodo iscrizioni: ',
+                  value: widget.periodoIscrizioni,
+                  fontSize: 14,
+                ),
+                InfoRichText(
+                  text: 'Sessione: ',
+                  value: widget.sessione,
+                  fontSize: 14,
+                ),
               ],
             ),
           ),
@@ -741,6 +393,8 @@ class _CardAppelloState extends State<CardAppello> {
               nomeAppello: widget.nomeAppello,
               dataAppello: widget.dataAppello,
               descrizione: widget.descrizione,
+              prenotaEsame: widget.prenotaEsame,
+              darkModeOn: darkModeOn,
             )
           else
             const SizedBox.shrink(),

@@ -36,9 +36,7 @@ class HeaderLibretto extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (puntiGrafico.isEmpty)
-                  const SizedBox.shrink()
-                else
+                if (puntiGrafico.isNotEmpty)
                   Text(
                     puntiGrafico.isEmpty
                         ? 'Nessun esame con voto ancora'

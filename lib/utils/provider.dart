@@ -496,6 +496,7 @@ class Provider {
 
         libretto.esami.add(esame);
       }
+      libretto.esami.sort((a, b) => a.esameIdoneo ? 0 : 1);
       mapLibretto['item'] = libretto;
     } catch (e) {
       mapLibretto['success'] = false;
@@ -770,7 +771,7 @@ class Provider {
 
     try {
       tableAppello = document.querySelector('#app-box_dati_pren');
-      tabellaHidden = document.querySelector('#app-form_dati_pren').children[5];
+      tabellaHidden = document.querySelector('#app-form_dati_pren').children[6];
       tabellaTurni = document
           .querySelector('#app-tabella_turni')
           .querySelector('.table-1-body');
@@ -1071,7 +1072,8 @@ class Provider {
   }
 
   /// Serve a cancellare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
-  static Future<bool> cancellaAppello(Map<String, dynamic> infoAppello) async {
+  static Future<bool> cancellaAppello(
+      Map<String, dynamic> infoAppello, String linkCancellazione) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -1084,8 +1086,7 @@ class Provider {
 
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
-    var requestUrl =
-        'https://www.esse3.unimore.it/auth/studente/Appelli/ConfermaCancellaAppello.do;$_jSessionId';
+    var requestUrl = 'https://www.esse3.unimore.it/$linkCancellazione';
     String idStud;
 
     if (isSceltaCarriera) {
@@ -1094,14 +1095,10 @@ class Provider {
     }
     http.StreamedResponse response;
 
-    infoAppello['imageField.x'] = '21';
-    infoAppello['imageField.y'] = '8';
+    final customRequest = http.Request('GET', Uri.parse(requestUrl));
+    customRequest.followRedirects = true;
 
-    final customRequest = http.Request('POST', Uri.parse(requestUrl));
-    customRequest.followRedirects = false;
-
-    customRequest.headers['cookie'] = '$_shibSessionCookie, $_jSessionId';
-    customRequest.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    customRequest.headers['cookie'] = _shibSessionCookie;
     customRequest.body = infoAppello.toString();
 
     try {
@@ -1111,29 +1108,18 @@ class Provider {
       return false;
     }
 
-    if (response.statusCode == 302) {
-      http.Response response2;
-      try {
-        response2 = await http.post(
-          Uri.parse(requestUrl),
-          body: infoAppello,
-          headers: {
-            'cookie': _shibSessionCookie,
-          },
-        );
-      } catch (e) {
-        debugPrint('Errore cancellazione appello: $e');
-        return false;
-      }
+    final document = parser.parse(await response.stream.bytesToString());
 
-      final document = parser.parse(response2.body);
-      var formHiddens = document.querySelector('#esse3old');
-      if (formHiddens == null) return false;
+    final form = document.querySelector('form');
 
-      formHiddens = formHiddens.querySelector('form').children[0];
+    if (form != null) {
+      final formHiddens = form.children[2];
 
       final newBodyRequest = {};
       final lenBody = formHiddens.children.length - 1;
+
+      newBodyRequest['form_id_formCancellazioneAppello'] =
+          'formCancellazioneAppello';
 
       try {
         for (var i = 0; i < lenBody; i++) {
@@ -1144,50 +1130,9 @@ class Provider {
         return false;
       }
 
-      requestUrl =
-          'https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do';
+      final action = form.attributes['action'];
 
-      if (isSceltaCarriera) {
-        idStud = prefs.getString('idStud');
-        requestUrl = requestUrl + idStud;
-      }
-
-      http.Response finalResponse;
-      try {
-        finalResponse = await http.post(
-          Uri.parse(requestUrl),
-          body: newBodyRequest,
-          headers: {
-            'cookie': _shibSessionCookie,
-          },
-        );
-      } catch (e) {
-        debugPrint('Errore finalResponse cancellazione apppello: $e');
-        return false;
-      }
-
-      return finalResponse.statusCode == 302;
-    } else if (response.statusCode == 200) {
-      final document = parser.parse(response.stream.bytesToString());
-      var formHiddens = document.querySelector('#esse3old');
-      if (formHiddens == null) return false;
-
-      formHiddens = formHiddens.querySelector('form').children[0];
-
-      final newBodyRequest = {};
-      final lenBody = formHiddens.children.length - 1;
-
-      try {
-        for (var i = 0; i < lenBody; i++) {
-          newBodyRequest[formHiddens.children[i].attributes['name']] =
-              formHiddens.children[i].attributes['value'];
-        }
-      } catch (e) {
-        return false;
-      }
-
-      requestUrl =
-          'https://www.esse3.unimore.it/auth/studente/Appelli/CancellaAppello.do';
+      requestUrl = 'https://www.esse3.unimore.it/$action';
 
       if (isSceltaCarriera) {
         requestUrl = requestUrl + idStud;
@@ -1207,8 +1152,7 @@ class Provider {
         return false;
       }
       return finalResponse.statusCode == 302;
-    } else {
-      return false;
     }
+    return false;
   }
 }

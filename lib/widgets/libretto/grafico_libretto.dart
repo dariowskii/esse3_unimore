@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 class GraficoLibretto extends StatelessWidget {
   static const List<Color> _gradientColorsDark = [Constants.mainColorLighter];
-  static final List<Color> _gradientColorsLight = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
+  static const List<Color> _gradientColorsLight = [
+    Color(0xff23b6e6),
+    Color(0xff02d39a),
   ];
   final bool darkModeOn;
   final List puntiGrafico;

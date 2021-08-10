@@ -53,6 +53,7 @@ class _LoginFormState extends State<LoginForm> {
         },
       );
     }
+
     final responseSession =
         await Provider.getSession(_userController.text, _passController.text);
     if (responseSession == null) {
@@ -83,7 +84,7 @@ class _LoginFormState extends State<LoginForm> {
         },
       );
     } else if (responseSession['success'] as bool) {
-      var prefs = await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('username', _userController.text);

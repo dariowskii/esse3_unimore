@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/card_appello.dart';
@@ -5,6 +7,7 @@ import 'package:Esse3/widgets/card_appello_imminente.dart';
 import 'package:Esse3/widgets/connection_error.dart';
 import 'package:Esse3/widgets/no_exams_widget.dart';
 import 'package:Esse3/widgets/shimmer_loader.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -118,78 +121,10 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                                   deviceWidth: deviceWidth, isTablet: isTablet);
                             }
                             // In caso ci siano appelli
-                            return Padding(
-                              padding: isTablet
-                                  ? EdgeInsets.symmetric(
-                                      horizontal: deviceWidth / 6)
-                                  : const EdgeInsets.all(0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (appelliWrapper
-                                      .appelliImminenti.isNotEmpty) ...[
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 16.0, top: 16),
-                                      child: Text('Appelli imminenti',
-                                          style: Constants.fontBold24),
-                                    ),
-                                    SizedBox(
-                                      height: 170,
-                                      child: ListView.separated(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 16),
-                                        cacheExtent: 10,
-                                        shrinkWrap: true,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: appelliWrapper
-                                            .appelliImminenti.length,
-                                        itemBuilder: (context, index) {
-                                          final appello = appelliWrapper
-                                              .appelliImminenti[index];
-                                          return CardAppelloImminente(
-                                            deviceWidth: deviceWidth,
-                                            isTablet: isTablet,
-                                            nomeAppello: appello.nomeMateria,
-                                            dataAppello: appello.dataAppello,
-                                            descrizione: appello.descrizione,
-                                          );
-                                        },
-                                        separatorBuilder: (context, index) =>
-                                            const SizedBox(width: 10),
-                                      ),
-                                    ),
-                                  ],
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text('Tutti gli appelli',
-                                            style: Constants.fontBold24),
-                                        const SizedBox(height: 15),
-                                        ListView.builder(
-                                          shrinkWrap: true,
-                                          cacheExtent: 30,
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemCount:
-                                              appelliWrapper.totaleApelli,
-                                          itemBuilder: (context, index) {
-                                            final appello =
-                                                appelliWrapper.appelli[index];
-
-                                            return CardAppello.fromAppelloModel(
-                                                appello);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                            return _ProssimiAppelliBody(
+                                isTablet: isTablet,
+                                deviceWidth: deviceWidth,
+                                appelliWrapper: appelliWrapper);
                           }
                           return ConnectionError(
                               deviceWidth: deviceWidth, isTablet: isTablet);
@@ -205,6 +140,125 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ProssimiAppelliBody extends StatelessWidget {
+  const _ProssimiAppelliBody({
+    Key key,
+    @required this.isTablet,
+    @required this.deviceWidth,
+    @required this.appelliWrapper,
+  }) : super(key: key);
+
+  final bool isTablet;
+  final double deviceWidth;
+  final AppelliWrapper appelliWrapper;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: isTablet
+          ? EdgeInsets.symmetric(horizontal: deviceWidth / 6)
+          : const EdgeInsets.all(0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (appelliWrapper.appelliImminenti.isNotEmpty) ...[
+            const Padding(
+              padding: EdgeInsets.only(left: 16.0, top: 16),
+              child: Text('Appelli imminenti', style: Constants.fontBold24),
+            ),
+            SizedBox(
+              height: 170,
+              child: ListView.separated(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
+                cacheExtent: 10,
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: appelliWrapper.appelliImminenti.length,
+                itemBuilder: (context, index) {
+                  final appello = appelliWrapper.appelliImminenti[index];
+                  return CardAppelloImminente(
+                    deviceWidth: deviceWidth,
+                    isTablet: isTablet,
+                    nomeAppello: appello.nomeMateria,
+                    dataAppello: appello.dataAppello,
+                    descrizione: appello.descrizione,
+                  );
+                },
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
+              ),
+            ),
+          ],
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Tutti gli appelli', style: Constants.fontBold24),
+                const SizedBox(height: 15),
+                ListView.builder(
+                  shrinkWrap: true,
+                  cacheExtent: 30,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: appelliWrapper.totaleApelli,
+                  itemBuilder: (context, index) {
+                    final appello = appelliWrapper.appelli[index];
+
+                    return CardAppello.fromAppelloModel(
+                        appello, PrenotaEsame());
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PrenotaEsame extends StatelessWidget {
+  Map<String, dynamic> altreInfo = {};
+  PrenotaEsame({
+    Key key,
+    this.altreInfo,
+  }) : super(key: key);
+
+  void _prenotaEsame(BuildContext context) {
+    Constants.showAdaptiveWaitingDialog(context);
+
+    Provider.prenotaAppello(altreInfo).then(
+      (result) {
+        if (result != null) {
+          Constants.showAdaptiveDialog(
+            context,
+            success: result['success'] as bool,
+            successText: 'Prenotazione effettuata!',
+            errorText: 'Errore prenotazione',
+          );
+        } else {
+          Constants.showAdaptiveDialog(
+            context,
+            success: false,
+            successText: 'Prenotazione effettuata!',
+            errorText: 'Errore prenotazione',
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Constants.getAskingModalBottomSheet(
+      context,
+      onAccepted: () => _prenotaEsame(context),
+      title: 'Prenotazione appello',
+      text: 'Sei sicuro di volerti prenotare?',
     );
   }
 }

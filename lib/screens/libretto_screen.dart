@@ -17,7 +17,7 @@ class LibrettoScreen extends StatelessWidget {
   LibrettoScreen({@required this.libretto}) : assert(libretto != null);
 
   double _votoLaurea = 0;
-  var _puntiGrafico = [];
+  final _puntiGrafico = [];
 
   void _initGrafico() {
     if (_puntiGrafico.isNotEmpty) return;
@@ -26,24 +26,27 @@ class LibrettoScreen extends StatelessWidget {
       if (esame.voto > 0) {
         _puntiGrafico.add({
           'voto': esame.voto > 30 ? esame.voto - 1 : esame.voto,
-          'data': esame.dataEsame
+          'data': esame.dataEsameDateTime
         });
       }
     }
 
     if (_puntiGrafico.isNotEmpty) {
       _puntiGrafico.sort((a, b) {
-        final ad =
-            '${a['data'].toString().substring(6)}-${a['data'].toString().substring(3, 5)}-${a['data'].toString().substring(0, 2)}';
-        final bd =
-            '${b['data'].toString().substring(6)}-${b['data'].toString().substring(3, 5)}-${b['data'].toString().substring(0, 2)}';
-        return ad.compareTo(bd);
+        final aD = a['data'] as DateTime;
+        final bD = b['data'] as DateTime;
+
+        return aD.compareTo(bD);
       });
     }
 
-    if (_puntiGrafico.length >= 8) {
-      _puntiGrafico =
-          _puntiGrafico.sublist(_puntiGrafico.length - 8, _puntiGrafico.length);
+    final lenghtPuntiGrafico = _puntiGrafico.length;
+
+    if (lenghtPuntiGrafico >= 8) {
+      final subList =
+          _puntiGrafico.sublist(lenghtPuntiGrafico - 8, lenghtPuntiGrafico);
+      _puntiGrafico.clear();
+      _puntiGrafico.addAll(subList);
     }
   }
 

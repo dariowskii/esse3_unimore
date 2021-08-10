@@ -21,7 +21,7 @@ class ReloadAppelli extends StatelessWidget {
       onRefresh: onReload,
       showChildOpacityTransition: false,
       child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Container(
