@@ -1,4 +1,5 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/appello_prenotato_model.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,23 +17,22 @@ class CardAppelloPrenotato extends StatelessWidget {
   final bool darkModeOn;
   final bool isTablet;
 
-  const CardAppelloPrenotato(
-      {Key key,
-      this.nomeEsame,
-      this.iscrizione,
-      this.giorno,
-      this.ora,
-      this.docente,
-      this.linkCancellazione,
-      this.tipoEsame,
-      this.svolgimento,
-      this.darkModeOn,
-      this.isTablet})
-      : super(key: key);
+  const CardAppelloPrenotato({
+    Key key,
+    @required this.nomeEsame,
+    @required this.iscrizione,
+    @required this.giorno,
+    @required this.ora,
+    @required this.docente,
+    @required this.linkCancellazione,
+    @required this.tipoEsame,
+    @required this.svolgimento,
+    this.darkModeOn = false,
+    this.isTablet = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final darkModeOn = Theme.of(context).brightness == Brightness.dark;
     final _nomeEsame = nomeEsame.split(' [');
     return Container(
       margin: const EdgeInsets.only(bottom: 15),

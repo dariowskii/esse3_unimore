@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Esse3/models/appello_model.dart';
+import 'package:Esse3/models/appello_prenotato_model.dart';
 import 'package:Esse3/models/esame_model.dart';
 import 'package:Esse3/models/libretto_model.dart';
 import 'package:Esse3/models/tassa_model.dart';
@@ -873,37 +874,16 @@ class Provider {
     final arrayAzioni = divPrenotati.querySelectorAll('#toolbarAzioni');
 
     if (arrayPrenotati == null) {
-      mapPrenotati['totali'] = 0;
+      mapPrenotati['item'] = AppelliPrenotatiWrapper(appelliTotali: 0);
       return mapPrenotati;
     }
 
     final lengthPrenotati = arrayPrenotati.length;
-    mapPrenotati['totali'] = 0;
-    mapPrenotati['esame'] = <String>[];
-    mapPrenotati['iscrizione'] = <String>[];
-    mapPrenotati['tipo_esame'] = <String>[];
-    mapPrenotati['svolgimento'] = <String>[];
-    mapPrenotati['giorno'] = <String>[];
-    mapPrenotati['ora'] = <String>[];
-    mapPrenotati['docente'] = <String>[];
-    mapPrenotati['linkCancellazione'] = <String>[];
 
     try {
+      final appelliPrenotati =
+          AppelliPrenotatiWrapper(appelliTotali: lengthPrenotati);
       for (int i = 0; i < lengthPrenotati; i++) {
-        final nomeEsame = arrayPrenotati[i].querySelector('h2.record-h2').text;
-        mapPrenotati['esame'].add(nomeEsame);
-
-        final dataEsame = arrayPrenotati[i]
-            .querySelector('dt.app-box_dati_data_esame')
-            .innerHtml
-            .split('&nbsp;');
-
-        final data = dataEsame[0];
-        final ora = dataEsame[1].trim();
-
-        mapPrenotati['giorno'].add(data);
-        mapPrenotati['ora'].add(ora);
-
         final tablePrenotazione =
             arrayPrenotati[i].querySelector('dl.record-riga');
 
@@ -911,47 +891,64 @@ class Provider {
           break;
         }
 
+        final nomeMateria =
+            arrayPrenotati[i].querySelector('h2.record-h2').text;
+        final dataEsame = arrayPrenotati[i]
+            .querySelector('dt.app-box_dati_data_esame')
+            .innerHtml
+            .split('&nbsp;');
+        final dataAppello = dataEsame[0];
+        final oraAppello = dataEsame[1].trim();
+
+        // Recupero info principali appello
         final arrayInfo = tablePrenotazione.querySelectorAll('dd');
         arrayInfo.removeAt(0);
 
-        final numeroIscrizione = arrayInfo[2]
+        final iscrizione = arrayInfo[2]
             .innerHtml
             .replaceFirst('&nbsp;', '')
             .trim()
             .replaceFirst('<br>', '');
-        mapPrenotati['iscrizione'].add(numeroIscrizione);
 
         final tipoEsame = arrayInfo[3].innerHtml.split('&nbsp;')[0];
-        mapPrenotati['tipo_esame'].add(tipoEsame);
 
         final svolgimento = arrayInfo[4]
             .innerHtml
             .replaceFirst('&nbsp;', '')
             .trim()
             .replaceFirst('<br>', '');
-        mapPrenotati['svolgimento'].add(svolgimento);
 
         final docenti = arrayInfo[10].innerHtml.split('<br>');
         docenti.removeLast();
 
-        var nomeDocentiComposto = "";
-
-        docenti.forEach((docente) {
-          nomeDocentiComposto += "${docente.replaceFirst('&nbsp;', '')}, ";
-        });
-        nomeDocentiComposto =
-            nomeDocentiComposto.substring(0, nomeDocentiComposto.length - 3);
-
-        mapPrenotati['docente'].add(nomeDocentiComposto);
-        final btnCancella = arrayAzioni[i].querySelector('#btnCancella');
-        if (btnCancella != null) {
-          mapPrenotati['linkCancellazione'].add(btnCancella.attributes['href']);
-        } else {
-          mapPrenotati['linkCancellazione'].add(null);
+        final docentiBuffer = StringBuffer();
+        for (final docente in docenti) {
+          docentiBuffer.write("${docente.replaceFirst('&nbsp;', '')}, ");
         }
 
-        mapPrenotati['totali']++;
+        final nomeDocentiComposto =
+            docentiBuffer.toString().substring(0, docentiBuffer.length - 3);
+
+        final btnCancella = arrayAzioni[i].querySelector('#btnCancella');
+        String linkCancellazione;
+        if (btnCancella != null) {
+          linkCancellazione = btnCancella.attributes['href'];
+        }
+
+        final appello = AppelloPrenotatoModel(
+          nomeMateria: nomeMateria,
+          iscrizione: iscrizione,
+          tipoEsame: tipoEsame,
+          svolgimento: svolgimento,
+          dataAppello: dataAppello,
+          oraAppello: oraAppello,
+          docenti: nomeDocentiComposto,
+          linkCancellazione: linkCancellazione,
+        );
+
+        appelliPrenotati.appelli.add(appello);
       }
+      mapPrenotati['item'] = appelliPrenotati;
     } catch (e) {
       mapPrenotati['success'] = false;
       mapPrenotati['error'] = e;

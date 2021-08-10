@@ -1,4 +1,5 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/appello_prenotato_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/card_appello_prenotato.dart';
 import 'package:Esse3/widgets/loading_bacheca_prenotazioni.dart';
@@ -50,8 +51,8 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _appelli,
-        builder: (context, appelli) {
-          switch (appelli.connectionState) {
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
             case ConnectionState.none:
               return ReloadAppelli(
                 deviceWidth: deviceWidth,
@@ -62,22 +63,17 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
               return LoadingBachecaPrenotazioni(darkModeOn: darkModeOn);
             case ConnectionState.active:
             case ConnectionState.done:
-              //In caso di risposta nulla..
-              if (appelli.data == null) {
-                return ReloadAppelli(
-                  deviceWidth: deviceWidth,
-                  deviceHeight: deviceHeight,
-                  onReload: _refreshBacheca,
-                );
-              }
-              if (appelli.data['success'] as bool) {
+              if (snapshot.hasData &&
+                  (snapshot.data['success'] as bool) &&
+                  snapshot.data['item'] != null) {
+                final appelliWrapper =
+                    snapshot.data['item'] as AppelliPrenotatiWrapper;
                 //In caso non ci siano appelli
-                if (appelli.data['totali'] == 0) {
+                if (appelliWrapper.appelliTotali <= 0) {
                   return RicaricaBachecaPrenotazioni(
                       refreshBacheca: _refreshBacheca, svgAsset: _svgAsset);
                 }
                 //In caso ci siano appelli...
-                final appello = appelli.data;
                 return LiquidPullToRefresh(
                   animSpeedFactor: 1.5,
                   height: 80,
@@ -104,24 +100,18 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                                   horizontal: deviceWidth / 6)
                               : null,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: appello['totali'] as int,
+                          itemCount: appelliWrapper.appelliTotali,
                           itemBuilder: (context, index) {
+                            final appello = appelliWrapper.appelli[index];
                             return CardAppelloPrenotato(
-                              nomeEsame:
-                                  (appello['esame'] as List<String>)[index],
-                              iscrizione: (appello['iscrizione']
-                                  as List<String>)[index],
-                              giorno:
-                                  (appello['giorno'] as List<String>)[index],
-                              ora: (appello['ora'] as List<String>)[index],
-                              docente:
-                                  (appello['docente'] as List<String>)[index],
-                              linkCancellazione: (appello['linkCancellazione']
-                                  as List<String>)[index],
-                              tipoEsame: (appello['tipo_esame']
-                                  as List<String>)[index],
-                              svolgimento: (appello['svolgimento']
-                                  as List<String>)[index],
+                              nomeEsame: appello.nomeMateria,
+                              iscrizione: appello.iscrizione,
+                              giorno: appello.dataAppello,
+                              ora: appello.oraAppello,
+                              docente: appello.docenti,
+                              linkCancellazione: appello.linkCancellazione,
+                              tipoEsame: appello.tipoEsame,
+                              svolgimento: appello.svolgimento,
                               darkModeOn: darkModeOn,
                               isTablet: isTablet,
                             );
