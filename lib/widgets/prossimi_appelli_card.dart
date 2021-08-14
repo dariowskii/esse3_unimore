@@ -11,8 +11,8 @@ class ProssimiAppelliCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        boxShadow: [
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        boxShadow: const [
           BoxShadow(
               color: Colors.black12,
               offset: Offset(0, 2),
@@ -21,7 +21,7 @@ class ProssimiAppelliCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -40,7 +40,7 @@ class ProssimiAppelliCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             MaterialButton(
               onPressed: () {
                 Navigator.of(context)
@@ -57,9 +57,9 @@ class ProssimiAppelliCard extends StatelessWidget {
               color: Theme.of(context).primaryColor,
               disabledColor: Theme.of(context).disabledColor,
               minWidth: double.infinity,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
-              child: Text(
+              child: const Text(
                 'Guarda i prossimi appelli',
               ),
             ),

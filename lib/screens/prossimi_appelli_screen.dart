@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/utils/provider.dart';

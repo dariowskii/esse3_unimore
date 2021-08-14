@@ -20,9 +20,9 @@ class ConnectionError extends StatelessWidget {
             width: isTablet ? deviceWidth * 0.5 : deviceWidth / 1.7,
           ),
           SizedBox(height: isTablet ? 30 : 15),
-          Text('Errore di connessione', style: Constants.fontBold28),
+          const Text('Errore di connessione', style: Constants.fontBold28),
           const SizedBox(height: 5),
-          Text(
+          const Text(
             "Sembra ci siano problemi nel recuperare i tuoi dati, riaggiorna oppure riprova tra un po'!",
             style: Constants.font18,
             textAlign: TextAlign.center,

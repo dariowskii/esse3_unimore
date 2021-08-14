@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
@@ -98,17 +96,14 @@ class _CardAppelloState extends State<CardAppello> {
                 InfoRichText(
                   text: 'Descrizione: ',
                   value: widget.appello.descrizione,
-                  fontSize: 14,
                 ),
                 InfoRichText(
                   text: 'Periodo iscrizioni: ',
                   value: widget.appello.periodoIscrizione,
-                  fontSize: 14,
                 ),
                 InfoRichText(
                   text: 'Sessione: ',
                   value: widget.appello.sessione,
-                  fontSize: 14,
                 ),
               ],
             ),
@@ -204,22 +199,18 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                       InfoRichText(
                         text: 'Tipo esame: ',
                         value: altreInfoWrapper.altreInfo.tipoEsame,
-                        fontSize: 14,
                       ),
                       InfoRichText(
                         text: 'Verbalizzazione: ',
                         value: altreInfoWrapper.altreInfo.verbalizzazione,
-                        fontSize: 14,
                       ),
                       InfoRichText(
                         text: 'Aula: ',
                         value: altreInfoWrapper.altreInfo.aula,
-                        fontSize: 14,
                       ),
                       InfoRichText(
                         text: 'Numero iscritti: ',
                         value: altreInfoWrapper.altreInfo.numIscritti,
-                        fontSize: 14,
                       ),
                     ],
                   ),

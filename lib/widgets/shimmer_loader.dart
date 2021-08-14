@@ -22,6 +22,7 @@ class ShimmerLoader extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
+    // ignore: avoid_unnecessary_containers
     return Container(
       child: Column(
         children: [
@@ -30,14 +31,14 @@ class ShimmerLoader extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Platform.isIOS
-                    ? CupertinoActivityIndicator()
-                    : CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(colorCircular),
-                      ),
-                SizedBox(width: 20),
-                Text(
+                if (Platform.isIOS)
+                  const CupertinoActivityIndicator()
+                else
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(colorCircular),
+                  ),
+                const SizedBox(width: 20),
+                const Text(
                   'Sto scaricando i dati...',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
@@ -47,16 +48,16 @@ class ShimmerLoader extends StatelessWidget {
           Padding(
             padding: isTablet
                 ? EdgeInsets.symmetric(horizontal: deviceWidth / 6)
-                : EdgeInsets.only(bottom: 16.0, left: 16, right: 16),
+                : const EdgeInsets.only(bottom: 16.0, left: 16, right: 16),
             child: Column(
               children: [
                 ShimmerCustom(height: shimmerHeight),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ShimmerCustom(height: shimmerHeight),
-                isTablet ? SizedBox(height: 10) : SizedBox.shrink(),
-                isTablet
-                    ? ShimmerCustom(height: shimmerHeight)
-                    : SizedBox.shrink(),
+                if (isTablet) ...[
+                  const SizedBox(height: 10),
+                  ShimmerCustom(height: shimmerHeight)
+                ],
               ],
             ),
           ),

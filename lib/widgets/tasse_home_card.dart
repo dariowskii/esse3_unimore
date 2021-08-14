@@ -7,12 +7,12 @@ class TasseHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.redAccent,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -25,7 +25,7 @@ class TasseHomeCard extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.monetization_on,
                   color: Colors.white,
                 ),
@@ -40,9 +40,9 @@ class TasseHomeCard extends StatelessWidget {
               color: Colors.white,
               textColor: Colors.redAccent,
               minWidth: double.infinity,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
-              child: Text(
+              child: const Text(
                 'Sei sicuro di volerle guardare?',
               ),
             ),

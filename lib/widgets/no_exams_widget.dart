@@ -19,14 +19,14 @@ class NoExams extends StatelessWidget {
             width: isTablet ? deviceWidth * 0.6 : deviceWidth / 1.7,
           ),
           SizedBox(height: isTablet ? 30 : 15),
-          Text('Nessun appello', style: Constants.fontBold28),
+          const Text('Nessun appello', style: Constants.fontBold28),
           const SizedBox(height: 10),
-          Text(
+          const Text(
             'Sembra non ci siano appelli, fantastico!',
             style: Constants.font18,
             textAlign: TextAlign.center,
           ),
-          Text(
+          const Text(
             'Adesso scappa finchè sei in tempo',
             style: Constants.font14,
             textAlign: TextAlign.center,

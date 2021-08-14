@@ -31,31 +31,29 @@ class ReloadAppelli extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Bacheca prenotazioni',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 25),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                 ),
-                Divider(),
+                const Divider(),
                 const SizedBox(height: 50),
                 Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       SvgPicture.asset(
                         'assets/img/networkError.svg',
                         width: deviceWidth * 0.7,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
-                      Text(
+                      const Text(
                         'Oops..',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 32),
                       ),
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 10),
+                      const Text(
                         'Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!',
                         softWrap: true,
                         textAlign: TextAlign.center,

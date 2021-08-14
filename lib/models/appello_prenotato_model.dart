@@ -33,12 +33,12 @@ class AppelloPrenotatoModel {
   Map<String, dynamic> get hiddensCancellazione {
     final map = <String, dynamic>{};
 
-    var buffer = linkCancellazione.replaceFirst(
+    final buffer = linkCancellazione.replaceFirst(
         'auth/studente/Appelli/ConfermaCancellaAppello.do?', '');
-    var list = buffer.split('&');
+    final list = buffer.split('&');
 
-    for (String element in list) {
-      var newBuffer = element.split('=');
+    for (final String element in list) {
+      final newBuffer = element.split('=');
       map[newBuffer[0]] = newBuffer[1];
     }
 

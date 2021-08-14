@@ -7,23 +7,21 @@ class ErrorHomeData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(32.0),
       child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             SvgPicture.asset('assets/img/networkError.svg', width: 200),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Text(
+            const Text(
               'Oops..',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 32),
             ),
-            SizedBox(height: 10),
-            Text(
+            const SizedBox(height: 10),
+            const Text(
               'Ci sono problemi nel recuperare i tuoi dati, aggiorna oppure riprova tra un pò!',
               softWrap: true,
               textAlign: TextAlign.center,
