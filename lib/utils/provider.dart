@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/models/appello_prenotato_model.dart';
 import 'package:Esse3/models/esame_model.dart';
@@ -154,6 +155,7 @@ class Provider {
   /// Serve ad ottenere le prime informazioni iniziali della home.
   static Future<Map<String, dynamic>> getSession(
       String username, String password) async {
+    final escapedPassword = Uri.encodeFull(password);
     final Map<String, dynamic> mapSession = {};
     //Ottengo il cookie di sessione per la request
     final client = http.Client();
@@ -174,7 +176,9 @@ class Provider {
       // Mando la POST
       final documentIdp =
           parser.parse(await streamedResponse.stream.bytesToString());
+      // Prelevo l'action dal form
       final formAction = documentIdp.querySelector('form').attributes['action'];
+      // Creo la request
       final newRequestUrl = 'https://idp.unimore.it$formAction';
       customRequest = http.Request('POST', Uri.parse(newRequestUrl));
       customRequest.headers['cookie'] = firstJsessionCookie;
@@ -182,23 +186,28 @@ class Provider {
           'application/x-www-form-urlencoded';
       customRequest.followRedirects = false;
       customRequest.body =
-          'j_username=$username&j_password=$password&_eventId_proceed=';
+          'j_username=$username&j_password=$escapedPassword&_eventId_proceed=';
       final responsePost = await client.send(customRequest);
-
+      // Elaboro la prima request
       final documentLogin =
           parser.parse(await responsePost.stream.bytesToString());
+      // Ottengo il RelayState
       final relayState = documentLogin
           .querySelector('input[name="RelayState"]')
           .attributes['value'];
-
+      // Ottengo SamlResponse
       final samlResponse = documentLogin
           .querySelector('input[name="SAMLResponse"]')
           .attributes['value'];
-      final postAction =
-          documentLogin.querySelector('form').attributes['action'];
+      // Ottengo il primo shibStateCookie
       final shibStateCookieLogin =
           '_shibstate_${relayState.replaceFirst('cookie&#x3a;', '')}';
 
+      // Inizio la recondo request per il shibSessionCookie
+      // prelevo la prossima action
+      final postAction =
+          documentLogin.querySelector('form').attributes['action'];
+      // Creo la seconda request
       customRequest = http.Request('POST', Uri.parse(postAction));
       customRequest.headers['cookie'] = shibStateCookieLogin;
       customRequest.headers['content-type'] =
@@ -206,20 +215,24 @@ class Provider {
       customRequest.body = 'RelayState=$relayState&SAMLResponse=$samlResponse'
           .replaceAll('+', '%2B');
       final finalResponse = await client.send(customRequest);
+      // Ottengo il cookie
       _shibSessionCookie =
           finalResponse.headers['set-cookie'].toString().split(';')[0];
+      // Preparo la request finale per il jSessionId cookie
       customRequest = http.Request('GET', Uri.parse(_urlLoginEsse3));
       customRequest.followRedirects = false;
       customRequest.headers['cookie'] = _shibSessionCookie;
       final jSessionResponse = await client.send(customRequest);
       _jSessionId =
           jSessionResponse.headers['set-cookie'].toString().split(';')[0];
+      // Se non riesco ad ottenerli entrambi, la sessione fallisce
       if (_shibSessionCookie.isEmpty || _jSessionId.isEmpty) {
         mapSession['success'] = false;
         mapSession['error'] = 'Non riesco a creare una sessione.';
         return mapSession;
       }
     } catch (e) {
+      // In caso di eventuali eccezioni, la sessione fallisce
       mapSession['success'] = false;
       mapSession['error'] = e;
       return mapSession;
@@ -781,35 +794,40 @@ class Provider {
       return mapInfoAppello;
     }
 
-    mapInfoAppello['tabellaHidden'] = true;
-    final lunghezzaHidden = tabellaHidden.children.length;
-    mapInfoAppello['lunghezzaHidden'] = lunghezzaHidden;
-    mapInfoAppello['hiddens_name'] = {};
-    mapInfoAppello['hiddens_value'] = {};
-
     try {
-      for (var i = 0; i < lunghezzaHidden; i++) {
-        if (i < lunghezzaHidden - 1) {
-          mapInfoAppello['hiddens_name'][i] = tabellaHidden.children[i].id;
-          mapInfoAppello['hiddens_value'][i] =
-              tabellaHidden.children[i].attributes['value'];
+      final altreInfoWrapper =
+          AltreInfoAppelloWrapper(numHiddens: tabellaHidden.children.length);
+
+      for (var i = 0; i < altreInfoWrapper.numHiddens; i++) {
+        if (i < altreInfoWrapper.numHiddens - 1) {
+          final name = tabellaHidden.children[i].id;
+          final value = tabellaHidden.children[i].attributes['value'];
+          altreInfoWrapper.hiddens[name] = value;
         } else {
-          mapInfoAppello['hiddens_name'][i] = 'form_id_app-form_dati_pren';
-          mapInfoAppello['hiddens_value'][i] = 'app-form_dati_pren';
+          altreInfoWrapper.hiddens['form_id_app-form_dati_pren'] =
+              'app-form_dati_pren';
         }
       }
-      mapInfoAppello['tipo_esame'] =
-          tableAppello.children[1].children[7].text.trim();
-      mapInfoAppello['verbalizzazione'] =
-          tableAppello.children[1].children[9].text.trim();
-      mapInfoAppello['docente'] = tableAppello
-          .children[1].children[11].innerHtml
+
+      final tipoEsame = tableAppello.children[1].children[7].text.trim();
+      final verbalizzazione = tableAppello.children[1].children[9].text.trim();
+      final docente = tableAppello.children[1].children[11].innerHtml
           .replaceAll('<br>', ' ')
           .replaceAll('&nbsp;', '')
           .trim();
-      mapInfoAppello['num_iscritti'] =
-          tabellaTurni.children[0].children[2].text.trim();
-      mapInfoAppello['aula'] = tabellaTurni.children[0].children[1].text;
+      final numIscritti = tabellaTurni.children[0].children[2].text.trim();
+      final aula = tabellaTurni.children[0].children[1].text;
+
+      final altreInfo = AltreInfoAppelloModel(
+        tipoEsame: tipoEsame,
+        verbalizzazione: verbalizzazione,
+        docente: docente,
+        numIscritti: numIscritti,
+        aula: aula,
+      );
+
+      altreInfoWrapper.altreInfo = altreInfo;
+      mapInfoAppello['item'] = altreInfoWrapper;
     } catch (e) {
       mapInfoAppello['success'] = false;
       mapInfoAppello['error'] = e;
@@ -891,9 +909,11 @@ class Provider {
         if (tablePrenotazione == null) {
           break;
         }
-
-        final nomeMateria =
+        final nomeMateriaFull =
             arrayPrenotati[i].querySelector('h2.record-h2').text;
+        final nomeMateria = nomeMateriaFull.split(' [')[0];
+        final codiceMateria = "[${nomeMateriaFull.split(' [')[1]}";
+
         final dataEsame = arrayPrenotati[i]
             .querySelector('dt.app-box_dati_data_esame')
             .innerHtml
@@ -938,6 +958,7 @@ class Provider {
 
         final appello = AppelloPrenotatoModel(
           nomeMateria: nomeMateria,
+          codiceEsame: codiceMateria,
           iscrizione: iscrizione,
           tipoEsame: tipoEsame,
           svolgimento: svolgimento,
@@ -960,7 +981,7 @@ class Provider {
 
   /// Serve a prenotare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
   static Future<Map<String, dynamic>> prenotaAppello(
-      Map<String, dynamic> infoAppello) async {
+      AltreInfoAppelloWrapper altreInfoWrapper) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
@@ -981,20 +1002,13 @@ class Provider {
       requestUrl = requestUrl + idStud;
     }
 
-    final lunghezzaHidden = infoAppello['lunghezzaHidden'] as int;
-
-    for (var i = 0; i < lunghezzaHidden; i++) {
-      mapHiddens[infoAppello['hiddens_name'][i] as String] =
-          infoAppello['hiddens_value'][i];
-    }
-
-    mapHiddens['btnSalva'] = "Prenotati all'appello >>";
+    altreInfoWrapper.hiddens['btnSalva'] = "Prenotati all'appello >>";
 
     http.Response response;
     try {
       response = await http.post(
         Uri.parse(requestUrl),
-        body: mapHiddens,
+        body: altreInfoWrapper.hiddens,
         headers: {
           'cookie': _shibSessionCookie,
         },
@@ -1018,7 +1032,7 @@ class Provider {
       try {
         responseAppello = await http.post(
           Uri.parse(location),
-          body: mapHiddens,
+          body: altreInfoWrapper.hiddens,
           headers: {
             'cookie': _shibSessionCookie,
           },
@@ -1052,8 +1066,9 @@ class Provider {
                   .replaceFirst(
                       'PRENOTAZIONE NON EFFETTUATA<br>Questo messaggio può presentarsi se:',
                       '');
-              mapHiddens['error'] =
-                  mapHiddens['error'].toString().replaceAll(';', ';\n');
+              mapHiddens['error_readable'] = mapHiddens['error_readable']
+                  .toString()
+                  .replaceAll(';', ';\n');
             } catch (e) {
               mapHiddens['error'] = e;
             }

@@ -32,6 +32,8 @@ class Constants {
   );
   // Fonts
   static const TextStyle fontBold = TextStyle(fontWeight: FontWeight.bold);
+  static const TextStyle fontBold14 =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.bold);
   static const TextStyle fontBold18 =
       TextStyle(fontSize: 18, fontWeight: FontWeight.bold);
   static const TextStyle fontBold20 =

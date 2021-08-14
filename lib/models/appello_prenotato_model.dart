@@ -10,9 +10,11 @@ class AppelloPrenotatoModel {
     @required this.oraAppello,
     @required this.docenti,
     @required this.linkCancellazione,
+    @required this.codiceEsame,
   });
 
   final String nomeMateria;
+  final String codiceEsame;
   final String iscrizione;
   final String tipoEsame;
   final String svolgimento;

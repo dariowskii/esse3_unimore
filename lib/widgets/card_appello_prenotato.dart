@@ -22,7 +22,6 @@ class CardAppelloPrenotato extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _nomeEsame = appello.nomeMateria.split(' [');
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
@@ -48,7 +47,7 @@ class CardAppelloPrenotato extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  _nomeEsame[0],
+                  appello.nomeMateria,
                   style: isTablet
                       ? Constants.fontBold28.copyWith(
                           color: darkModeOn
@@ -66,28 +65,26 @@ class CardAppelloPrenotato extends StatelessWidget {
                 minWidth: null,
                 backgroundColor: Theme.of(context).primaryColorLight,
                 child: Text(
-                  "[${_nomeEsame[1]}",
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
+                  appello.dataAppello,
+                  style: Constants.fontBold.copyWith(color: Colors.white),
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Text(
-              appello.svolgimento,
-              style: const TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ),
+          const SizedBox(height: 5),
+          const Text('Generale', style: Constants.fontBold),
           const SizedBox(height: 5),
           BoxInfo(
             darkModeOn: darkModeOn,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InfoRichText(text: 'Giorno: ', value: appello.dataAppello),
+                InfoRichText(
+                  text: 'Svolgimento: ',
+                  value: appello.svolgimento,
+                ),
+                InfoRichText(
+                    text: 'Codice esame: ', value: appello.codiceEsame),
                 InfoRichText(text: 'Ora: ', value: appello.oraAppello),
                 InfoRichText(
                     text: 'Numero iscrizione: ', value: appello.iscrizione),
@@ -96,9 +93,14 @@ class CardAppelloPrenotato extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
+          const Text('Docente', style: Constants.fontBold),
+          const SizedBox(height: 5),
           BoxInfo(
             darkModeOn: darkModeOn,
-            child: InfoRichText(text: 'Docente: ', value: appello.docenti),
+            child: Text(
+              appello.docenti,
+              style: Constants.fontBold14,
+            ),
           ),
           const SizedBox(height: 10),
           Row(
@@ -110,7 +112,7 @@ class CardAppelloPrenotato extends StatelessWidget {
               const SizedBox(width: 10),
               _PromemoriaAppello(
                 darkModeOn: darkModeOn,
-                nomeEsame: _nomeEsame[0],
+                nomeEsame: appello.nomeMateria,
                 appello: appello,
               ),
             ],
@@ -176,8 +178,8 @@ class _CancellaEsameButton extends StatelessWidget {
     this.appello,
   }) : super(key: key);
 
-  void _proponiCancellazioneEsame(BuildContext context) {
-    showModalBottomSheet(
+  Future<void> _proponiCancellazioneEsame(BuildContext context) async {
+    await showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),

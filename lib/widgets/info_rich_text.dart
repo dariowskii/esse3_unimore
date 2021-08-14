@@ -5,7 +5,7 @@ class InfoRichText extends StatelessWidget {
     Key key,
     @required this.text,
     @required this.value,
-    this.fontSize = 16,
+    this.fontSize = 14,
   }) : super(key: key);
 
   final String text;
@@ -16,17 +16,18 @@ class InfoRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-          text: text,
-          style: DefaultTextStyle.of(context).style,
-          children: [
-            TextSpan(
-              text: value,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: fontSize,
-              ),
-            )
-          ]),
+        text: text,
+        style: DefaultTextStyle.of(context).style,
+        children: [
+          TextSpan(
+            text: value,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: fontSize,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

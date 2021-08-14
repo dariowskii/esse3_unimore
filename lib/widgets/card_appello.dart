@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:Esse3/utils/provider.dart';
@@ -10,300 +11,22 @@ import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
-class _RichiediAltreInfo extends StatefulWidget {
-  _RichiediAltreInfo({
-    Key key,
-    this.altreInfo,
-    this.linkInfo,
-    this.nomeAppello,
-    this.dataAppello,
-    this.descrizione,
-    this.prenotaEsame,
-    this.darkModeOn,
-  }) : super(key: key);
-
-  Future<Map<String, dynamic>> altreInfo;
-  final String linkInfo;
-  final String nomeAppello;
-  final String dataAppello;
-  final String descrizione;
-  final bool darkModeOn;
-  final PrenotaEsame prenotaEsame;
-  @override
-  __RichiediAltreInfoState createState() => __RichiediAltreInfoState();
-}
-
-class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: widget.altreInfo,
-      builder: (context, altreInfo) {
-        switch (altreInfo.connectionState) {
-          case ConnectionState.none:
-            return Column(
-              children: [
-                Row(
-                  children: <Widget>[
-                    const Icon(
-                      Icons.error,
-                      color: Colors.redAccent,
-                    ),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'Errore nel recuperare i dati!',
-                    ),
-                    Expanded(child: Container()),
-                    IconButton(
-                        icon: const Icon(Icons.refresh),
-                        onPressed: () {
-                          setState(() {
-                            widget.altreInfo =
-                                Provider.getInfoAppello(widget.linkInfo);
-                          });
-                        })
-                  ],
-                ),
-                MaterialButton(
-                  minWidth: double.infinity,
-                  color: Theme.of(context).primaryColorLight,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  onPressed: () {
-                    final event = Event(
-                      title:
-                          'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
-                      description:
-                          "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                      location: 'Esse3',
-                      startDate: DateTime.parse(
-                              widget.dataAppello.substring(6) +
-                                  widget.dataAppello.substring(3, 5) +
-                                  widget.dataAppello.substring(0, 2))
-                          .subtract(const Duration(days: 7))
-                          .add(const Duration(hours: 10)),
-                      endDate: DateTime.parse(widget.dataAppello.substring(6) +
-                              widget.dataAppello.substring(3, 5) +
-                              widget.dataAppello.substring(0, 2))
-                          .subtract(const Duration(days: 6)),
-                    );
-                    Add2Calendar.addEvent2Cal(event);
-                  },
-                  child: const Text('IMPOSTA PROMEMORIA',
-                      style: TextStyle(color: Colors.white)),
-                )
-              ],
-            );
-          case ConnectionState.active:
-          case ConnectionState.waiting:
-            return Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    CupertinoActivityIndicator(),
-                    SizedBox(width: 10),
-                    Text(
-                      'Sto scaricando le info...',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                MaterialButton(
-                  minWidth: double.infinity,
-                  color: Theme.of(context).primaryColorLight,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  onPressed: () {
-                    final event = Event(
-                      title:
-                          'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
-                      description:
-                          "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                      location: 'Esse3',
-                      startDate: DateTime.parse(
-                              widget.dataAppello.substring(6) +
-                                  widget.dataAppello.substring(3, 5) +
-                                  widget.dataAppello.substring(0, 2))
-                          .subtract(const Duration(days: 7))
-                          .add(const Duration(hours: 10)),
-                      endDate: DateTime.parse(widget.dataAppello.substring(6) +
-                              widget.dataAppello.substring(3, 5) +
-                              widget.dataAppello.substring(0, 2))
-                          .subtract(const Duration(days: 6)),
-                    );
-                    Add2Calendar.addEvent2Cal(event);
-                  },
-                  child: const Text('IMPOSTA PROMEMORIA',
-                      style: TextStyle(color: Colors.white)),
-                )
-              ],
-            );
-          case ConnectionState.done:
-            if (altreInfo.data == null ||
-                !(altreInfo.data['success'] as bool)) {
-              return const Text('Sembra non ci siano risultati...');
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BoxInfo(
-                  darkModeOn: widget.darkModeOn,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      InfoRichText(
-                        text: 'Tipo esame: ',
-                        value: altreInfo.data['tipo_esame'] as String,
-                        fontSize: 14,
-                      ),
-                      InfoRichText(
-                        text: 'Verbalizzazione: ',
-                        value: altreInfo.data['verbalizzazione'] as String,
-                        fontSize: 14,
-                      ),
-                      InfoRichText(
-                        text: 'Aula: ',
-                        value: altreInfo.data['aula'] as String,
-                        fontSize: 14,
-                      ),
-                      InfoRichText(
-                        text: 'Numero iscritti: ',
-                        value: altreInfo.data['num_iscritti'] as String,
-                        fontSize: 14,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                BoxInfo(
-                  darkModeOn: widget.darkModeOn,
-                  child: InfoRichText(
-                    text: 'Docente: ',
-                    value: altreInfo.data['docente'] as String,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  children: [
-                    if (altreInfo.data['tabellaHidden'] != null) ...[
-                      Flexible(
-                        child: MaterialButton(
-                          padding: const EdgeInsets.all(0),
-                          minWidth: double.infinity,
-                          color: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20)),
-                              ),
-                              builder: (context) {
-                                widget.prenotaEsame.altreInfo = altreInfo.data;
-                                return widget.prenotaEsame;
-                              },
-                            );
-                          },
-                          child: const Text('PRENOTA',
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                    ],
-                    Flexible(
-                      child: MaterialButton(
-                        minWidth: double.infinity,
-                        color: Theme.of(context).primaryColorLight,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        onPressed: () {
-                          final event = Event(
-                            title:
-                                'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
-                            description:
-                                "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                            location: 'Esse3',
-                            startDate: DateTime.parse(
-                                    widget.dataAppello.substring(6) +
-                                        widget.dataAppello.substring(3, 5) +
-                                        widget.dataAppello.substring(0, 2))
-                                .subtract(const Duration(days: 7))
-                                .add(const Duration(hours: 10)),
-                            endDate: DateTime.parse(
-                                    widget.dataAppello.substring(6) +
-                                        widget.dataAppello.substring(3, 5) +
-                                        widget.dataAppello.substring(0, 2))
-                                .subtract(const Duration(days: 6)),
-                          );
-                          Add2Calendar.addEvent2Cal(event);
-                        },
-                        child: altreInfo.data['tabellaHidden'] == null
-                            ? const Text('IMPOSTA PROMEMORIA',
-                                style: TextStyle(color: Colors.white))
-                            : const Text('PROMEMORIA',
-                                style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            );
-          default:
-            return const Text('Errore interno');
-        }
-      },
-    );
-  }
-}
-
 /// Card dell'appello con tutte le informazioni necessarie per prenotarsi,
 /// utilizzata in [ProssimiAppelliScreen].
 class CardAppello extends StatefulWidget {
-  final String nomeAppello;
-  final String dataAppello;
-  final String descrizione;
-  final String periodoIscrizioni;
-  final String sessione;
+  final AppelloModel appello;
   final PrenotaEsame prenotaEsame;
-
-  /// Serve poi per richiedere i parametri per la prenotazione dell'appello.
-  final String linkInfo;
 
   const CardAppello({
     Key key,
-    this.nomeAppello,
-    this.dataAppello,
-    this.descrizione,
-    this.periodoIscrizioni,
-    this.sessione,
-    this.linkInfo,
+    this.appello,
     this.prenotaEsame,
   }) : super(key: key);
 
   factory CardAppello.fromAppelloModel(
       AppelloModel appello, PrenotaEsame prenotaEsame) {
     return CardAppello(
-      nomeAppello: appello.nomeMateria,
-      dataAppello: appello.dataAppello,
-      descrizione: appello.descrizione,
-      periodoIscrizioni: appello.periodoIscrizione,
-      sessione: appello.sessione,
-      linkInfo: appello.linkInfo,
+      appello: appello,
       prenotaEsame: prenotaEsame,
     );
   }
@@ -344,7 +67,7 @@ class _CardAppelloState extends State<CardAppello> {
             children: [
               Flexible(
                 child: Text(
-                  widget.nomeAppello,
+                  widget.appello.nomeMateria,
                   style: Constants.fontBold20
                       .copyWith(color: Theme.of(context).primaryColorLight),
                 ),
@@ -355,13 +78,18 @@ class _CardAppelloState extends State<CardAppello> {
                 minWidth: null,
                 backgroundColor: Theme.of(context).primaryColorLight,
                 child: Text(
-                  widget.dataAppello,
+                  widget.appello.dataAppello,
                   style: Constants.fontBold.copyWith(color: Colors.white),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
+          const Text(
+            'Generale',
+            style: Constants.fontBold,
+          ),
+          const SizedBox(height: 5),
           BoxInfo(
             darkModeOn: darkModeOn,
             child: Column(
@@ -369,17 +97,17 @@ class _CardAppelloState extends State<CardAppello> {
               children: [
                 InfoRichText(
                   text: 'Descrizione: ',
-                  value: widget.descrizione,
+                  value: widget.appello.descrizione,
                   fontSize: 14,
                 ),
                 InfoRichText(
                   text: 'Periodo iscrizioni: ',
-                  value: widget.periodoIscrizioni,
+                  value: widget.appello.periodoIscrizione,
                   fontSize: 14,
                 ),
                 InfoRichText(
                   text: 'Sessione: ',
-                  value: widget.sessione,
+                  value: widget.appello.sessione,
                   fontSize: 14,
                 ),
               ],
@@ -389,66 +117,309 @@ class _CardAppelloState extends State<CardAppello> {
           if (_isRequestedAltreInfo)
             _RichiediAltreInfo(
               altreInfo: _altreInfo,
-              linkInfo: widget.linkInfo,
-              nomeAppello: widget.nomeAppello,
-              dataAppello: widget.dataAppello,
-              descrizione: widget.descrizione,
+              appello: widget.appello,
               prenotaEsame: widget.prenotaEsame,
               darkModeOn: darkModeOn,
-            )
-          else
-            const SizedBox.shrink(),
+            ),
           Column(
             children: [
-              if (_isRequestedAltreInfo)
-                const SizedBox.shrink()
-              else
+              if (!_isRequestedAltreInfo) ...[
                 MaterialButton(
                   onPressed: () {
                     setState(() {
                       _isRequestedAltreInfo = !_isRequestedAltreInfo;
-                      _altreInfo = Provider.getInfoAppello(widget.linkInfo);
+                      _altreInfo =
+                          Provider.getInfoAppello(widget.appello.linkInfo);
                     });
                   },
                   child: Text('ALTRE INFO',
                       style: TextStyle(
                           color: Theme.of(context).primaryColorLight)),
                 ),
-              if (_isRequestedAltreInfo)
-                const SizedBox.shrink()
-              else
-                MaterialButton(
-                  minWidth: double.infinity,
-                  color: Theme.of(context).primaryColorLight,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  onPressed: () {
-                    final event = Event(
-                      title:
-                          'Appello: ${widget.nomeAppello} (${widget.descrizione} - ${widget.dataAppello})',
-                      description:
-                          "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
-                      location: 'Esse3',
-                      startDate: DateTime.parse(
-                              widget.dataAppello.substring(6) +
-                                  widget.dataAppello.substring(3, 5) +
-                                  widget.dataAppello.substring(0, 2))
-                          .subtract(const Duration(days: 7))
-                          .add(const Duration(hours: 10)),
-                      endDate: DateTime.parse(widget.dataAppello.substring(6) +
-                              widget.dataAppello.substring(3, 5) +
-                              widget.dataAppello.substring(0, 2))
-                          .subtract(const Duration(days: 6)),
-                    );
-                    Add2Calendar.addEvent2Cal(event);
-                  },
-                  child: const Text('IMPOSTA PROMEMORIA',
-                      style: TextStyle(color: Colors.white)),
+                _BottonePromemoriaAppello(
+                  appello: widget.appello,
+                  otherInfoRequested: false,
                 ),
+              ],
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class _RichiediAltreInfo extends StatefulWidget {
+  _RichiediAltreInfo({
+    Key key,
+    @required this.altreInfo,
+    @required this.appello,
+    @required this.prenotaEsame,
+    @required this.darkModeOn,
+  }) : super(key: key);
+
+  Future<Map<String, dynamic>> altreInfo;
+  final AppelloModel appello;
+  final bool darkModeOn;
+  final PrenotaEsame prenotaEsame;
+  @override
+  __RichiediAltreInfoState createState() => __RichiediAltreInfoState();
+}
+
+class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: widget.altreInfo,
+      builder: (context, altreInfo) {
+        switch (altreInfo.connectionState) {
+          case ConnectionState.none:
+            return _ErrorRequestAltreInfo(
+                appello: widget.appello, altreInfo: widget.altreInfo);
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return _WaitingRequestAltreInfo(appello: widget.appello);
+          case ConnectionState.done:
+            if (altreInfo.data == null ||
+                !(altreInfo.data['success'] as bool) ||
+                altreInfo.data['item'] == null) {
+              return const Text('Sembra non ci siano risultati...');
+            }
+            final altreInfoWrapper =
+                altreInfo.data['item'] as AltreInfoAppelloWrapper;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Appello',
+                  style: Constants.fontBold,
+                ),
+                const SizedBox(height: 5),
+                BoxInfo(
+                  darkModeOn: widget.darkModeOn,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InfoRichText(
+                        text: 'Tipo esame: ',
+                        value: altreInfoWrapper.altreInfo.tipoEsame,
+                        fontSize: 14,
+                      ),
+                      InfoRichText(
+                        text: 'Verbalizzazione: ',
+                        value: altreInfoWrapper.altreInfo.verbalizzazione,
+                        fontSize: 14,
+                      ),
+                      InfoRichText(
+                        text: 'Aula: ',
+                        value: altreInfoWrapper.altreInfo.aula,
+                        fontSize: 14,
+                      ),
+                      InfoRichText(
+                        text: 'Numero iscritti: ',
+                        value: altreInfoWrapper.altreInfo.numIscritti,
+                        fontSize: 14,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Docente',
+                  style: Constants.fontBold,
+                ),
+                const SizedBox(height: 5),
+                BoxInfo(
+                  darkModeOn: widget.darkModeOn,
+                  child: Text(altreInfoWrapper.altreInfo.docente,
+                      style: Constants.fontBold14),
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  children: [
+                    _PrenotaEsameButton(
+                      altreInfoWrapper: altreInfoWrapper,
+                      prenotaEsame: widget.prenotaEsame,
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: _BottonePromemoriaAppello(
+                        appello: widget.appello,
+                        otherInfoRequested: true,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
+          default:
+            return const Text('Errore interno');
+        }
+      },
+    );
+  }
+}
+
+class _WaitingRequestAltreInfo extends StatelessWidget {
+  const _WaitingRequestAltreInfo({
+    Key key,
+    @required this.appello,
+  }) : super(key: key);
+
+  final AppelloModel appello;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        const SizedBox(
+          height: 16,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            CupertinoActivityIndicator(),
+            SizedBox(width: 10),
+            Text(
+              'Sto scaricando le info...',
+              style: TextStyle(fontStyle: FontStyle.italic),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+        _BottonePromemoriaAppello(
+          appello: appello,
+          otherInfoRequested: false,
+        ),
+      ],
+    );
+  }
+}
+
+class _BottonePromemoriaAppello extends StatelessWidget {
+  const _BottonePromemoriaAppello({
+    Key key,
+    @required this.appello,
+    @required this.otherInfoRequested,
+  }) : super(key: key);
+
+  final AppelloModel appello;
+  final bool otherInfoRequested;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      minWidth: double.infinity,
+      color: Theme.of(context).primaryColorLight,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+      ),
+      onPressed: () {
+        final event = Event(
+          title:
+              'Appello: ${appello.nomeMateria} (${appello.descrizione} - ${appello.dataAppello})',
+          description:
+              "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
+          location: 'Esse3',
+          startDate: appello.dataAppelloDateTime
+              .subtract(const Duration(days: 7))
+              .add(const Duration(hours: 10)),
+          endDate:
+              appello.dataAppelloDateTime.subtract(const Duration(days: 6)),
+        );
+        Add2Calendar.addEvent2Cal(event);
+      },
+      child: Text(otherInfoRequested ? 'PROMEMORIA' : 'IMPOSTA PROMEMORIA',
+          style: const TextStyle(color: Colors.white)),
+    );
+  }
+}
+
+class _ErrorRequestAltreInfo extends StatefulWidget {
+  _ErrorRequestAltreInfo({
+    Key key,
+    @required this.appello,
+    @required this.altreInfo,
+  }) : super(key: key);
+
+  final AppelloModel appello;
+  Future<Map<String, dynamic>> altreInfo;
+
+  @override
+  __ErrorRequestAltreInfoState createState() => __ErrorRequestAltreInfoState();
+}
+
+class __ErrorRequestAltreInfoState extends State<_ErrorRequestAltreInfo> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: <Widget>[
+            const Icon(
+              Icons.error,
+              color: Colors.redAccent,
+            ),
+            const SizedBox(width: 5),
+            const Text(
+              'Errore nel recuperare i dati!',
+            ),
+            Expanded(child: Container()),
+            IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  setState(() {
+                    widget.altreInfo =
+                        Provider.getInfoAppello(widget.appello.linkInfo);
+                  });
+                })
+          ],
+        ),
+        _BottonePromemoriaAppello(
+          appello: widget.appello,
+          otherInfoRequested: false,
+        ),
+      ],
+    );
+  }
+}
+
+class _PrenotaEsameButton extends StatelessWidget {
+  const _PrenotaEsameButton({
+    Key key,
+    @required this.altreInfoWrapper,
+    @required this.prenotaEsame,
+  }) : super(key: key);
+
+  final PrenotaEsame prenotaEsame;
+  final AltreInfoAppelloWrapper altreInfoWrapper;
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: MaterialButton(
+        padding: const EdgeInsets.all(0),
+        minWidth: double.infinity,
+        color: Colors.green,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            builder: (context) {
+              prenotaEsame.altreInfoWrapper = altreInfoWrapper;
+              return prenotaEsame;
+            },
+          );
+        },
+        child: const Text('PRENOTA', style: TextStyle(color: Colors.white)),
       ),
     );
   }

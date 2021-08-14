@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/card_appello.dart';
@@ -171,7 +172,7 @@ class _ProssimiAppelliBody extends StatelessWidget {
               child: Text('Appelli imminenti', style: Constants.fontBold24),
             ),
             SizedBox(
-              height: 170,
+              height: 200,
               child: ListView.separated(
                 padding:
                     const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
@@ -222,16 +223,17 @@ class _ProssimiAppelliBody extends StatelessWidget {
 }
 
 class PrenotaEsame extends StatelessWidget {
-  Map<String, dynamic> altreInfo = {};
   PrenotaEsame({
     Key key,
-    this.altreInfo,
+    this.altreInfoWrapper,
   }) : super(key: key);
+
+  AltreInfoAppelloWrapper altreInfoWrapper;
 
   void _prenotaEsame(BuildContext context) {
     Constants.showAdaptiveWaitingDialog(context);
 
-    Provider.prenotaAppello(altreInfo).then(
+    Provider.prenotaAppello(altreInfoWrapper).then(
       (result) {
         if (result != null) {
           Constants.showAdaptiveDialog(
