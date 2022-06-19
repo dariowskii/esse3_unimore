@@ -41,36 +41,42 @@ class GraficoLibretto extends StatelessWidget {
           ),
           titlesData: FlTitlesData(
             show: true,
-            bottomTitles: SideTitles(
-              showTitles: false,
-              reservedSize: 15,
-              getTextStyles: (value) => TextStyle(
-                  color: darkModeOn ? const Color(0xff68737d) : Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10),
-              getTitles: (value) {
-                return '';
-              },
-            ),
-            leftTitles: SideTitles(
-              showTitles: true,
-              getTextStyles: (value) => TextStyle(
-                color: darkModeOn ? const Color(0xff67727d) : Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+                reservedSize: 15,
+                getTitlesWidget: (_, __) => const Text(""),
               ),
-              reservedSize: 15,
-              getTitles: (value) {
-                switch (value.toInt()) {
-                  case 18:
-                    return '18';
-                  case 24:
-                    return '24';
-                  case 30:
-                    return '30';
-                }
-                return '';
-              },
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 15,
+                getTitlesWidget: (value, meta) {
+                  var val = '';
+
+                  switch (value.toInt()) {
+                    case 18:
+                      val = '18';
+                      break;
+                    case 24:
+                      val = '24';
+                      break;
+                    case 30:
+                      val = '30';
+                  }
+
+                  return Text(
+                    val,
+                    style: TextStyle(
+                      color:
+                          darkModeOn ? const Color(0xff67727d) : Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           borderData: FlBorderData(
@@ -88,7 +94,9 @@ class GraficoLibretto extends StatelessWidget {
                     index.toDouble(), double.parse(punto['voto'].toString()));
               }).toList(),
               isCurved: true,
-              colors: darkModeOn ? _gradientColorsDark : _gradientColorsLight,
+              gradient: LinearGradient(
+                  colors:
+                      darkModeOn ? _gradientColorsDark : _gradientColorsLight),
               barWidth: 3,
               isStrokeCapRound: true,
               dotData: FlDotData(
@@ -96,13 +104,14 @@ class GraficoLibretto extends StatelessWidget {
               ),
               belowBarData: BarAreaData(
                 show: true,
-                colors: darkModeOn
-                    ? _gradientColorsDark
-                        .map((color) => color.withOpacity(0.3))
-                        .toList()
-                    : _gradientColorsLight
-                        .map((color) => color.withOpacity(0.3))
-                        .toList(),
+                gradient: LinearGradient(
+                    colors: darkModeOn
+                        ? _gradientColorsDark
+                            .map((color) => color.withOpacity(0.3))
+                            .toList()
+                        : _gradientColorsLight
+                            .map((color) => color.withOpacity(0.3))
+                            .toList()),
               ),
             ),
           ],

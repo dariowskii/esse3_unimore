@@ -297,13 +297,15 @@ class Provider {
     //Recupero l'immagine del profilo
     mapInfo['profile_pic'] = await _getProfilePic(documentHome);
 
-    var scrapingNomeMatricola = [];
+    var scrapingNomeMatricola = <String>[];
     try {
       scrapingNomeMatricola = documentHome
           .querySelector('.pagetitle_title')
           .innerHtml
-          .replaceAll('Area Studente ', '')
-          .split(' - ');
+          .replaceAll('&nbsp;', ' ')
+          .replaceFirst('Benvenuto', '')
+          .replaceFirst(')', '')
+          .split('(');
     } catch (e) {
       mapInfo['error'] = '.pagetitle_title not found';
       mapInfo['success'] = false;
@@ -313,10 +315,9 @@ class Provider {
     // debugPrint('respose: ${response.body}');
     assert(scrapingNomeMatricola.length == 2);
 
-    final nomeStudente = scrapingNomeMatricola[0];
-    final matricolaStudente = scrapingNomeMatricola[1]
-        .replaceFirst('[MAT. ', '')
-        .replaceFirst(']', '');
+    final nomeStudente = scrapingNomeMatricola[0].trim();
+    final matricolaStudente =
+        scrapingNomeMatricola[1].replaceFirst('Matricola N. ', '');
 
     final info = documentHome.querySelector('.record-riga');
     if (info == null) {
@@ -328,16 +329,16 @@ class Provider {
 
     mapInfo['nome'] = nomeStudente;
     var _nomeCompletoCamel = '';
-    mapInfo['nome'].split(' ').forEach((str) {
+    nomeStudente.split(' ').forEach((str) {
       _nomeCompletoCamel +=
-          '${str.toString()[0]}${str.toString().substring(1).toLowerCase()} ';
+          '${str.substring(0, 2)}${str.substring(2).toLowerCase()} ';
     });
     mapInfo['nome'] =
         _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
     mapInfo['matricola'] = matricolaStudente;
     final bufferNome = nomeStudente.split(' ');
     mapInfo['text_avatar'] =
-        '${bufferNome[0].substring(0, 1)}${bufferNome[1].substring(0, 1)}';
+        '${bufferNome[0].substring(0, 2)}${bufferNome[1].substring(0, 2)}';
     mapInfo['username'] = username;
 
     //Scraping info
