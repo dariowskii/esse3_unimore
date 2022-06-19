@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/auth_credential_model.dart';
 import 'package:Esse3/utils/database.dart';
 import 'package:Esse3/utils/provider.dart';
+import 'package:Esse3/utils/shared_wrapper.dart';
 import 'package:Esse3/widgets/drawer_home.dart';
 import 'package:Esse3/widgets/home/future_home_screen.dart';
 import 'package:Esse3/widgets/home/home_screen_builder.dart';
@@ -40,16 +42,15 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// Ritorna lo username corrente.
   Future<String> _getCurrentUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('username');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    return authCredential.username;
   }
 
   Future<void> _initSession() async {
     if (Provider.shibSessionCookie.isEmpty) {
-      final prefs = await SharedPreferences.getInstance();
-      final username = prefs.getString('username');
-      final password = prefs.getString('password');
-      await Provider.getSession(username, password);
+      final authCredential = await SharedWrapper.shared.getUserCreditentials();
+      await Provider.getSession(
+          authCredential.username, authCredential.password);
     }
   }
 

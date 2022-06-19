@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/models/appello_prenotato_model.dart';
+import 'package:Esse3/models/auth_credential_model.dart';
 import 'package:Esse3/models/esame_model.dart';
 import 'package:Esse3/models/libretto_model.dart';
 import 'package:Esse3/models/tassa_model.dart';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
+import 'package:Esse3/utils/shared_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:http/http.dart' as http;
@@ -266,12 +268,10 @@ class Provider {
   }
 
   static Future<Map<String, dynamic>> getHomeInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final password = prefs.getString('password');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(authCredential.username, authCredential.password);
     }
     http.Response homeResponse;
     final Map<String, dynamic> mapInfo = {};
@@ -339,7 +339,9 @@ class Provider {
     final bufferNome = nomeStudente.split(' ');
     mapInfo['text_avatar'] =
         '${bufferNome[0].substring(0, 2)}${bufferNome[1].substring(0, 2)}';
-    mapInfo['username'] = username;
+    mapInfo['username'] = authCredential.username;
+
+    mapInfo['tipo_corso'] = info.children[0].innerHtml;
 
     //Scraping info
     try {
@@ -389,11 +391,10 @@ class Provider {
   /// Serve a scaricare le informazioni del libretto universitario per [LibrettoScreen].
   static Future<Map<String, dynamic>> getLibretto() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final password = prefs.getString('password');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(authCredential.username, authCredential.password);
     }
 
     final Map<String, dynamic> mapLibretto = {};
@@ -524,11 +525,10 @@ class Provider {
   /// Serve a scaricare le informazioni delle tasse per [TasseScreen].
   static Future<Map<String, dynamic>> getTasse() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final password = prefs.getString('password');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(authCredential.username, authCredential.password);
     }
 
     final Map<String, dynamic> mapTasse = {};
@@ -633,11 +633,10 @@ class Provider {
   /// Serve a scaricare le informazioni dei prossimi appelli per [ProssimiAppelliScreen].
   static Future<Map<String, dynamic>> getAppelli() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final password = prefs.getString('password');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(authCredential.username, authCredential.password);
     }
 
     final Map<String, dynamic> mapAppelli = {};
@@ -732,11 +731,10 @@ class Provider {
   /// Serve a scaricare le informazioni nascoste dell'appello per poter prenotarsi.
   static Future<Map<String, dynamic>> getInfoAppello(String urlInfo) async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final password = prefs.getString('password');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(authCredential.username, authCredential.password);
     }
 
     final Map<String, dynamic> mapInfoAppello = {};
@@ -841,11 +839,10 @@ class Provider {
   /// Serve a scaricare la lista degli appelli prenotati per la [BachecaPrenotazioniScreen].
   static Future<Map<String, dynamic>> getAppelliPrenotati() async {
     final prefs = await SharedPreferences.getInstance();
-    final username = prefs.getString('username');
-    final password = prefs.getString('password');
+    final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(authCredential.username, authCredential.password);
     }
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 

@@ -1,4 +1,5 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/auth_credential_model.dart';
 import 'package:Esse3/screens/home_screen.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/login/login_button.dart';
@@ -87,8 +88,12 @@ class _LoginFormState extends State<LoginForm> {
       final prefs = await SharedPreferences.getInstance();
 
       await prefs.setBool('isLoggedIn', true);
-      await prefs.setString('username', _userController.text);
-      await prefs.setString('password', _passController.text);
+
+      final authCredential = AuthCredential(
+        username: _userController.text,
+        password: _passController.text,
+      );
+      await prefs.setString(AuthCredential.sharedKey, authCredential.encode());
 
       final userInfo = await Provider.getHomeInfo();
       if (!(userInfo['success'] as bool)) {
