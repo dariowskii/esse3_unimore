@@ -89,7 +89,7 @@ class Provider {
 
           try {
             nomeMatricola = documentSceltaCarriera
-                .querySelector('.pagetitle_title')
+                .querySelector('.pagetitle_title')!
                 .innerHtml
                 .replaceAll('Area Studente ', '')
                 .split(' - ');
@@ -157,7 +157,7 @@ class Provider {
 
   /// Serve ad ottenere le prime informazioni iniziali della home.
   static Future<Map<String, dynamic>> getSession(
-      String username, String password) async {
+      String? username, String password) async {
     final escapedPassword = Uri.encodeFull(password);
     final Map<String, dynamic> mapSession = {};
     //Ottengo il cookie di sessione per la request
@@ -167,7 +167,7 @@ class Provider {
       var customRequest = http.Request('HEAD', Uri.parse(requestUrl));
       customRequest.followRedirects = false;
       var streamedResponse = await client.send(customRequest);
-      final location = streamedResponse.headers['location'];
+      final location = streamedResponse.headers['location']!;
       customRequest = http.Request('HEAD', Uri.parse(location));
       streamedResponse = await client.send(customRequest);
       final firstJsessionCookie =
@@ -180,7 +180,7 @@ class Provider {
       final documentIdp =
           parser.parse(await streamedResponse.stream.bytesToString());
       // Prelevo l'action dal form
-      final formAction = documentIdp.querySelector('form').attributes['action'];
+      final formAction = documentIdp.querySelector('form')!.attributes['action'];
       // Creo la request
       final newRequestUrl = 'https://idp.unimore.it$formAction';
       customRequest = http.Request('POST', Uri.parse(newRequestUrl));
@@ -196,11 +196,11 @@ class Provider {
           parser.parse(await responsePost.stream.bytesToString());
       // Ottengo il RelayState
       final relayState = documentLogin
-          .querySelector('input[name="RelayState"]')
-          .attributes['value'];
+          .querySelector('input[name="RelayState"]')!
+          .attributes['value']!;
       // Ottengo SamlResponse
       final samlResponse = documentLogin
-          .querySelector('input[name="SAMLResponse"]')
+          .querySelector('input[name="SAMLResponse"]')!
           .attributes['value'];
       // Ottengo il primo shibStateCookie
       final shibStateCookieLogin =
@@ -209,7 +209,7 @@ class Provider {
       // Inizio la recondo request per il shibSessionCookie
       // prelevo la prossima action
       final postAction =
-          documentLogin.querySelector('form').attributes['action'];
+          documentLogin.querySelector('form')!.attributes['action']!;
       // Creo la seconda request
       customRequest = http.Request('POST', Uri.parse(postAction));
       customRequest.headers['cookie'] = shibStateCookieLogin;
@@ -247,8 +247,8 @@ class Provider {
   static Future<String> _getProfilePic(dom.Document document) async {
     String photoBase64 = '';
     final fotoUrl =
-        document.querySelector('img[alt="Foto Utente"]').attributes['src'];
-    http.Response responsePhoto;
+        document.querySelector('img[alt="Foto Utente"]')!.attributes['src'];
+    late http.Response responsePhoto;
     try {
       responsePhoto = await http.get(
         Uri.parse('https://www.esse3.unimore.it/$fotoUrl'),
@@ -272,7 +272,7 @@ class Provider {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(authCredential.username, authCredential.password);
+      await getSession(authCredential.username, authCredential.password!);
     }
     http.Response homeResponse;
     final Map<String, dynamic> mapInfo = {};
@@ -301,7 +301,7 @@ class Provider {
     var scrapingNomeMatricola = <String>[];
     try {
       scrapingNomeMatricola = documentHome
-          .querySelector('.pagetitle_title')
+          .querySelector('.pagetitle_title')!
           .innerHtml
           .replaceAll('&nbsp;', ' ')
           .replaceFirst('Benvenuto', '')
@@ -397,7 +397,7 @@ class Provider {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(authCredential.username, authCredential.password);
+      await getSession(authCredential.username, authCredential.password!);
     }
 
     final Map<String, dynamic> mapLibretto = {};
@@ -409,7 +409,7 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Libretto/LibrettoHome.do?&menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      final idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud')!;
       requestUrl = requestUrl + idStud;
     }
     http.Response response;
@@ -466,13 +466,13 @@ class Provider {
     }
 
     tableLibretto = tableLibretto.querySelector('.table-1-body');
-    final lengthLibretto = tableLibretto.children.length;
+    final lengthLibretto = tableLibretto!.children.length;
 
     //Scraping libretto
 
     final libretto = LibrettoModel(
-      mediaAritmetica: mapLibretto['media_arit'] as String,
-      mediaPonderata: mapLibretto['media_pond'] as String,
+      mediaAritmetica: mapLibretto['media_arit'] as String?,
+      mediaPonderata: mapLibretto['media_pond'] as String?,
       esamiTotali: lengthLibretto,
     );
 
@@ -488,7 +488,7 @@ class Provider {
 
         final tempVoto = tableLibretto.children[i].children[5].innerHtml;
         String dataEsame = "";
-        String altroVoto;
+        String? altroVoto;
         int votoEsame = 0;
         if (tempVoto != '') {
           final box = tempVoto.split('&nbsp;-&nbsp;');
@@ -531,7 +531,7 @@ class Provider {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(authCredential.username, authCredential.password);
+      await getSession(authCredential.username, authCredential.password!);
     }
 
     final Map<String, dynamic> mapTasse = {};
@@ -543,7 +543,7 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Tasse/ListaFatture.do;menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      final idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud')!;
       requestUrl = requestUrl + idStud;
     }
     http.Response response;
@@ -599,7 +599,7 @@ class Provider {
         final importo = tableTasse.children[i].children[5].innerHtml;
         final tempStatoString = tableTasse.children[i].children[6].innerHtml;
 
-        StatoPagamento stato;
+        StatoPagamento? stato;
 
         if (tempStatoString.contains('non')) {
           stato = StatoPagamento.nonPagato;
@@ -639,7 +639,7 @@ class Provider {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(authCredential.username, authCredential.password);
+      await getSession(authCredential.username, authCredential.password!);
     }
 
     final Map<String, dynamic> mapAppelli = {};
@@ -650,7 +650,7 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Appelli/AppelliF.do;&menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      final idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud')!;
       requestUrl = requestUrl + idStud;
     }
 
@@ -737,7 +737,7 @@ class Provider {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(authCredential.username, authCredential.password);
+      await getSession(authCredential.username, authCredential.password!);
     }
 
     final Map<String, dynamic> mapInfoAppello = {};
@@ -753,7 +753,7 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Appelli/DatiPrenotazioneAppello.do;?$urlInfo';
 
     if (isSceltaCarriera) {
-      final idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud')!;
       requestUrl = requestUrl + idStud;
     }
     http.Response response;
@@ -780,15 +780,15 @@ class Provider {
 
     final document = parser.parse(response.body);
 
-    dom.Element tableAppello;
-    dom.Element tabellaTurni;
+    dom.Element? tableAppello;
+    dom.Element? tabellaTurni;
     dom.Element tabellaHidden;
 
     try {
       tableAppello = document.querySelector('#app-box_dati_pren');
-      tabellaHidden = document.querySelector('#app-form_dati_pren').children[6];
+      tabellaHidden = document.querySelector('#app-form_dati_pren')!.children[6];
       tabellaTurni = document
-          .querySelector('#app-tabella_turni')
+          .querySelector('#app-tabella_turni')!
           .querySelector('.table-1-body');
     } catch (e) {
       mapInfoAppello['success'] = false;
@@ -811,13 +811,13 @@ class Provider {
         }
       }
 
-      final tipoEsame = tableAppello.children[1].children[7].text.trim();
+      final tipoEsame = tableAppello!.children[1].children[7].text.trim();
       final verbalizzazione = tableAppello.children[1].children[9].text.trim();
       final docente = tableAppello.children[1].children[11].innerHtml
           .replaceAll('<br>', ' ')
           .replaceAll('&nbsp;', '')
           .trim();
-      final numIscritti = tabellaTurni.children[0].children[2].text.trim();
+      final numIscritti = tabellaTurni!.children[0].children[2].text.trim();
       final aula = tabellaTurni.children[0].children[1].text;
 
       final altreInfo = AltreInfoAppelloModel(
@@ -845,7 +845,7 @@ class Provider {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(authCredential.username, authCredential.password);
+      await getSession(authCredential.username, authCredential.password!);
     }
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
@@ -855,7 +855,7 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Appelli/BachecaPrenotazioni.do;?menu_opened_cod=menu_link-navbox_studenti_Area_Studente';
 
     if (isSceltaCarriera) {
-      final idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud')!;
       requestUrl = requestUrl + idStud;
     }
 
@@ -911,12 +911,12 @@ class Provider {
           break;
         }
         final nomeMateriaFull =
-            arrayPrenotati[i].querySelector('h2.record-h2').text;
+            arrayPrenotati[i].querySelector('h2.record-h2')!.text;
         final nomeMateria = nomeMateriaFull.split(' [')[0];
         final codiceMateria = "[${nomeMateriaFull.split(' [')[1]}";
 
         final dataEsame = arrayPrenotati[i]
-            .querySelector('dt.app-box_dati_data_esame')
+            .querySelector('dt.app-box_dati_data_esame')!
             .innerHtml
             .split('&nbsp;');
         final dataAppello = dataEsame[0];
@@ -952,7 +952,7 @@ class Provider {
             docentiBuffer.toString().substring(0, docentiBuffer.length - 3);
 
         final btnCancella = arrayAzioni[i].querySelector('#btnCancella');
-        String linkCancellazione;
+        String? linkCancellazione;
         if (btnCancella != null) {
           linkCancellazione = btnCancella.attributes['href'];
         }
@@ -988,7 +988,7 @@ class Provider {
     final password = prefs.getString('password');
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(username, password!);
     }
 
     final Map<String, dynamic> mapHiddens = {};
@@ -999,7 +999,7 @@ class Provider {
         'https://www.esse3.unimore.it/auth/studente/Appelli/EffettuaPrenotazioneAppello.do;TIPO_ATTIVITA=1';
 
     if (isSceltaCarriera) {
-      final idStud = prefs.getString('idStud');
+      final idStud = prefs.getString('idStud')!;
       requestUrl = requestUrl + idStud;
     }
 
@@ -1050,7 +1050,7 @@ class Provider {
         if (document.querySelector('#app-text_esito_pren_msg') != null) {
           try {
             mapHiddens['success'] = document
-                .querySelector('#app-text_esito_pren_msg')
+                .querySelector('#app-text_esito_pren_msg')!
                 .text
                 .contains('PRENOTAZIONE EFFETTUATA');
           } catch (e) {
@@ -1062,7 +1062,7 @@ class Provider {
           if (!(mapHiddens['success'] as bool)) {
             try {
               mapHiddens['error'] = document
-                  .querySelector('#app-text_esito_pren_msg')
+                  .querySelector('#app-text_esito_pren_msg')!
                   .innerHtml
                   .replaceFirst(
                       'PRENOTAZIONE NON EFFETTUATA<br>Questo messaggio può presentarsi se:',
@@ -1089,13 +1089,13 @@ class Provider {
 
   /// Serve a cancellare un appello grazie alle [infoAppello] scaricate da [getInfoAppello].
   static Future<bool> cancellaAppello(
-      Map<String, dynamic> infoAppello, String linkCancellazione) async {
+      Map<String, dynamic> infoAppello, String? linkCancellazione) async {
     final prefs = await SharedPreferences.getInstance();
     final username = prefs.getString('username');
     final password = prefs.getString('password');
 
     if (_shibSessionCookie.isEmpty) {
-      await getSession(username, password);
+      await getSession(username, password!);
     }
 
     final client = http.Client();
@@ -1103,11 +1103,11 @@ class Provider {
     final isSceltaCarriera = prefs.getBool('isSceltaCarriera') ?? false;
 
     var requestUrl = 'https://www.esse3.unimore.it/$linkCancellazione';
-    String idStud;
+    String? idStud;
 
     if (isSceltaCarriera) {
       idStud = prefs.getString('idStud');
-      requestUrl = requestUrl + idStud;
+      requestUrl = requestUrl + idStud!;
     }
     http.StreamedResponse response;
 
@@ -1151,7 +1151,7 @@ class Provider {
       requestUrl = 'https://www.esse3.unimore.it/$action';
 
       if (isSceltaCarriera) {
-        requestUrl = requestUrl + idStud;
+        requestUrl = requestUrl + idStud!;
       }
 
       http.Response finalResponse;

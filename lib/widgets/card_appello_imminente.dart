@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 /// Card con poche informazioni sull'appello, utilizzata per gli appelli
 /// imminenti in [ProssimiAppelliScreen].
 class CardAppelloImminente extends StatelessWidget {
-  final String nomeAppello;
-  final String dataAppello;
-  final String descrizione;
-  String get _nomeMateria {
-    if (nomeAppello.length > 20) {
-      return "${nomeAppello.substring(0, 20)}...";
+  final String? nomeAppello;
+  final String? dataAppello;
+  final String? descrizione;
+  String? get _nomeMateria {
+    if (nomeAppello!.length > 20) {
+      return "${nomeAppello!.substring(0, 20)}...";
     }
     return nomeAppello;
   }
 
-  String get _descrizione {
-    if (descrizione.length > 60) {
-      return "${descrizione.substring(0, 60)}...";
+  String? get _descrizione {
+    if (descrizione!.length > 60) {
+      return "${descrizione!.substring(0, 60)}...";
     }
     return descrizione;
   }
@@ -30,7 +30,7 @@ class CardAppelloImminente extends StatelessWidget {
   final double deviceWidth;
 
   const CardAppelloImminente({
-    Key key,
+    Key? key,
     this.nomeAppello,
     this.dataAppello,
     this.descrizione,
@@ -73,7 +73,7 @@ class CardAppelloImminente extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  _nomeMateria,
+                  _nomeMateria!,
                   style: Constants.fontBold20
                       .copyWith(color: Theme.of(context).primaryColorLight),
                 ),
@@ -84,7 +84,7 @@ class CardAppelloImminente extends StatelessWidget {
                 minWidth: null,
                 backgroundColor: Theme.of(context).primaryColorLight,
                 child: Text(
-                  dataAppello,
+                  dataAppello!,
                   style: Constants.fontBold.copyWith(color: Colors.white),
                 ),
               ),
@@ -95,7 +95,7 @@ class CardAppelloImminente extends StatelessWidget {
           const SizedBox(height: 5),
           BoxInfo(
             darkModeOn: darkModeOn,
-            child: Text(_descrizione),
+            child: Text(_descrizione!),
           ),
         ],
       ),

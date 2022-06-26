@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 class TassaExpansionTile extends StatelessWidget {
   final bool darkModeOn;
   final TassaModel tassa;
-  String _statoPagamento;
-  Color _themeColor;
-  Icon _icon;
+  String? _statoPagamento;
+  Color? _themeColor;
+  Icon? _icon;
 
   TassaExpansionTile({
-    Key key,
-    @required this.tassa,
-    @required this.darkModeOn,
+    Key? key,
+    required this.tassa,
+    required this.darkModeOn,
   }) : super(key: key);
 
   @override
@@ -110,7 +110,7 @@ class TassaExpansionTile extends StatelessWidget {
 }
 
 class _PromemoriaTassa extends StatelessWidget {
-  const _PromemoriaTassa({Key key, @required this.tassa}) : super(key: key);
+  const _PromemoriaTassa({Key? key, required this.tassa}) : super(key: key);
 
   final TassaModel tassa;
 

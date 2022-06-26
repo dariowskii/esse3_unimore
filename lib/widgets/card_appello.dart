@@ -12,11 +12,11 @@ import 'package:flutter/material.dart';
 /// Card dell'appello con tutte le informazioni necessarie per prenotarsi,
 /// utilizzata in [ProssimiAppelliScreen].
 class CardAppello extends StatefulWidget {
-  final AppelloModel appello;
-  final PrenotaEsame prenotaEsame;
+  final AppelloModel? appello;
+  final PrenotaEsame? prenotaEsame;
 
   const CardAppello({
-    Key key,
+    Key? key,
     this.appello,
     this.prenotaEsame,
   }) : super(key: key);
@@ -34,7 +34,7 @@ class CardAppello extends StatefulWidget {
 }
 
 class _CardAppelloState extends State<CardAppello> {
-  Future<Map<String, dynamic>> _altreInfo;
+  Future<Map<String, dynamic>>? _altreInfo;
   bool _isRequestedAltreInfo = false;
 
   @override
@@ -65,7 +65,7 @@ class _CardAppelloState extends State<CardAppello> {
             children: [
               Flexible(
                 child: Text(
-                  widget.appello.nomeMateria,
+                  widget.appello!.nomeMateria,
                   style: Constants.fontBold20
                       .copyWith(color: Theme.of(context).primaryColorLight),
                 ),
@@ -76,7 +76,7 @@ class _CardAppelloState extends State<CardAppello> {
                 minWidth: null,
                 backgroundColor: Theme.of(context).primaryColorLight,
                 child: Text(
-                  widget.appello.dataAppello,
+                  widget.appello!.dataAppello,
                   style: Constants.fontBold.copyWith(color: Colors.white),
                 ),
               ),
@@ -95,15 +95,15 @@ class _CardAppelloState extends State<CardAppello> {
               children: [
                 InfoRichText(
                   text: 'Descrizione: ',
-                  value: widget.appello.descrizione,
+                  value: widget.appello!.descrizione,
                 ),
                 InfoRichText(
                   text: 'Periodo iscrizioni: ',
-                  value: widget.appello.periodoIscrizione,
+                  value: widget.appello!.periodoIscrizione,
                 ),
                 InfoRichText(
                   text: 'Sessione: ',
-                  value: widget.appello.sessione,
+                  value: widget.appello!.sessione,
                 ),
               ],
             ),
@@ -124,7 +124,7 @@ class _CardAppelloState extends State<CardAppello> {
                     setState(() {
                       _isRequestedAltreInfo = !_isRequestedAltreInfo;
                       _altreInfo =
-                          Provider.getInfoAppello(widget.appello.linkInfo);
+                          Provider.getInfoAppello(widget.appello!.linkInfo!);
                     });
                   },
                   child: Text('ALTRE INFO',
@@ -147,17 +147,17 @@ class _CardAppelloState extends State<CardAppello> {
 // ignore: must_be_immutable
 class _RichiediAltreInfo extends StatefulWidget {
   _RichiediAltreInfo({
-    Key key,
-    @required this.altreInfo,
-    @required this.appello,
-    @required this.prenotaEsame,
-    @required this.darkModeOn,
+    Key? key,
+    required this.altreInfo,
+    required this.appello,
+    required this.prenotaEsame,
+    required this.darkModeOn,
   }) : super(key: key);
 
-  Future<Map<String, dynamic>> altreInfo;
-  final AppelloModel appello;
+  Future<Map<String, dynamic>>? altreInfo;
+  final AppelloModel? appello;
   final bool darkModeOn;
-  final PrenotaEsame prenotaEsame;
+  final PrenotaEsame? prenotaEsame;
   @override
   __RichiediAltreInfoState createState() => __RichiediAltreInfoState();
 }
@@ -177,12 +177,12 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
             return _WaitingRequestAltreInfo(appello: widget.appello);
           case ConnectionState.done:
             if (altreInfo.data == null ||
-                !(altreInfo.data['success'] as bool) ||
-                altreInfo.data['item'] == null) {
+                !(altreInfo.data!['success'] as bool) ||
+                altreInfo.data!['item'] == null) {
               return const Text('Sembra non ci siano risultati...');
             }
             final altreInfoWrapper =
-                altreInfo.data['item'] as AltreInfoAppelloWrapper;
+                altreInfo.data!['item'] as AltreInfoAppelloWrapper;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -254,11 +254,11 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
 
 class _WaitingRequestAltreInfo extends StatelessWidget {
   const _WaitingRequestAltreInfo({
-    Key key,
-    @required this.appello,
+    Key? key,
+    required this.appello,
   }) : super(key: key);
 
-  final AppelloModel appello;
+  final AppelloModel? appello;
 
   @override
   Widget build(BuildContext context) {
@@ -292,12 +292,12 @@ class _WaitingRequestAltreInfo extends StatelessWidget {
 
 class _BottonePromemoriaAppello extends StatelessWidget {
   const _BottonePromemoriaAppello({
-    Key key,
-    @required this.appello,
-    @required this.otherInfoRequested,
+    Key? key,
+    required this.appello,
+    required this.otherInfoRequested,
   }) : super(key: key);
 
-  final AppelloModel appello;
+  final AppelloModel? appello;
   final bool otherInfoRequested;
 
   @override
@@ -311,15 +311,15 @@ class _BottonePromemoriaAppello extends StatelessWidget {
       onPressed: () {
         final event = Event(
           title:
-              'Appello: ${appello.nomeMateria} (${appello.descrizione} - ${appello.dataAppello})',
+              'Appello: ${appello!.nomeMateria} (${appello!.descrizione} - ${appello!.dataAppello})',
           description:
               "Non dimenticarti di prenotare l'esame e in bocca al lupo!",
           location: 'Esse3',
-          startDate: appello.dataAppelloDateTime
+          startDate: appello!.dataAppelloDateTime
               .subtract(const Duration(days: 7))
               .add(const Duration(hours: 10)),
           endDate:
-              appello.dataAppelloDateTime.subtract(const Duration(days: 6)),
+              appello!.dataAppelloDateTime.subtract(const Duration(days: 6)),
         );
         Add2Calendar.addEvent2Cal(event);
       },
@@ -331,13 +331,13 @@ class _BottonePromemoriaAppello extends StatelessWidget {
 
 class _ErrorRequestAltreInfo extends StatefulWidget {
   _ErrorRequestAltreInfo({
-    Key key,
-    @required this.appello,
-    @required this.altreInfo,
+    Key? key,
+    required this.appello,
+    required this.altreInfo,
   }) : super(key: key);
 
-  final AppelloModel appello;
-  Future<Map<String, dynamic>> altreInfo;
+  final AppelloModel? appello;
+  Future<Map<String, dynamic>>? altreInfo;
 
   @override
   __ErrorRequestAltreInfoState createState() => __ErrorRequestAltreInfoState();
@@ -364,7 +364,7 @@ class __ErrorRequestAltreInfoState extends State<_ErrorRequestAltreInfo> {
                 onPressed: () {
                   setState(() {
                     widget.altreInfo =
-                        Provider.getInfoAppello(widget.appello.linkInfo);
+                        Provider.getInfoAppello(widget.appello!.linkInfo!);
                   });
                 })
           ],
@@ -380,12 +380,12 @@ class __ErrorRequestAltreInfoState extends State<_ErrorRequestAltreInfo> {
 
 class _PrenotaEsameButton extends StatelessWidget {
   const _PrenotaEsameButton({
-    Key key,
-    @required this.altreInfoWrapper,
-    @required this.prenotaEsame,
+    Key? key,
+    required this.altreInfoWrapper,
+    required this.prenotaEsame,
   }) : super(key: key);
 
-  final PrenotaEsame prenotaEsame;
+  final PrenotaEsame? prenotaEsame;
   final AltreInfoAppelloWrapper altreInfoWrapper;
 
   @override
@@ -405,8 +405,8 @@ class _PrenotaEsameButton extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             builder: (context) {
-              prenotaEsame.altreInfoWrapper = altreInfoWrapper;
-              return prenotaEsame;
+              prenotaEsame!.altreInfoWrapper = altreInfoWrapper;
+              return prenotaEsame!;
             },
           );
         },

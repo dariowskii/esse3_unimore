@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Chip utilizzata per le info primarie della [HomeScreen].
 class ChipInfo extends StatelessWidget {
   /// Testo della chip.
-  final String text;
+  final String? text;
 
   /// Grandezza del font della chip.
   final double textSize;
@@ -15,7 +15,7 @@ class ChipInfo extends StatelessWidget {
     return Chip(
       backgroundColor: Theme.of(context).primaryColor,
       label: Text(
-        text,
+        text!,
         style: TextStyle(
           color: Colors.white,
           fontSize: textSize,

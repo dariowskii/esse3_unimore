@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 class HeaderLibretto extends StatelessWidget {
   const HeaderLibretto({
-    Key key,
+    Key? key,
     this.darkModeOn = false,
-    @required this.puntiGrafico,
+    required this.puntiGrafico,
   })  : assert(puntiGrafico != null),
         super(key: key);
 

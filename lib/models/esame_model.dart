@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 class EsameModel {
   EsameModel({
-    @required this.nome,
-    @required this.codiceEsame,
-    @required this.dataEsame,
-    @required this.crediti,
-    @required this.voto,
+    required this.nome,
+    required this.codiceEsame,
+    required this.dataEsame,
+    required this.crediti,
+    required this.voto,
     this.altroVoto,
   });
 
   final String nome;
   final String codiceEsame;
   final String dataEsame;
-  final String altroVoto;
+  final String? altroVoto;
   final int crediti;
   final int voto;
 

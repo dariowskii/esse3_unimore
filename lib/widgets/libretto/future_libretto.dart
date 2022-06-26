@@ -9,7 +9,7 @@ class FutureLibretto extends StatelessWidget {
   final Function() onPressed;
 
   const FutureLibretto(
-      {Key key, @required this.futureLibretto, @required this.onPressed})
+      {Key? key, required this.futureLibretto, required this.onPressed})
       : assert(futureLibretto != null),
         assert(onPressed != null),
         super(key: key);
@@ -38,11 +38,11 @@ class FutureLibretto extends StatelessWidget {
             case ConnectionState.active:
             case ConnectionState.done:
               if (snapLibretto.data == null ||
-                  !(snapLibretto.data['success'] as bool)) {
+                  !(snapLibretto.data!['success'] as bool)) {
                 return ErrorLibretto(onPressed: onPressed);
               }
-              if (snapLibretto.data['item'] != null) {
-                final _libretto = snapLibretto.data['item'] as LibrettoModel;
+              if (snapLibretto.data!['item'] != null) {
+                final _libretto = snapLibretto.data!['item'] as LibrettoModel;
                 final fraseLibretto = _libretto.esamiSuperati ==
                         _libretto.esamiTotali
                     ? 'Che la Sbronza sia con te! 🍻'
@@ -59,7 +59,7 @@ class FutureLibretto extends StatelessWidget {
                         text: "${_libretto.esamiSuperati}",
                         style: TextStyle(
                           fontFamily: 'SF Pro',
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                           fontWeight: FontWeight.bold,
                         ),
                         children: [

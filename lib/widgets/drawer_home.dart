@@ -13,10 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerHome extends StatelessWidget {
-  final Map<String, dynamic> user;
-  final Future<Map<String, dynamic>> userFuture;
+  final Map<String, dynamic>? user;
+  final Future<Map<String, dynamic>?>? userFuture;
 
-  const DrawerHome({Key key, @required this.user, @required this.userFuture})
+  const DrawerHome({Key? key, required this.user, required this.userFuture})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -47,10 +47,10 @@ class DrawerHome extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  if (user == null)
-                    FutureDrawerHeaderHome(userFuture: userFuture)
+                  if (user == null && userFuture != null)
+                    FutureDrawerHeaderHome(userFuture: userFuture!)
                   else
-                    DrawerHeaderHome(user: user),
+                    DrawerHeaderHome(user: user!),
                   const SizedBox(height: 15),
                   const Text(
                     'Created by 145622',
@@ -66,7 +66,7 @@ class DrawerHome extends StatelessWidget {
               children: [
                 BottonePaginaDrawer(
                   testoBottone: 'Bacheca prenotazioni',
-                  textColor: Theme.of(context).textTheme.bodyText1.color,
+                  textColor: Theme.of(context).textTheme.bodyText1!.color,
                   onPressed: () async {
                     await Navigator.of(context)
                         .pushNamed(BachecaPrenotazioniScreen.id);
@@ -83,7 +83,7 @@ class DrawerHome extends StatelessWidget {
               children: [
                 BottonePaginaDrawer(
                   testoBottone: "Info sull'applicazione",
-                  textColor: Theme.of(context).textTheme.bodyText1.color,
+                  textColor: Theme.of(context).textTheme.bodyText1!.color,
                   onPressed: () async {
                     await Navigator.of(context).pushNamed(InfoApp.id);
                   },

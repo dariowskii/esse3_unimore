@@ -4,10 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 /// Schermata in cui non ci sono esami in [ProssimiAppelliScreen].
 class NoExams extends StatelessWidget {
-  final double deviceWidth;
-  final bool isTablet;
+  final double? deviceWidth;
+  final bool? isTablet;
 
-  const NoExams({Key key, this.deviceWidth, this.isTablet}) : super(key: key);
+  const NoExams({Key? key, this.deviceWidth, this.isTablet}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,9 +16,9 @@ class NoExams extends StatelessWidget {
         children: [
           SvgPicture.asset(
             'assets/img/party.svg',
-            width: isTablet ? deviceWidth * 0.6 : deviceWidth / 1.7,
+            width: isTablet! ? deviceWidth! * 0.6 : deviceWidth! / 1.7,
           ),
-          SizedBox(height: isTablet ? 30 : 15),
+          SizedBox(height: isTablet! ? 30 : 15),
           const Text('Nessun appello', style: Constants.fontBold28),
           const SizedBox(height: 10),
           const Text(

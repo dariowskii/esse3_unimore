@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 class LoginTextField extends StatelessWidget {
   const LoginTextField({
-    Key key,
-    @required this.enabled,
-    @required this.onSubmitted,
-    @required this.labelText,
+    Key? key,
+    required this.enabled,
+    required this.onSubmitted,
+    required this.labelText,
     this.focusNode,
     this.obscureText = false,
     this.controller,
@@ -15,13 +15,13 @@ class LoginTextField extends StatelessWidget {
   }) : super(key: key);
 
   final bool enabled;
-  final FocusNode focusNode;
-  final TextEditingController controller;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
   final bool obscureText;
   final Function(String) onSubmitted;
   final String labelText;
-  final int maxLenght;
-  final TextInputType keyboardType;
+  final int? maxLenght;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {

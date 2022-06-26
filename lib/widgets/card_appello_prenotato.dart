@@ -14,8 +14,8 @@ class CardAppelloPrenotato extends StatelessWidget {
   final AppelloPrenotatoModel appello;
 
   const CardAppelloPrenotato({
-    Key key,
-    @required this.appello,
+    Key? key,
+    required this.appello,
     this.darkModeOn = false,
     this.isTablet = false,
   }) : super(key: key);
@@ -129,10 +129,10 @@ class _PromemoriaAppello extends StatelessWidget {
   final AppelloPrenotatoModel appello;
 
   const _PromemoriaAppello({
-    Key key,
-    @required this.darkModeOn,
-    @required this.nomeEsame,
-    @required this.appello,
+    Key? key,
+    required this.darkModeOn,
+    required this.nomeEsame,
+    required this.appello,
   }) : super(key: key);
 
   @override
@@ -169,11 +169,11 @@ class _PromemoriaAppello extends StatelessWidget {
 }
 
 class _CancellaEsameButton extends StatelessWidget {
-  final bool darkModeOn;
-  final AppelloPrenotatoModel appello;
+  final bool? darkModeOn;
+  final AppelloPrenotatoModel? appello;
 
   const _CancellaEsameButton({
-    Key key,
+    Key? key,
     this.darkModeOn,
     this.appello,
   }) : super(key: key);
@@ -198,7 +198,7 @@ class _CancellaEsameButton extends StatelessWidget {
     Constants.showAdaptiveWaitingDialog(context);
 
     Provider.cancellaAppello(
-            appello.hiddensCancellazione, appello.linkCancellazione)
+            appello!.hiddensCancellazione, appello!.linkCancellazione)
         .then((success) {
       if (success != null) {
         Constants.showAdaptiveDialog(

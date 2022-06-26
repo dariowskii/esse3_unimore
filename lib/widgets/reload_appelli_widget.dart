@@ -5,11 +5,11 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 /// Schermata di errore che appare quando la richiesta
 /// della [BachecaPrenotazioniScreen] non va a buon fine.
 class ReloadAppelli extends StatelessWidget {
-  final Future<void> Function() onReload;
-  final double deviceHeight, deviceWidth;
+  final Future<void> Function()? onReload;
+  final double? deviceHeight, deviceWidth;
 
   const ReloadAppelli(
-      {Key key, this.onReload, this.deviceHeight, this.deviceWidth})
+      {Key? key, this.onReload, this.deviceHeight, this.deviceWidth})
       : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class ReloadAppelli extends StatelessWidget {
       animSpeedFactor: 1.5,
       height: 80,
       color: Theme.of(context).primaryColorLight,
-      onRefresh: onReload,
+      onRefresh: onReload!,
       showChildOpacityTransition: false,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -26,7 +26,7 @@ class ReloadAppelli extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: deviceHeight - 130,
+              maxHeight: deviceHeight! - 130,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +42,7 @@ class ReloadAppelli extends StatelessWidget {
                     children: <Widget>[
                       SvgPicture.asset(
                         'assets/img/networkError.svg',
-                        width: deviceWidth * 0.7,
+                        width: deviceWidth! * 0.7,
                       ),
                       const SizedBox(
                         height: 20,

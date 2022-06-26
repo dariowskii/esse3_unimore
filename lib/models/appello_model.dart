@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppelloModel {
   AppelloModel({
-    @required this.nomeMateria,
-    @required this.dataAppello,
-    @required this.periodoIscrizione,
-    @required this.descrizione,
-    @required this.sessione,
-    @required this.linkInfo,
+    required this.nomeMateria,
+    required this.dataAppello,
+    required this.periodoIscrizione,
+    required this.descrizione,
+    required this.sessione,
+    required this.linkInfo,
   });
 
   final String nomeMateria;
@@ -15,7 +15,7 @@ class AppelloModel {
   final String periodoIscrizione;
   final String descrizione;
   final String sessione;
-  final String linkInfo;
+  final String? linkInfo;
 
   DateTime get dataAppelloDateTime {
     final anno = dataAppello.substring(6);
@@ -27,7 +27,7 @@ class AppelloModel {
 
 class AppelliWrapper {
   AppelliWrapper({
-    @required this.totaleApelli,
+    required this.totaleApelli,
   });
 
   final int totaleApelli;

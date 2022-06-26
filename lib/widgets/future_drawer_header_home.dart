@@ -4,15 +4,15 @@ import 'package:Esse3/constants.dart';
 import 'package:flutter/material.dart';
 
 class FutureDrawerHeaderHome extends StatelessWidget {
-  const FutureDrawerHeaderHome({Key key, @required this.userFuture})
+  const FutureDrawerHeaderHome({Key? key, required this.userFuture})
       : assert(userFuture != null),
         super(key: key);
 
-  final Future<Map<String, dynamic>> userFuture;
+  final Future<Map<String, dynamic>?> userFuture;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<Map<String, dynamic>?>(
       future: userFuture,
       builder: (context, userData) {
         switch (userData.connectionState) {
@@ -36,13 +36,13 @@ class FutureDrawerHeaderHome extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundColor: Constants.mainColor.withOpacity(0.9),
                     radius: 30,
-                    backgroundImage: userData.data['profile_pic'] == 'no'
+                    backgroundImage: userData.data!['profile_pic'] == 'no'
                         ? null
                         : MemoryImage(base64Decode(
-                            userData.data['profile_pic'] as String)),
-                    child: userData.data['profile_pic'] == 'no'
+                            userData.data!['profile_pic'] as String)),
+                    child: userData.data!['profile_pic'] == 'no'
                         ? Text(
-                            userData.data['text_avatar'] as String,
+                            userData.data!['text_avatar'] as String,
                             style: const TextStyle(
                               fontWeight: FontWeight.w100,
                               fontSize: 16,
@@ -59,7 +59,7 @@ class FutureDrawerHeaderHome extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '${userData.data['nome_studente']}',
+                        '${userData.data!['nome_studente']}',
                         style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -69,7 +69,7 @@ class FutureDrawerHeaderHome extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        'Matr. ${userData.data['matricola']}',
+                        'Matr. ${userData.data!['matricola']}',
                         style: const TextStyle(color: Colors.white),
                       )
                     ],

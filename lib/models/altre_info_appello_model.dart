@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class AltreInfoAppelloModel {
   AltreInfoAppelloModel({
-    @required this.tipoEsame,
-    @required this.verbalizzazione,
-    @required this.docente,
-    @required this.numIscritti,
-    @required this.aula,
+    required this.tipoEsame,
+    required this.verbalizzazione,
+    required this.docente,
+    required this.numIscritti,
+    required this.aula,
   });
 
   final String tipoEsame;
@@ -18,10 +18,10 @@ class AltreInfoAppelloModel {
 
 class AltreInfoAppelloWrapper {
   final int numHiddens;
-  final Map<String, String> hiddens = {};
-  AltreInfoAppelloModel altreInfo;
+  final Map<String, String?> hiddens = {};
+  late AltreInfoAppelloModel altreInfo;
 
   AltreInfoAppelloWrapper({
-    @required this.numHiddens,
+    required this.numHiddens,
   });
 }

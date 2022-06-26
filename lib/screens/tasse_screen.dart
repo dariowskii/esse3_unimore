@@ -16,7 +16,7 @@ class TasseScreen extends StatefulWidget {
 
 class _TasseScreenState extends State<TasseScreen> {
   /// Future delle tasse per il [FutureBuilder].
-  Future<Map<String, dynamic>> _tasse;
+  Future<Map<String, dynamic>>? _tasse;
 
   /// Lista di citazioni sulle tasse.
   final List<String> _citTasse = [
@@ -30,7 +30,7 @@ class _TasseScreenState extends State<TasseScreen> {
   ];
 
   /// Numero random per estrarre a caso la citazione.
-  Random _rand;
+  late Random _rand;
 
   @override
   void initState() {
@@ -117,10 +117,10 @@ class _TasseScreenState extends State<TasseScreen> {
                             switch (snapshot.connectionState) {
                               case ConnectionState.done:
                                 if (snapshot.hasData &&
-                                    (snapshot.data['success'] as bool) &&
-                                    snapshot.data['item'] != null) {
+                                    (snapshot.data!['success'] as bool) &&
+                                    snapshot.data!['item'] != null) {
                                   final _tasseDaPagare =
-                                      snapshot.data['da_pagare'] as int;
+                                      snapshot.data!['da_pagare'] as int;
                                   if (_tasseDaPagare > 0) {
                                     return Column(
                                       children: [
@@ -198,10 +198,10 @@ class _TasseScreenState extends State<TasseScreen> {
                       case ConnectionState.active:
                       case ConnectionState.done:
                         if (tasseSnap.hasData &&
-                            (tasseSnap.data['success'] as bool) &&
-                            tasseSnap.data['item'] != null) {
+                            (tasseSnap.data!['success'] as bool) &&
+                            tasseSnap.data!['item'] != null) {
                           final tasse =
-                              tasseSnap.data['item'] as List<TassaModel>;
+                              tasseSnap.data!['item'] as List<TassaModel>;
                           return Column(
                             children: [
                               ListView.separated(

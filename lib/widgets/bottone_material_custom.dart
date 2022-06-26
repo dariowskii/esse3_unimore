@@ -9,11 +9,11 @@ class BottoneMaterialCustom extends StatelessWidget {
   final FontWeight fontWeight;
 
   const BottoneMaterialCustom(
-      {Key key,
-      @required this.onPressed,
+      {Key? key,
+      required this.onPressed,
       this.backgroundColor = Colors.redAccent,
       this.textColor = Colors.white,
-      @required this.textButton,
+      required this.textButton,
       this.minWidth = double.infinity,
       this.height = 40,
       this.fontWeight = FontWeight.bold,

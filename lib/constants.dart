@@ -105,9 +105,9 @@ class Constants {
   }
 
   static void showAdaptiveDialog(BuildContext context,
-      {@required bool success,
-      @required String successText,
-      @required String errorText}) {
+      {required bool success,
+      required String successText,
+      required String errorText}) {
     final content = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -164,9 +164,9 @@ class Constants {
   }
 
   static Widget getAskingModalBottomSheet(BuildContext context,
-      {@required Function() onAccepted,
-      @required String title,
-      @required String text}) {
+      {required Function() onAccepted,
+      required String title,
+      required String text}) {
     return SizedBox(
       height: 180,
       child: Column(

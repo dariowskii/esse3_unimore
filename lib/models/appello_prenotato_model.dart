@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class AppelloPrenotatoModel {
   AppelloPrenotatoModel({
-    @required this.nomeMateria,
-    @required this.iscrizione,
-    @required this.tipoEsame,
-    @required this.svolgimento,
-    @required this.dataAppello,
-    @required this.oraAppello,
-    @required this.docenti,
-    @required this.linkCancellazione,
-    @required this.codiceEsame,
+    required this.nomeMateria,
+    required this.iscrizione,
+    required this.tipoEsame,
+    required this.svolgimento,
+    required this.dataAppello,
+    required this.oraAppello,
+    required this.docenti,
+    required this.linkCancellazione,
+    required this.codiceEsame,
   });
 
   final String nomeMateria;
@@ -21,7 +21,7 @@ class AppelloPrenotatoModel {
   final String dataAppello;
   final String oraAppello;
   final String docenti;
-  final String linkCancellazione;
+  final String? linkCancellazione;
 
   DateTime get dataAppelloDateTime {
     final anno = dataAppello.substring(6);
@@ -33,7 +33,7 @@ class AppelloPrenotatoModel {
   Map<String, dynamic> get hiddensCancellazione {
     final map = <String, dynamic>{};
 
-    final buffer = linkCancellazione.replaceFirst(
+    final buffer = linkCancellazione!.replaceFirst(
         'auth/studente/Appelli/ConfermaCancellaAppello.do?', '');
     final list = buffer.split('&');
 
@@ -48,7 +48,7 @@ class AppelloPrenotatoModel {
 
 class AppelliPrenotatiWrapper {
   AppelliPrenotatiWrapper({
-    @required this.appelliTotali,
+    required this.appelliTotali,
   });
 
   final int appelliTotali;

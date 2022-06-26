@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 /// in [LibrettoHomeCard].
 class ErrorLibretto extends StatelessWidget {
   /// Future del libretto da ricaricare.
-  final Function() onPressed;
+  final Function()? onPressed;
 
-  const ErrorLibretto({Key key, this.onPressed}) : super(key: key);
+  const ErrorLibretto({Key? key, this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

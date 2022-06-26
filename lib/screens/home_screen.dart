@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Home screen dell'app.
 class HomeScreen extends StatefulWidget {
-  final Map<String, dynamic> user;
+  final Map<String, dynamic>? user;
   static const String id = 'homeScreen';
 
   // ignore: prefer_const_constructors_in_immutables
@@ -27,21 +27,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  List<String> _cdl;
+  List<String>? _cdl;
 
   /// Future dell'utente in caso sia già loggato.
-  Future<Map<String, dynamic>> _userFuture;
-  AnimationController _controller;
-  Animation _animation;
+  Future<Map<String, dynamic>?>? _userFuture;
+  AnimationController? _controller;
+  Animation? _animation;
 
   /// Riprende le info dell'utente dal [DBProvider.db].
-  Future<Map<String, dynamic>> _getUserDb(String user) async {
-    final userData = await DBProvider.db.getUser(user);
-    return userData;
+  Future<Map<String, dynamic>?> _getUserDb(String? user) async {
+    // final userData = await DBProvider.db.getUser(user);
+    // return userData;
   }
 
   /// Ritorna lo username corrente.
-  Future<String> _getCurrentUserName() async {
+  Future<String?> _getCurrentUserName() async {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
     return authCredential.username;
   }
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen>
     if (Provider.shibSessionCookie.isEmpty) {
       final authCredential = await SharedWrapper.shared.getUserCreditentials();
       await Provider.getSession(
-          authCredential.username, authCredential.password);
+          authCredential.username, authCredential.password!);
     }
   }
 
@@ -63,10 +63,10 @@ class _HomeScreenState extends State<HomeScreen>
       vsync: this,
     );
     _animation = CurvedAnimation(
-      parent: _controller,
+      parent: _controller!,
       curve: Curves.decelerate,
     );
-    _controller.addListener(() {
+    _controller!.addListener(() {
       setState(() {});
     });
 
@@ -77,26 +77,26 @@ class _HomeScreenState extends State<HomeScreen>
         });
       });
     } else {
-      _cdl = widget.user['corso_stud'].toString().split('] - ');
-      _cdl[0] = '${_cdl[0]}]';
+      _cdl = widget.user!['corso_stud'].toString().split('] - ');
+      _cdl![0] = '${_cdl![0]}]';
 
-      DBProvider.db
-          .checkExistUser(widget.user['username'] as String)
-          .then((data) {
-        if (data != null) {
-          DBProvider.db.updateUser(widget.user);
-        } else {
-          DBProvider.db.newUser(widget.user);
-        }
-      });
+      // DBProvider.db
+      //     .checkExistUser(widget.user!['username'] as String?)
+      //     .then((data) {
+      //   if (data != null) {
+      //     DBProvider.db.updateUser(widget.user!);
+      //   } else {
+      //     DBProvider.db.newUser(widget.user!);
+      //   }
+      // });
 
-      _controller.forward();
+      _controller!.forward();
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen>
         if (Platform.isAndroid) {
           await SystemNavigator.pop(animated: true);
         }
-        return null;
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(

@@ -4,10 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 /// Schermata di errore riguardo la connessione.
 class ConnectionError extends StatelessWidget {
-  final double deviceWidth;
-  final bool isTablet;
+  final double? deviceWidth;
+  final bool? isTablet;
 
-  const ConnectionError({Key key, this.deviceWidth, this.isTablet})
+  const ConnectionError({Key? key, this.deviceWidth, this.isTablet})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -17,9 +17,9 @@ class ConnectionError extends StatelessWidget {
         children: [
           SvgPicture.asset(
             'assets/img/networkError.svg',
-            width: isTablet ? deviceWidth * 0.5 : deviceWidth / 1.7,
+            width: isTablet! ? deviceWidth! * 0.5 : deviceWidth! / 1.7,
           ),
-          SizedBox(height: isTablet ? 30 : 15),
+          SizedBox(height: isTablet! ? 30 : 15),
           const Text('Errore di connessione', style: Constants.fontBold28),
           const SizedBox(height: 5),
           const Text(

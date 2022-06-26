@@ -6,16 +6,16 @@ class BottonePaginaDrawer extends StatelessWidget {
   final String testoBottone;
 
   /// Icona del bottone, in caso ne abbia una.
-  final IconData icona;
+  final IconData? icona;
 
   /// Funzione del bottone quando viene premuto.
   final Function() onPressed;
-  final Color textColor;
+  final Color? textColor;
 
   const BottonePaginaDrawer({
-    Key key,
-    @required this.testoBottone,
-    @required this.onPressed,
+    Key? key,
+    required this.testoBottone,
+    required this.onPressed,
     this.textColor,
     this.icona,
   }) : super(key: key);

@@ -5,7 +5,7 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class RicaricaBachecaPrenotazioni extends StatelessWidget {
   const RicaricaBachecaPrenotazioni(
-      {Key key, @required this.refreshBacheca, @required this.svgAsset})
+      {Key? key, required this.refreshBacheca, required this.svgAsset})
       : assert(refreshBacheca != null),
         assert(svgAsset != null),
         super(key: key);

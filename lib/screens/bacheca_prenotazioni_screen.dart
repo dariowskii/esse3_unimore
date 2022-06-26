@@ -19,7 +19,7 @@ class BachecaPrenotazioniScreen extends StatefulWidget {
 
 class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
   /// Future degli appelli per il [FutureBuilder].
-  Future<Map<String, dynamic>> _appelli;
+  Future<Map<String, dynamic>>? _appelli;
 
   @override
   void initState() {
@@ -64,10 +64,10 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
             case ConnectionState.active:
             case ConnectionState.done:
               if (snapshot.hasData &&
-                  (snapshot.data['success'] as bool) &&
-                  snapshot.data['item'] != null) {
+                  (snapshot.data!['success'] as bool) &&
+                  snapshot.data!['item'] != null) {
                 final appelliWrapper =
-                    snapshot.data['item'] as AppelliPrenotatiWrapper;
+                    snapshot.data!['item'] as AppelliPrenotatiWrapper;
                 //In caso non ci siano appelli
                 if (appelliWrapper.appelliTotali <= 0) {
                   return RicaricaBachecaPrenotazioni(

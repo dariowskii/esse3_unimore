@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class InfoRichText extends StatelessWidget {
   const InfoRichText({
-    Key key,
-    @required this.text,
-    @required this.value,
+    Key? key,
+    required this.text,
+    required this.value,
     this.fontSize = 14,
   }) : super(key: key);
 

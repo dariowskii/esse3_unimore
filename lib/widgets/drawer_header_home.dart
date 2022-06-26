@@ -4,7 +4,7 @@ import 'package:Esse3/constants.dart';
 import 'package:flutter/material.dart';
 
 class DrawerHeaderHome extends StatelessWidget {
-  const DrawerHeaderHome({Key key, @required this.user})
+  const DrawerHeaderHome({Key? key, required this.user})
       : assert(user != null),
         super(key: key);
 

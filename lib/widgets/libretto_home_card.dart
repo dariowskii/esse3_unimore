@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 /// utilizzata nella [HomeScreen].
 class LibrettoHomeCard extends StatefulWidget {
   const LibrettoHomeCard({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -16,7 +16,7 @@ class LibrettoHomeCard extends StatefulWidget {
 
 class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
   /// Future del libretto.
-  Future<Map<String, dynamic>> _libretto;
+  late Future<Map<String, dynamic>> _libretto;
 
   /// Questo valore serve per gestire la visualizzazione nella card.
   bool _isRequestedLibretto = false;
@@ -83,7 +83,7 @@ class _LibrettoHomeCardState extends State<LibrettoHomeCard> {
 }
 
 class _ScaricaLibretto extends StatelessWidget {
-  const _ScaricaLibretto({Key key, @required this.onPressed})
+  const _ScaricaLibretto({Key? key, required this.onPressed})
       : assert(onPressed != null),
         super(key: key);
 

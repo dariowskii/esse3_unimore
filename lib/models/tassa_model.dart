@@ -5,14 +5,14 @@ class TassaModel {
   final String descrizione;
   final String importo;
   final String scadenza;
-  final StatoPagamento stato;
+  final StatoPagamento? stato;
 
   TassaModel({
-    @required this.titolo,
-    @required this.descrizione,
-    @required this.importo,
-    @required this.scadenza,
-    @required this.stato,
+    required this.titolo,
+    required this.descrizione,
+    required this.importo,
+    required this.scadenza,
+    required this.stato,
   });
 }
 

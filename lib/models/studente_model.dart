@@ -7,13 +7,13 @@ import 'package:Esse3/utils/interfaces/codable.dart';
 import 'package:html/dom.dart';
 
 class StudenteModel extends Codable {
-  DatiPersonaliStudente _datiPersonali;
-  StatusStudente _status;
-  RiepilogoEsamiStudente _riepilogoEsami;
+  DatiPersonaliStudente? _datiPersonali;
+  StatusStudente? _status;
+  RiepilogoEsamiStudente? _riepilogoEsami;
 
-  DatiPersonaliStudente get datiPersonali => _datiPersonali;
-  StatusStudente get status => _status;
-  RiepilogoEsamiStudente get riepilogoEsami => _riepilogoEsami;
+  DatiPersonaliStudente? get datiPersonali => _datiPersonali;
+  StatusStudente? get status => _status;
+  RiepilogoEsamiStudente? get riepilogoEsami => _riepilogoEsami;
 
   @override
   void decode(String data) {
@@ -39,5 +39,5 @@ class StudenteModel extends Codable {
         'riepilogoEsami': _riepilogoEsami?.encode(),
       };
 
-  void fromHtmlBody({Document document}) {}
+  void fromHtmlBody({Document? document}) {}
 }

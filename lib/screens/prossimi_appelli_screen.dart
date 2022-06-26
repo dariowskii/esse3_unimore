@@ -20,7 +20,7 @@ class ProssimiAppelliScreen extends StatefulWidget {
 
 class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
   ///Future dei prossimi appelli per il [FutureBuilder].
-  Future<Map<String, dynamic>> _prossimiAppelli;
+  Future<Map<String, dynamic>>? _prossimiAppelli;
 
   void _initAppelli() {
     setState(() {
@@ -110,10 +110,10 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
                         case ConnectionState.active:
                         case ConnectionState.done:
                           if (snapshot.data != null &&
-                              (snapshot.data['success'] as bool) &&
-                              snapshot.data['item'] != null) {
+                              (snapshot.data!['success'] as bool) &&
+                              snapshot.data!['item'] != null) {
                             final appelliWrapper =
-                                snapshot.data['item'] as AppelliWrapper;
+                                snapshot.data!['item'] as AppelliWrapper;
                             // In caso non ci siano appelli
                             if (appelliWrapper.totaleApelli <= 0) {
                               return NoExams(
@@ -145,10 +145,10 @@ class _ProssimiAppelliScreenState extends State<ProssimiAppelliScreen> {
 
 class _ProssimiAppelliBody extends StatelessWidget {
   const _ProssimiAppelliBody({
-    Key key,
-    @required this.isTablet,
-    @required this.deviceWidth,
-    @required this.appelliWrapper,
+    Key? key,
+    required this.isTablet,
+    required this.deviceWidth,
+    required this.appelliWrapper,
   }) : super(key: key);
 
   final bool isTablet;
@@ -222,16 +222,16 @@ class _ProssimiAppelliBody extends StatelessWidget {
 
 class PrenotaEsame extends StatelessWidget {
   PrenotaEsame({
-    Key key,
+    Key? key,
     this.altreInfoWrapper,
   }) : super(key: key);
 
-  AltreInfoAppelloWrapper altreInfoWrapper;
+  AltreInfoAppelloWrapper? altreInfoWrapper;
 
   void _prenotaEsame(BuildContext context) {
     Constants.showAdaptiveWaitingDialog(context);
 
-    Provider.prenotaAppello(altreInfoWrapper).then(
+    Provider.prenotaAppello(altreInfoWrapper!).then(
       (result) {
         if (result != null) {
           Constants.showAdaptiveDialog(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class BadgeLibretto extends StatelessWidget {
   final double mediaPonderata;
 
-  const BadgeLibretto({Key key, @required this.mediaPonderata})
+  const BadgeLibretto({Key? key, required this.mediaPonderata})
       : assert(mediaPonderata != null),
         super(key: key);
   @override

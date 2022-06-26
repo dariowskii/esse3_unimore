@@ -10,7 +10,7 @@ class SharedWrapper {
   Future<AuthCredential> getUserCreditentials() async {
     final prefs = await _prefs();
     final authCredential = AuthCredential();
-    authCredential.decode(prefs.getString(AuthCredential.sharedKey));
+    authCredential.decode(prefs.getString(AuthCredential.sharedKey)!);
     return authCredential;
   }
 

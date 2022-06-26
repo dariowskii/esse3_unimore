@@ -2,17 +2,17 @@ import 'package:Esse3/constants.dart';
 import 'package:flutter/material.dart';
 
 class AndamentoLibretto extends StatelessWidget {
-  final String mediaAritmetica;
-  final String mediaPonderata;
+  final String? mediaAritmetica;
+  final String? mediaPonderata;
   final int cfu;
   final double votoLaurea;
 
   const AndamentoLibretto({
-    Key key,
-    @required this.mediaAritmetica,
-    @required this.mediaPonderata,
-    @required this.cfu,
-    @required this.votoLaurea,
+    Key? key,
+    required this.mediaAritmetica,
+    required this.mediaPonderata,
+    required this.cfu,
+    required this.votoLaurea,
   })  : assert(cfu != null),
         assert(votoLaurea != null),
         super(key: key);
@@ -42,7 +42,7 @@ class AndamentoLibretto extends StatelessWidget {
                         text: 'Media Aritmetica: ',
                         style: Constants.font16.copyWith(
                           fontFamily: 'SF Pro',
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                         ),
                         children: [
                           TextSpan(
@@ -56,7 +56,7 @@ class AndamentoLibretto extends StatelessWidget {
                         text: 'Media Ponderata: ',
                         style: Constants.font16.copyWith(
                           fontFamily: 'SF Pro',
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                         ),
                         children: [
                           TextSpan(
@@ -72,7 +72,7 @@ class AndamentoLibretto extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
-                        color: Theme.of(context).textTheme.bodyText1.color,
+                        color: Theme.of(context).textTheme.bodyText1!.color!,
                         width: 2),
                   ),
                   child: RichText(
@@ -80,7 +80,7 @@ class AndamentoLibretto extends StatelessWidget {
                         text: 'CFU: ',
                         style: Constants.font20.copyWith(
                           fontFamily: 'SF Pro',
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                         ),
                         children: [
                           TextSpan(

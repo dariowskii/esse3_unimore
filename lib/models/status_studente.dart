@@ -3,35 +3,35 @@ import 'dart:convert';
 import 'package:Esse3/utils/interfaces/codable.dart';
 
 class StatusStudente extends Codable {
-  String _annoAccademico;
-  String _annoRegolamento;
-  String _statoCarriera;
-  String _corso;
-  String _dipartimento;
-  String _percorso;
-  String _classe;
-  String _durataCorso;
-  String _annoCorso;
-  String _ordinamento;
-  String _normativa;
-  String _dataImmatricolazione;
+  String? _annoAccademico;
+  String? _annoRegolamento;
+  String? _statoCarriera;
+  String? _corso;
+  String? _dipartimento;
+  String? _percorso;
+  String? _classe;
+  String? _durataCorso;
+  String? _annoCorso;
+  String? _ordinamento;
+  String? _normativa;
+  String? _dataImmatricolazione;
 
-  String get annoAccademico => _annoAccademico;
-  String get annoRegolamento => _annoRegolamento;
-  String get statoCarriera => _statoCarriera;
-  String get corso => _corso;
-  String get dipartimento => _dipartimento;
-  String get percorso => _percorso;
-  String get classe => _classe;
-  String get durataCorso => _durataCorso;
-  String get annoCorso => _annoCorso;
-  String get ordinamento => _ordinamento;
-  String get normativa => _normativa;
-  String get dataImmatricolazione => _dataImmatricolazione;
+  String? get annoAccademico => _annoAccademico;
+  String? get annoRegolamento => _annoRegolamento;
+  String? get statoCarriera => _statoCarriera;
+  String? get corso => _corso;
+  String? get dipartimento => _dipartimento;
+  String? get percorso => _percorso;
+  String? get classe => _classe;
+  String? get durataCorso => _durataCorso;
+  String? get annoCorso => _annoCorso;
+  String? get ordinamento => _ordinamento;
+  String? get normativa => _normativa;
+  String? get dataImmatricolazione => _dataImmatricolazione;
 
   @override
   void decode(String data) {
-    final jsonData = json.decode(data) as Map<String, String>;
+    final jsonData = json.decode(data) as Map<String, String>?;
     if (jsonData != null) {
       _annoAccademico = jsonData['annoAccademico'];
       _annoRegolamento = jsonData['annoRegolamento'];

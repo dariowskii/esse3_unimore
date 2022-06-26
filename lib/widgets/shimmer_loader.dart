@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 /// Animazione di caricamento per la pagina [TasseScreen]
 /// e [ProssimiAppelliScreen].
 class ShimmerLoader extends StatelessWidget {
-  final bool isTablet;
-  final double deviceWidth;
+  final bool? isTablet;
+  final double? deviceWidth;
   final double shimmerHeight;
   final Color colorCircular;
 
   const ShimmerLoader(
-      {Key key,
+      {Key? key,
       this.isTablet,
       this.deviceWidth,
       this.shimmerHeight = 200,
@@ -46,15 +46,15 @@ class ShimmerLoader extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: isTablet
-                ? EdgeInsets.symmetric(horizontal: deviceWidth / 6)
+            padding: isTablet!
+                ? EdgeInsets.symmetric(horizontal: deviceWidth! / 6)
                 : const EdgeInsets.only(bottom: 16.0, left: 16, right: 16),
             child: Column(
               children: [
                 ShimmerCustom(height: shimmerHeight),
                 const SizedBox(height: 10),
                 ShimmerCustom(height: shimmerHeight),
-                if (isTablet) ...[
+                if (isTablet!) ...[
                   const SizedBox(height: 10),
                   ShimmerCustom(height: shimmerHeight)
                 ],

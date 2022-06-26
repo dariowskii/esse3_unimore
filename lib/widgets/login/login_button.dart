@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 class LoginButton extends StatelessWidget {
   const LoginButton({
-    Key key,
-    @required this.onPressed,
+    Key? key,
+    required this.onPressed,
   }) : super(key: key);
-  final Function() onPressed;
+  final Function()? onPressed;
   @override
   Widget build(BuildContext context) {
     return MaterialButton(

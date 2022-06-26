@@ -14,7 +14,7 @@ class LibrettoScreen extends StatelessWidget {
   /// Map del libretto passatto da [Provider.getLibretto()].
   final LibrettoModel libretto;
 
-  LibrettoScreen({@required this.libretto}) : assert(libretto != null);
+  LibrettoScreen({required this.libretto}) : assert(libretto != null);
 
   double _votoLaurea = 0;
   final _puntiGrafico = [];
@@ -97,7 +97,7 @@ class LibrettoScreen extends StatelessWidget {
                     ),
                   ),
                   if (libretto.mediaPonderata != 'NaN')
-                    BadgeLibretto(mediaPonderata: mediaPonderata),
+                    BadgeLibretto(mediaPonderata: mediaPonderata!),
                 ],
               ),
               Padding(

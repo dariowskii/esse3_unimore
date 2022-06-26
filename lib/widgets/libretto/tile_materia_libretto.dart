@@ -6,8 +6,8 @@ class TileMateriaLibretto extends StatelessWidget {
   final EsameModel esame;
 
   const TileMateriaLibretto({
-    Key key,
-    @required this.esame,
+    Key? key,
+    required this.esame,
   })  : assert(esame != null),
         super(key: key);
 
@@ -20,7 +20,7 @@ class TileMateriaLibretto extends StatelessWidget {
         child: IgnorePointer(
           ignoring: !esame.esameIdoneo,
           child: ExpansionTile(
-            iconColor: Theme.of(context).textTheme.bodyText1.color,
+            iconColor: Theme.of(context).textTheme.bodyText1!.color,
             trailing: esame.esameIdoneo ? null : const SizedBox.shrink(),
             leading: esame.esameIdoneo
                 ? Padding(
@@ -36,7 +36,7 @@ class TileMateriaLibretto extends StatelessWidget {
             subtitle: Text(
               'CFU: ${esame.crediti}',
               style: Constants.fontBold
-                  .copyWith(color: Theme.of(context).textTheme.bodyText1.color),
+                  .copyWith(color: Theme.of(context).textTheme.bodyText1!.color),
             ),
             backgroundColor: Theme.of(context).cardColor,
             children: [
@@ -51,7 +51,7 @@ class TileMateriaLibretto extends StatelessWidget {
                         text: TextSpan(
                           text: 'Voto: ',
                           style: Constants.font18.copyWith(
-                            color: Theme.of(context).textTheme.bodyText1.color,
+                            color: Theme.of(context).textTheme.bodyText1!.color,
                             fontFamily: 'SF Pro',
                           ),
                           children: [
@@ -59,7 +59,7 @@ class TileMateriaLibretto extends StatelessWidget {
                               text: "${esame.altroVoto ?? esame.voto}",
                               style: Constants.fontBold18.copyWith(
                                 color:
-                                    Theme.of(context).textTheme.bodyText1.color,
+                                    Theme.of(context).textTheme.bodyText1!.color,
                               ),
                             ),
                           ],
@@ -70,7 +70,7 @@ class TileMateriaLibretto extends StatelessWidget {
                         text: TextSpan(
                           text: 'Data esame: ',
                           style: Constants.font16.copyWith(
-                            color: Theme.of(context).textTheme.bodyText1.color,
+                            color: Theme.of(context).textTheme.bodyText1!.color,
                             fontFamily: 'SF Pro',
                           ),
                           children: [
@@ -78,7 +78,7 @@ class TileMateriaLibretto extends StatelessWidget {
                               text: esame.dataEsame,
                               style: Constants.fontBold.copyWith(
                                 color:
-                                    Theme.of(context).textTheme.bodyText1.color,
+                                    Theme.of(context).textTheme.bodyText1!.color,
                               ),
                             ),
                           ],

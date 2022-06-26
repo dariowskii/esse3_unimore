@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 class LoadingBachecaPrenotazioni extends StatelessWidget {
   const LoadingBachecaPrenotazioni({
-    Key key,
-    @required this.darkModeOn,
+    Key? key,
+    required this.darkModeOn,
   })  : assert(darkModeOn != null),
         super(key: key);
 

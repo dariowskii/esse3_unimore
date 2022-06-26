@@ -9,22 +9,22 @@ import 'package:flutter/material.dart';
 
 class FutureHomeScreen extends StatelessWidget {
   FutureHomeScreen({
-    Key key,
-    @required this.userFuture,
-    @required this.controllerAnimation,
-    @required this.animation,
-    @required this.deviceWidth,
+    Key? key,
+    required this.userFuture,
+    required this.controllerAnimation,
+    required this.animation,
+    required this.deviceWidth,
   }) : super(key: key);
 
-  final Future<Map<String, dynamic>> userFuture;
-  final AnimationController controllerAnimation;
-  final Animation animation;
+  final Future<Map<String, dynamic>?>? userFuture;
+  final AnimationController? controllerAnimation;
+  final Animation? animation;
   final double deviceWidth;
-  List<String> cdl;
+  late List<String> cdl;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
+    return FutureBuilder<Map<String, dynamic>?>(
       future: userFuture,
       builder: (context, userData) {
         switch (userData.connectionState) {
@@ -40,9 +40,9 @@ class FutureHomeScreen extends StatelessWidget {
           case ConnectionState.active:
           case ConnectionState.done:
             if (!userData.hasData) return ErrorHomeData();
-            cdl = userData.data['corso_stud'].toString().split('] - ');
+            cdl = userData.data!['corso_stud'].toString().split('] - ');
             cdl[0] += ']';
-            controllerAnimation.forward();
+            controllerAnimation!.forward();
             return Column(
               children: <Widget>[
                 Padding(
@@ -52,14 +52,14 @@ class FutureHomeScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       AnimatedAvatar(
-                          animation: animation, userData: userData.data),
+                          animation: animation, userData: userData.data!),
                       Text(
-                        userData.data['nome_studente'] as String,
+                        userData.data!['nome_studente'] as String,
                         style: Constants.fontBold28,
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '- Mat. ${userData.data['matricola']} -',
+                        '- Mat. ${userData.data!['matricola']} -',
                         style: Constants.font16,
                       ),
                       const SizedBox(height: 10),
@@ -83,19 +83,19 @@ class FutureHomeScreen extends StatelessWidget {
                   runSpacing: -5,
                   children: <Widget>[
                     ChipInfo(
-                        text: userData.data['tipo_corso'] as String,
+                        text: userData.data!['tipo_corso'] as String?,
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Profilo: ${userData.data['profilo_studente']}',
+                        text: 'Profilo: ${userData.data!['profilo_studente']}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Anno di Corso: ${userData.data['anno_corso']}',
+                        text: 'Anno di Corso: ${userData.data!['anno_corso']}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Immatricolazione: ${userData.data['data_imm']}',
+                        text: 'Immatricolazione: ${userData.data!['data_imm']}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Part Time: ${userData.data['part_time']}',
+                        text: 'Part Time: ${userData.data!['part_time']}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                   ],
                 ),
