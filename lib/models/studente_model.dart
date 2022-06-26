@@ -1,84 +1,43 @@
-import 'dart:ffi';
+import 'dart:convert';
 
+import 'package:Esse3/models/dati_personali_studente.dart';
+import 'package:Esse3/models/riepilogo_esami_studente.dart';
+import 'package:Esse3/models/status_studente.dart';
 import 'package:Esse3/utils/interfaces/codable.dart';
+import 'package:html/dom.dart';
 
-class StudenteModel implements Codable {
-  String _profilePicBase64;
+class StudenteModel extends Codable {
+  DatiPersonaliStudente _datiPersonali;
+  StatusStudente _status;
+  RiepilogoEsamiStudente _riepilogoEsami;
 
-  final String username;
-  final String nomeCompleto;
-  final Uint8 matricola;
-  String tipoCorso;
-  String profiloStudente;
-  String annoCorsoCorrente;
-  String dataImmatricolazione;
-  String corsoDiLaurea;
-  bool partTime;
-  bool hasSceltaCarriera;
-
-  String get textAvatar {
-    final buffer = nomeCompleto.split(' ');
-    return buffer[0].substring(0, 2) + buffer[1].substring(0, 2);
-  }
-
-  String get nomeCompletoCamel {
-    var result = '';
-
-    for (var i = 0; i < nomeCompleto.length; i++) {
-      if (i == 0) {
-        result += nomeCompleto[i].toUpperCase();
-        continue;
-      }
-
-      if (nomeCompleto[i] == ' ') {
-        i++;
-        result += ' ';
-        result += nomeCompleto[i].toUpperCase();
-      } else {
-        result += nomeCompleto[i];
-      }
-    }
-
-    return result;
-  }
-
-  // Core
-
-  StudenteModel({
-    this.username,
-    this.nomeCompleto,
-    this.matricola,
-  });
-
-  // Getters
-
-  Map<String, Object> toJson() => {
-        'username': username,
-        'nomeCompleto': nomeCompleto,
-        'matricola': matricola,
-        'tipoCorso': tipoCorso,
-        'profiloStudente': profiloStudente,
-        'annoCorsoCorrente': annoCorsoCorrente,
-        'dataImmatricolazione': dataImmatricolazione,
-        'corsoDiLaurea': corsoDiLaurea,
-        'partTime': partTime,
-        'hasSceltaCarriera': hasSceltaCarriera,
-        'textAvatar': textAvatar,
-        'profilePicBase64': _profilePicBase64,
-      };
+  DatiPersonaliStudente get datiPersonali => _datiPersonali;
+  StatusStudente get status => _status;
+  RiepilogoEsamiStudente get riepilogoEsami => _riepilogoEsami;
 
   @override
   void decode(String data) {
-    // TODO: implement decode
+    final jsonData = json.decode(data) as Map<String, String>;
+    final datiPersonali = jsonData['datiPersonali'];
+    final status = jsonData['status'];
+    final riepilogoEsami = jsonData['riepilogoEsami'];
+    if (datiPersonali != null) {
+      _datiPersonali = DatiPersonaliStudente()..decode(datiPersonali);
+    }
+    if (status != null) {
+      _status = StatusStudente()..decode(status);
+    }
+    if (riepilogoEsami != null) {
+      _riepilogoEsami = RiepilogoEsamiStudente()..decode(riepilogoEsami);
+    }
   }
 
   @override
-  String encode() {
-    // TODO: implement encode
-    throw UnimplementedError();
-  }
+  Map<String, dynamic> toJson() => {
+        'datiPersonali': _datiPersonali?.encode(),
+        'status': _status?.encode(),
+        'riepilogoEsami': _riepilogoEsami?.encode(),
+      };
 
-  @override
-  // TODO: implement jsonString
-  String get jsonString => throw UnimplementedError();
+  void fromHtmlBody({Document document}) {}
 }

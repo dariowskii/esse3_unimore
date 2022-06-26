@@ -6,6 +6,7 @@ import 'package:Esse3/models/appello_prenotato_model.dart';
 import 'package:Esse3/models/auth_credential_model.dart';
 import 'package:Esse3/models/esame_model.dart';
 import 'package:Esse3/models/libretto_model.dart';
+import 'package:Esse3/models/studente_model.dart';
 import 'package:Esse3/models/tassa_model.dart';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/prossimi_appelli_screen.dart';
@@ -314,6 +315,8 @@ class Provider {
 
     // debugPrint('respose: ${response.body}');
     assert(scrapingNomeMatricola.length == 2);
+
+    final studente = StudenteModel()..fromHtmlBody(document: documentHome);
 
     final nomeStudente = scrapingNomeMatricola[0].trim();
     final matricolaStudente =

@@ -89,18 +89,19 @@ class Constants {
     );
 
     showModalBottomSheet(
-        context: context,
-        isDismissible: false,
-        enableDrag: false,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (_) {
-          return SizedBox(
-            height: 180,
-            child: content,
-          );
-        });
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return SizedBox(
+          height: 180,
+          child: content,
+        );
+      },
+    );
   }
 
   static void showAdaptiveDialog(BuildContext context,

@@ -36,11 +36,11 @@ class TassaExpansionTile extends StatelessWidget {
         break;
     }
 
-    final _textColor = Theme.of(context).textTheme.bodyText1.color;
+    final _textColor = Theme.of(context).textTheme.bodyText1?.color;
 
     return Theme(
       data: Theme.of(context).copyWith(
-        accentColor: _themeColor,
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: _themeColor),
       ),
       child: ExpansionTile(
         maintainState: true,
