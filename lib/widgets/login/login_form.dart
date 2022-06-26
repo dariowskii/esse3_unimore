@@ -95,18 +95,19 @@ class _LoginFormState extends State<LoginForm> {
       );
       await prefs.setString(AuthCredential.sharedKey, authCredential.encode());
 
-      final userInfo = await Provider.getHomeInfo();
-      if (!(userInfo['success'] as bool)) {
+      final studentModel = await Provider.getHomeInfo();
+      if (studentModel == null) {
         _errorSession();
         return;
       }
       setState(() {
         _isLoading = !_isLoading;
       });
+      // TODO: Fix this
       await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomeScreen(user: userInfo),
+          builder: (_) => HomeScreen(user: null),
         ),
       );
     } else if (!(responseSession['success'] as bool)) {

@@ -1,5 +1,5 @@
-extension on String {
-  String get camelCase {
+extension StringExtension on String {
+  String camelCase() {
     var result = '';
 
     for (var i = 0; i < length; i++) {
@@ -15,6 +15,17 @@ extension on String {
       } else {
         result += this[i];
       }
+    }
+
+    return result;
+  }
+
+  String cleanFromEntities() {
+    var result = this;
+
+    final regex = RegExp('&(.*?);');
+    for (final match in regex.allMatches(this)) {
+      result = result.replaceFirst(match.group(0)!, ' ');
     }
 
     return result;

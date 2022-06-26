@@ -19,11 +19,10 @@ class AuthCredential extends Codable {
 
   @override
   void decode(String data) {
-    final jsonData = json.decode(data) as Map<String, String>?;
-    if (jsonData != null) {
-      _username = jsonData['username'];
-      _password = jsonData['password'];
-    }
+    final jsonData =
+        Map<String, String>.from(json.decode(data) as Map<String, dynamic>);
+    _username = jsonData['username'];
+    _password = jsonData['password'];
   }
 
   @override

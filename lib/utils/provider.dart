@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:Esse3/models/altre_info_appello_model.dart';
 import 'package:Esse3/models/appello_model.dart';
 import 'package:Esse3/models/appello_prenotato_model.dart';
-import 'package:Esse3/models/auth_credential_model.dart';
 import 'package:Esse3/models/esame_model.dart';
 import 'package:Esse3/models/libretto_model.dart';
 import 'package:Esse3/models/studente_model.dart';
@@ -13,8 +12,8 @@ import 'package:Esse3/screens/prossimi_appelli_screen.dart';
 import 'package:Esse3/utils/shared_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Questa classe effettua lo scraping su esse3.unimore.it
@@ -33,15 +32,16 @@ class Provider {
 
   /// Serve sostanzialmente ad estrarre l'`idStud` per mandare le
   /// request in caso di scelta carriera iniziale.
-  static Future<Map<String, dynamic>> _isSceltaCarriera(
+  static Future<StudenteModel?> _isSceltaCarriera(
       var tableCarriere, Map<String, dynamic> mapInfo) async {
     mapInfo['sceltaCarriera'] = true;
 
     final tableScelta = tableCarriere.querySelector('.table-1-body');
     if (tableScelta == null) {
-      mapInfo['error'] = 'tableScelta not found';
-      mapInfo['success'] = false;
-      return mapInfo;
+      // TODO: log crashlytics
+      // mapInfo['error'] = 'tableScelta not found';
+      // mapInfo['success'] = false;
+      return null;
     }
 
     final lengthScelta = tableScelta.children.length as int;
@@ -72,87 +72,64 @@ class Provider {
               },
             );
           } catch (e) {
-            mapInfo['error'] = e;
-            mapInfo['success'] = false;
-            return mapInfo;
+            // TODO: log crashlytics
+            // mapInfo['error'] = e;
+            // mapInfo['success'] = false;
+            return null;
           }
 
           mapInfo['success'] = response.statusCode == 200;
           if (!(mapInfo['success'] as bool)) {
-            mapInfo['error'] =
-                'response isSceltaCarriera => ${response.statusCode}: ${response.reasonPhrase}';
-            return mapInfo;
+            // TODO: log crashlytics
+            // mapInfo['error'] =
+            //     'response isSceltaCarriera => ${response.statusCode}: ${response.reasonPhrase}';
+            return null;
           }
 
           final documentSceltaCarriera = parser.parse(response.body);
-          var nomeMatricola = [];
-
+          var scrapingNomeMatricola = <String>[];
           try {
-            nomeMatricola = documentSceltaCarriera
+            scrapingNomeMatricola = documentSceltaCarriera
                 .querySelector('.pagetitle_title')!
                 .innerHtml
-                .replaceAll('Area Studente ', '')
-                .split(' - ');
+                .replaceAll('&nbsp;', ' ')
+                .replaceFirst('Benvenuto', '')
+                .replaceFirst(')', '')
+                .split('(');
           } catch (e) {
-            mapInfo['error'] = '.pagetitle_title (isSceltaCarriera) not found';
-            mapInfo['success'] = false;
-            return mapInfo;
+            // TODO: log crashlytics
+            // mapInfo['error'] = '.pagetitle_title not found';
+            // mapInfo['success'] = false;
+            return null;
           }
 
-          final nomeStudente = nomeMatricola[0];
+          // debugPrint('respose: ${response.body}');
+          assert(scrapingNomeMatricola.length == 2);
+
           final matricolaStudente =
-              nomeMatricola[1].replaceFirst('[MAT. ', '').replaceFirst(']', '');
+              scrapingNomeMatricola[1].replaceFirst('Matricola N. ', '');
+          final profilePicture = await _getProfilePic(documentSceltaCarriera);
+          final studente = StudenteModel()
+            ..fromHtmlBody(
+              document: documentSceltaCarriera,
+              matricola: matricolaStudente,
+              profilePicture: profilePicture,
+            );
 
-          final info = documentSceltaCarriera.querySelector('.record-riga');
-          if (info == null) {
-            mapInfo['error'] = '.record-riga (isSceltaCarriera) not found';
-            mapInfo['success'] = false;
-            return mapInfo;
-          }
-
-          final lengthInfo = info.children.length;
-
-          mapInfo['nome'] = nomeStudente;
-          var _nomeCompletoCamel = '';
-          mapInfo['nome'].split(' ').forEach((str) {
-            _nomeCompletoCamel +=
-                '${str.toString()[0]}${str.toString().substring(1).toLowerCase()} ';
-          });
-          mapInfo['nome'] =
-              _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
-          mapInfo['matricola'] = matricolaStudente;
-          final bufferNome = nomeStudente.split(' ');
-          mapInfo['text_avatar'] =
-              '${bufferNome[0].substring(0, 1)}${bufferNome[1].substring(0, 1)}';
-
-          for (var i = 1; i < lengthInfo; i += 2) {
-            final index = info.children[i].innerHtml.indexOf('&');
-            final key = _getNomeInfo(i);
-            if (key == 'part_time') {
-              mapInfo[key] = info.children[i].children[0].innerHtml.trim();
-            } else {
-              mapInfo[key] = info.children[i].innerHtml
-                  .replaceRange(
-                      index, info.children[i].innerHtml.length - 1, '')
-                  .trim();
-            }
-          }
-
-          //Recupero l'immagine del profilo
-          mapInfo['profile_pic'] = await _getProfilePic(documentSceltaCarriera);
-
-          return mapInfo;
+          return studente;
         }
       }
     } catch (e) {
-      mapInfo['error'] = e;
-      mapInfo['success'] = false;
-      return mapInfo;
+      // TODO: log crashlytics
+      // mapInfo['error'] = e;
+      // mapInfo['success'] = false;
+      return null;
     }
 
-    mapInfo['error'] = 'unknown error (isSceltaCarriera)';
-    mapInfo['success'] = false;
-    return mapInfo;
+    // TODO: log crashlytics
+    // mapInfo['error'] = 'unknown error (isSceltaCarriera)';
+    // mapInfo['success'] = false;
+    return null;
   }
 
   /// Serve ad ottenere le prime informazioni iniziali della home.
@@ -180,7 +157,8 @@ class Provider {
       final documentIdp =
           parser.parse(await streamedResponse.stream.bytesToString());
       // Prelevo l'action dal form
-      final formAction = documentIdp.querySelector('form')!.attributes['action'];
+      final formAction =
+          documentIdp.querySelector('form')!.attributes['action'];
       // Creo la request
       final newRequestUrl = 'https://idp.unimore.it$formAction';
       customRequest = http.Request('POST', Uri.parse(newRequestUrl));
@@ -268,7 +246,7 @@ class Provider {
     return photoBase64;
   }
 
-  static Future<Map<String, dynamic>> getHomeInfo() async {
+  static Future<StudenteModel?> getHomeInfo() async {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
 
     if (_shibSessionCookie.isEmpty) {
@@ -279,9 +257,12 @@ class Provider {
 
     final client = http.Client();
 
-    homeResponse = await client.get(Uri.parse(_urlLoginEsse3), headers: {
-      'cookie': _shibSessionCookie,
-    });
+    homeResponse = await client.get(
+      Uri.parse(_urlLoginEsse3),
+      headers: {
+        'cookie': _shibSessionCookie,
+      },
+    );
 
     final homeBody = homeResponse.body;
 
@@ -295,9 +276,6 @@ class Provider {
       return _isSceltaCarriera(sceltaCarriera, mapInfo);
     }
 
-    //Recupero l'immagine del profilo
-    mapInfo['profile_pic'] = await _getProfilePic(documentHome);
-
     var scrapingNomeMatricola = <String>[];
     try {
       scrapingNomeMatricola = documentHome
@@ -308,87 +286,26 @@ class Provider {
           .replaceFirst(')', '')
           .split('(');
     } catch (e) {
-      mapInfo['error'] = '.pagetitle_title not found';
-      mapInfo['success'] = false;
-      return mapInfo;
+      // TODO: log crashlytics
+      // mapInfo['error'] = '.pagetitle_title not found';
+      // mapInfo['success'] = false;
+      return null;
     }
 
     // debugPrint('respose: ${response.body}');
     assert(scrapingNomeMatricola.length == 2);
 
-    final studente = StudenteModel()..fromHtmlBody(document: documentHome);
-
-    final nomeStudente = scrapingNomeMatricola[0].trim();
     final matricolaStudente =
         scrapingNomeMatricola[1].replaceFirst('Matricola N. ', '');
+    final profilePicture = await _getProfilePic(documentHome);
+    final studente = StudenteModel()
+      ..fromHtmlBody(
+        document: documentHome,
+        matricola: matricolaStudente,
+        profilePicture: profilePicture,
+      );
 
-    final info = documentHome.querySelector('.record-riga');
-    if (info == null) {
-      mapInfo['error'] = '.record-riga not found';
-      mapInfo['success'] = false;
-      return mapInfo;
-    }
-    final lengthInfo = info.children.length;
-
-    mapInfo['nome'] = nomeStudente;
-    var _nomeCompletoCamel = '';
-    nomeStudente.split(' ').forEach((str) {
-      _nomeCompletoCamel +=
-          '${str.substring(0, 2)}${str.substring(2).toLowerCase()} ';
-    });
-    mapInfo['nome'] =
-        _nomeCompletoCamel.substring(0, _nomeCompletoCamel.length - 1);
-    mapInfo['matricola'] = matricolaStudente;
-    final bufferNome = nomeStudente.split(' ');
-    mapInfo['text_avatar'] =
-        '${bufferNome[0].substring(0, 2)}${bufferNome[1].substring(0, 2)}';
-    mapInfo['username'] = authCredential.username;
-
-    mapInfo['tipo_corso'] = info.children[0].innerHtml;
-
-    //Scraping info
-    try {
-      for (var i = 1; i < lengthInfo; i += 2) {
-        final index = info.children[i].innerHtml.indexOf('&');
-        final key = _getNomeInfo(i);
-        if (key == 'part_time') {
-          mapInfo[key] = info.children[i].children[0].innerHtml.trim();
-        } else {
-          mapInfo[key] = info.children[i].innerHtml
-              .replaceRange(index, info.children[i].innerHtml.length - 1, '')
-              .trim();
-        }
-      }
-      mapInfo['corso_stud'] = mapInfo['corso_stud'].toString().split(' (')[0];
-    } catch (e) {
-      mapInfo['error'] = e;
-      mapInfo['success'] = false;
-      return mapInfo;
-    }
-    mapInfo['success'] = true;
-    return mapInfo;
-  }
-
-  /// Aiuta a prelevare le info in [getSession].
-  static String _getNomeInfo(int n) {
-    switch (n) {
-      case 1:
-        return 'tipo_corso';
-      case 3:
-        return 'profilo_studente';
-      case 5:
-        return 'anno_corso';
-      case 7:
-        return 'data_imm';
-      case 9:
-        return 'corso_stud';
-      case 11:
-        return 'ordinamento';
-      case 13:
-        return 'part_time';
-      default:
-        return 'null';
-    }
+    return studente;
   }
 
   /// Serve a scaricare le informazioni del libretto universitario per [LibrettoScreen].
@@ -786,7 +703,8 @@ class Provider {
 
     try {
       tableAppello = document.querySelector('#app-box_dati_pren');
-      tabellaHidden = document.querySelector('#app-form_dati_pren')!.children[6];
+      tabellaHidden =
+          document.querySelector('#app-form_dati_pren')!.children[6];
       tabellaTurni = document
           .querySelector('#app-tabella_turni')!
           .querySelector('.table-1-body');

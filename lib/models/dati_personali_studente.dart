@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:Esse3/constants.dart';
+import 'package:Esse3/extensions/string_extension.dart';
 import 'package:Esse3/models/residenza_studente.dart';
 import 'package:Esse3/utils/interfaces/codable.dart';
+import 'package:html/dom.dart';
+import 'package:html/parser.dart';
 
 class DatiPersonaliStudente extends Codable {
   static String get sharedKey => 'datiPersonaliStudente';
@@ -9,6 +13,7 @@ class DatiPersonaliStudente extends Codable {
   String? _nomeCompleto;
   String? _matricola;
   ResidenzaStudente? _residenza;
+  ResidenzaStudente? _domicilio;
   String? _emailPersonale;
   String? _emailAteneo;
   String? _profilePicture;
@@ -16,6 +21,7 @@ class DatiPersonaliStudente extends Codable {
   String? get nomeCompleto => _nomeCompleto;
   String? get matricola => _matricola;
   ResidenzaStudente? get residenza => _residenza;
+  ResidenzaStudente? get domicilio => _domicilio;
   String? get emailPersonale => _emailPersonale;
   String? get emailAteneo => _emailAteneo;
   String? get profilePicture => _profilePicture;
@@ -36,6 +42,7 @@ class DatiPersonaliStudente extends Codable {
       _nomeCompleto = jsonData['nomeCompleto'] as String?;
       _matricola = jsonData['matricola'] as String?;
       _residenza = ResidenzaStudente()..decode(jsonData['residenza'] as String);
+      _domicilio = ResidenzaStudente()..decode(jsonData['domicilio'] as String);
       _emailPersonale = jsonData['emailPersonale'] as String?;
       _emailAteneo = jsonData['emailAteneo'] as String?;
       _profilePicture = jsonData['profilePicture'] as String?;
@@ -46,9 +53,78 @@ class DatiPersonaliStudente extends Codable {
   Map<String, dynamic> toJson() => {
         'nomeCompleto': _nomeCompleto,
         'matricola': _matricola,
-        'residenza': _residenza!.encode(),
+        'residenza': _residenza?.encode(),
+        'domicilio': _domicilio?.encode(),
         'emailPersonale': _emailPersonale,
         'emailAteneo': _emailAteneo,
         'profilePicture': _profilePicture,
       };
+
+  void fromHtmlElement({
+    required Element element,
+    String? matricola,
+    String? profilePicture,
+  }) {
+    final nomeCognomeElement = element.children
+        .firstWhere((element) => element.innerHtml.contains('Nome Cognome'))
+        .nextElementSibling;
+    _nomeCompleto = _buildNomeCognome(element: nomeCognomeElement);
+    _matricola = matricola;
+
+    final residenzaElement = element.children
+        .firstWhere((element) => element.innerHtml.contains('Residenza'))
+        .nextElementSibling;
+    _residenza = _buildResidenza(element: residenzaElement);
+
+    final domicilioElement = element.children
+        .firstWhere((element) => element.innerHtml.contains('Domicilio'))
+        .nextElementSibling;
+    _domicilio = _buildResidenza(element: domicilioElement);
+
+    final emailPersonaleElement = element.children
+        .firstWhere((element) => element.innerHtml.contains('E-Mail'))
+        .nextElementSibling;
+    _emailPersonale = _buildEmail(element: emailPersonaleElement);
+
+    final emailAteneoElement = element.children
+        .firstWhere((element) => element.innerHtml.contains('E-Mail di Ateneo'))
+        .nextElementSibling;
+    _emailAteneo = _buildEmail(element: emailAteneoElement);
+
+    _profilePicture = profilePicture;
+  }
+
+  String? _buildNomeCognome({Element? element}) {
+    if (element == null) {
+      return null;
+    }
+
+    final nome = element.innerHtml.cleanFromEntities();
+
+    final alphaRegex = RegExp('[A-Z]{1,}');
+    final buffer = <String>[];
+    for (final match in alphaRegex.allMatches(nome)) {
+      buffer.add(match.group(0)!.toLowerCase().camelCase());
+    }
+
+    return buffer.join(' ');
+  }
+
+  ResidenzaStudente? _buildResidenza({Element? element}) {
+    if (element == null) {
+      return null;
+    }
+
+    return ResidenzaStudente()..fromHtmlElement(residenza: element);
+  }
+
+  String? _buildEmail({Element? element}) {
+    if (element == null) {
+      return null;
+    }
+
+    final buffer = element.innerHtml.split(Constants.emptyHtmlSpecialChar);
+    buffer.removeLast();
+    return buffer.first;
+  }
 }

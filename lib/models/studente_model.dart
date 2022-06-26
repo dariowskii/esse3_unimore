@@ -39,5 +39,30 @@ class StudenteModel extends Codable {
         'riepilogoEsami': _riepilogoEsami?.encode(),
       };
 
-  void fromHtmlBody({Document? document}) {}
+  void fromHtmlBody({
+    required Document document,
+    String? matricola,
+    String? profilePicture,
+  }) {
+    final datiPersonali = document
+        .getElementById('gu-hpstu-boxDatiPersonali')
+        ?.querySelector('.record-riga');
+    final status = document.getElementById('gu-homepagestudente-cp2Child');
+    final riepilogoEsami = document.getElementById('gu-boxRiepilogoEsami');
+    if (datiPersonali != null) {
+      _datiPersonali = DatiPersonaliStudente()
+        ..fromHtmlElement(
+          element: datiPersonali,
+          matricola: matricola,
+          profilePicture: profilePicture,
+        );
+    }
+    if (status != null) {
+      _status = StatusStudente()..fromHtmlElement(status: status);
+    }
+    if (riepilogoEsami != null) {
+      _riepilogoEsami = RiepilogoEsamiStudente()
+        ..fromHtmlElement(riepilogo: riepilogoEsami);
+    }
+  }
 }

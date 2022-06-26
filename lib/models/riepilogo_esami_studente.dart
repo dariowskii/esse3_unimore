@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Esse3/utils/interfaces/codable.dart';
+import 'package:html/dom.dart';
 
 class RiepilogoEsamiStudente extends Codable {
   String? _esamiRegistrati;
@@ -19,15 +20,14 @@ class RiepilogoEsamiStudente extends Codable {
 
   @override
   void decode(String data) {
-    final jsonData = json.decode(data) as Map<String, String>?;
-    if (jsonData != null) {
-      _esamiRegistrati = jsonData['esamiRegistrati'];
-      _mediaAritmentica = jsonData['mediaAritmentica'];
-      _mediaPonderata = jsonData['mediaPonderata'];
-      _cfuConseguiti = jsonData['cfuConseguiti'];
-      _cfuTotali = jsonData['cfuTotali'];
-      _progressoPercCfu = jsonData['progressoPercCfu'];
-    }
+    final jsonData =
+        Map<String, String>.from(json.decode(data) as Map<String, dynamic>);
+    _esamiRegistrati = jsonData['esamiRegistrati'];
+    _mediaAritmentica = jsonData['mediaAritmentica'];
+    _mediaPonderata = jsonData['mediaPonderata'];
+    _cfuConseguiti = jsonData['cfuConseguiti'];
+    _cfuTotali = jsonData['cfuTotali'];
+    _progressoPercCfu = jsonData['progressoPercCfu'];
   }
 
   @override
@@ -39,4 +39,6 @@ class RiepilogoEsamiStudente extends Codable {
         'cfuTotali': _cfuTotali,
         'progressoPercCfu': _progressoPercCfu,
       };
+
+  void fromHtmlElement({required Element riepilogo}) {}
 }

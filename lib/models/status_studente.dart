@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Esse3/utils/interfaces/codable.dart';
+import 'package:html/dom.dart';
 
 class StatusStudente extends Codable {
   String? _annoAccademico;
@@ -31,21 +32,20 @@ class StatusStudente extends Codable {
 
   @override
   void decode(String data) {
-    final jsonData = json.decode(data) as Map<String, String>?;
-    if (jsonData != null) {
-      _annoAccademico = jsonData['annoAccademico'];
-      _annoRegolamento = jsonData['annoRegolamento'];
-      _statoCarriera = jsonData['statoCarriera'];
-      _corso = jsonData['corso'];
-      _dipartimento = jsonData['dipartimento'];
-      _percorso = jsonData['percorso'];
-      _classe = jsonData['classe'];
-      _durataCorso = jsonData['durataCorso'];
-      _annoCorso = jsonData['annoCorso'];
-      _ordinamento = jsonData['ordinamento'];
-      _normativa = jsonData['normativa'];
-      _dataImmatricolazione = jsonData['dataImmatricolazione'];
-    }
+    final jsonData =
+        Map<String, String>.from(json.decode(data) as Map<String, dynamic>);
+    _annoAccademico = jsonData['annoAccademico'];
+    _annoRegolamento = jsonData['annoRegolamento'];
+    _statoCarriera = jsonData['statoCarriera'];
+    _corso = jsonData['corso'];
+    _dipartimento = jsonData['dipartimento'];
+    _percorso = jsonData['percorso'];
+    _classe = jsonData['classe'];
+    _durataCorso = jsonData['durataCorso'];
+    _annoCorso = jsonData['annoCorso'];
+    _ordinamento = jsonData['ordinamento'];
+    _normativa = jsonData['normativa'];
+    _dataImmatricolazione = jsonData['dataImmatricolazione'];
   }
 
   @override
@@ -63,4 +63,14 @@ class StatusStudente extends Codable {
         'normativa': _normativa,
         'dataImmatricolazione': _dataImmatricolazione,
       };
+
+  void fromHtmlElement({required Element status}) {
+    final annoInfo = status.querySelector('#gu-textStatusStudente');
+    if (annoInfo != null) {
+      final info =
+          annoInfo.children.where((element) => element.localName == 'b');
+      // TODO: finire parsing
+      
+    }
+  }
 }
