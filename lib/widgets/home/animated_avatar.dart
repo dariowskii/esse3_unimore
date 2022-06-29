@@ -1,21 +1,22 @@
 import 'dart:convert';
 
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/studente_model.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedAvatar extends StatelessWidget {
   const AnimatedAvatar({
     Key? key,
     required this.animation,
-    required this.userData,
-  })  : assert(userData != null),
-        super(key: key);
+    required this.studenteModel,
+  }) : super(key: key);
 
   final Animation? animation;
-  final Map<String, dynamic> userData;
+  final StudenteModel studenteModel;
 
   @override
   Widget build(BuildContext context) {
+    final hasProfilePic = studenteModel.datiPersonali?.profilePicture != null;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20),
       alignment: Alignment.center,
@@ -41,19 +42,19 @@ class AnimatedAvatar extends StatelessWidget {
         child: CircleAvatar(
           backgroundColor: Constants.mainColorLighter,
           radius: (animation!.value as double) * 50,
-          backgroundImage: userData['profile_pic'] == 'no'
-              ? null
-              : MemoryImage(base64Decode(userData['profile_pic'] as String)),
-          child: userData['profile_pic'] == 'no'
-              ? Text(
-                  userData['text_avatar'] as String,
+          backgroundImage: hasProfilePic
+              ? MemoryImage(studenteModel.datiPersonali!.profilePictureBytes!)
+              : null,
+          child: hasProfilePic
+              ? const SizedBox.shrink()
+              : Text(
+                  studenteModel.datiPersonali!.textAvatar,
                   style: const TextStyle(
                     fontWeight: FontWeight.w100,
                     fontSize: 40,
                     color: Colors.white,
                   ),
-                )
-              : const SizedBox.shrink(),
+                ),
         ),
       ),
     );

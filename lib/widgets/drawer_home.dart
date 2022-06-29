@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/studente_model.dart';
 import 'package:Esse3/screens/bacheca_prenotazioni_screen.dart';
 import 'package:Esse3/screens/info_app_screen.dart';
 import 'package:Esse3/screens/login_screen.dart';
@@ -13,10 +14,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerHome extends StatelessWidget {
-  final Map<String, dynamic>? user;
-  final Future<Map<String, dynamic>?>? userFuture;
+  final StudenteModel? studenteModel;
+  final Future<StudenteModel?>? userFuture;
 
-  const DrawerHome({Key? key, required this.user, required this.userFuture})
+  const DrawerHome({Key? key, required this.studenteModel, required this.userFuture})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -47,10 +48,10 @@ class DrawerHome extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  if (user == null && userFuture != null)
+                  if (studenteModel == null && userFuture != null)
                     FutureDrawerHeaderHome(userFuture: userFuture!)
                   else
-                    DrawerHeaderHome(user: user!),
+                    DrawerHeaderHome(studenteModel: studenteModel!),
                   const SizedBox(height: 15),
                   const Text(
                     'Created by 145622',

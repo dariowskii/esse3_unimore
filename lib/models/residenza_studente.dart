@@ -32,6 +32,13 @@ class ResidenzaStudente extends Codable {
         'telefono': _telefono,
       };
 
+  @override
+  void fromJson(Map<String, dynamic> json) {
+    _indirizzo = json['indirizzo'] as String;
+    _citta = json['citta'] as String;
+    _telefono = json['telefono'] as String;
+  }
+
   void fromHtmlElement({required Element residenza}) {
     final tmp = residenza.innerHtml.split('<br>');
     if (tmp.length <= 2) {

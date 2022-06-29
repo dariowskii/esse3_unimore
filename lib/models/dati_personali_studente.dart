@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:Esse3/constants.dart';
 import 'package:Esse3/extensions/string_extension.dart';
 import 'package:Esse3/models/residenza_studente.dart';
 import 'package:Esse3/utils/interfaces/codable.dart';
 import 'package:html/dom.dart';
-import 'package:html/parser.dart';
 
 class DatiPersonaliStudente extends Codable {
   static String get sharedKey => 'datiPersonaliStudente';
@@ -25,6 +25,14 @@ class DatiPersonaliStudente extends Codable {
   String? get emailPersonale => _emailPersonale;
   String? get emailAteneo => _emailAteneo;
   String? get profilePicture => _profilePicture;
+
+  Uint8List? get profilePictureBytes {
+    if (profilePicture != null) {
+      return base64Decode(profilePicture!);
+    }
+
+    return null;
+  }
 
   String get textAvatar {
     final buffer = _nomeCompleto!.split(' ');
@@ -59,6 +67,23 @@ class DatiPersonaliStudente extends Codable {
         'emailAteneo': _emailAteneo,
         'profilePicture': _profilePicture,
       };
+
+  @override
+  void fromJson(Map<String, dynamic> json) {
+    _nomeCompleto = json['nomeCompleto'] as String?;
+    _matricola = json['matricola'] as String?;
+    final residenza = json['residenza'] as Map<String, dynamic>?;
+    if (residenza != null) {
+      _residenza = ResidenzaStudente()..fromJson(residenza);
+    }
+    final domicilio = json['domicilio'] as Map<String, dynamic>?;
+    if (domicilio != null) {
+      _domicilio = ResidenzaStudente()..fromJson(domicilio);
+    }
+    _emailPersonale = json['emailPersonale'] as String?;
+    _emailAteneo = json['emailAteneo'] as String?;
+    _profilePicture = json['profilePicture'] as String?;
+  }
 
   void fromHtmlElement({
     required Element element,

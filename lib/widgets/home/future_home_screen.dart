@@ -1,4 +1,5 @@
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/studente_model.dart';
 import 'package:Esse3/widgets/chip_info.dart';
 import 'package:Esse3/widgets/error_home_data.dart';
 import 'package:Esse3/widgets/home/animated_avatar.dart';
@@ -16,7 +17,7 @@ class FutureHomeScreen extends StatelessWidget {
     required this.deviceWidth,
   }) : super(key: key);
 
-  final Future<Map<String, dynamic>?>? userFuture;
+  final Future<StudenteModel?>? userFuture;
   final AnimationController? controllerAnimation;
   final Animation? animation;
   final double deviceWidth;
@@ -24,7 +25,7 @@ class FutureHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>?>(
+    return FutureBuilder<StudenteModel?>(
       future: userFuture,
       builder: (context, userData) {
         switch (userData.connectionState) {
@@ -40,8 +41,13 @@ class FutureHomeScreen extends StatelessWidget {
           case ConnectionState.active:
           case ConnectionState.done:
             if (!userData.hasData) return ErrorHomeData();
-            cdl = userData.data!['corso_stud'].toString().split('] - ');
-            cdl[0] += ']';
+            final studenteModel = userData.data!;
+            final hasCorso = studenteModel.status?.corso != null;
+            if (hasCorso) {
+              cdl = studenteModel.status!.corso!.split('(');
+              cdl[1] = '(${cdl[1]}';
+            }
+
             controllerAnimation!.forward();
             return Column(
               children: <Widget>[
@@ -52,25 +58,25 @@ class FutureHomeScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       AnimatedAvatar(
-                          animation: animation, userData: userData.data!),
+                          animation: animation, studenteModel: studenteModel),
                       Text(
-                        userData.data!['nome_studente'] as String,
+                        studenteModel.datiPersonali?.nomeCompleto ?? 'null',
                         style: Constants.fontBold28,
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '- Mat. ${userData.data!['matricola']} -',
+                        '- Mat. ${studenteModel.datiPersonali?.matricola} -',
                         style: Constants.font16,
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        cdl[1].toUpperCase(),
+                        cdl.first,
                         textAlign: TextAlign.center,
                         style: Constants.fontBold32,
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        cdl[0],
+                        cdl[1],
                         style: Constants.font16,
                       ),
                       const SizedBox(height: 20),
@@ -83,20 +89,22 @@ class FutureHomeScreen extends StatelessWidget {
                   runSpacing: -5,
                   children: <Widget>[
                     ChipInfo(
-                        text: userData.data!['tipo_corso'] as String?,
+                        text: 'Durata: ${studenteModel.status?.durataCorso}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Profilo: ${userData.data!['profilo_studente']}',
+                        text: 'Percorso: ${studenteModel.status?.percorso}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Anno di Corso: ${userData.data!['anno_corso']}',
+                        text:
+                            'Anno di Corso: ${studenteModel.status?.annoCorso}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
                     ChipInfo(
-                        text: 'Immatricolazione: ${userData.data!['data_imm']}',
+                        text:
+                            'Immatricolazione: ${studenteModel.status?.dataImmatricolazione}',
                         textSize: deviceWidth >= 390 ? 13 : 10),
-                    ChipInfo(
-                        text: 'Part Time: ${userData.data!['part_time']}',
-                        textSize: deviceWidth >= 390 ? 13 : 10),
+                    // ChipInfo(
+                    //     text: 'Part Time: ${userData.data!['part_time']}',
+                    //     textSize: deviceWidth >= 390 ? 13 : 10),
                   ],
                 ),
                 const SizedBox(height: 20),

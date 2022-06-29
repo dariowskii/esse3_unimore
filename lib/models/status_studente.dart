@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/extensions/string_extension.dart';
 import 'package:Esse3/utils/interfaces/codable.dart';
 import 'package:html/dom.dart';
-import 'package:Esse3/extensions/string_extension.dart';
 
 class StatusStudente extends Codable {
   String? _annoAccademico;
@@ -65,6 +65,23 @@ class StatusStudente extends Codable {
         'normativa': _normativa,
         'dataImmatricolazione': _dataImmatricolazione,
       };
+
+  @override
+  void fromJson(Map<String, dynamic> json) {
+    final jsonData = Map<String, String>.from(json);
+    _annoAccademico = jsonData['annoAccademico'];
+    _annoRegolamento = jsonData['annoRegolamento'];
+    _statoCarriera = jsonData['statoCarriera'];
+    _corso = jsonData['corso'];
+    _dipartimento = jsonData['dipartimento'];
+    _percorso = jsonData['percorso'];
+    _classe = jsonData['classe'];
+    _durataCorso = jsonData['durataCorso'];
+    _annoCorso = jsonData['annoCorso'];
+    _ordinamento = jsonData['ordinamento'];
+    _normativa = jsonData['normativa'];
+    _dataImmatricolazione = jsonData['dataImmatricolazione'];
+  }
 
   void fromHtmlElement({required Element status}) {
     final annoInfo = status.querySelector('#gu-textStatusStudente');

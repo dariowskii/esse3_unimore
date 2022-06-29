@@ -30,7 +30,7 @@ Future<void> main() async {
 
 /// Rappresenta la classe che avvia l'applicazione.
 class Esse3 extends StatelessWidget {
-  const Esse3({required this.logged}) : assert(logged != null);
+  const Esse3({required this.logged});
 
   /// Serve per controllare se l'utente è loggato.
   final bool logged;

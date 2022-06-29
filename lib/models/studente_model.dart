@@ -7,6 +7,8 @@ import 'package:Esse3/utils/interfaces/codable.dart';
 import 'package:html/dom.dart';
 
 class StudenteModel extends Codable {
+  static String get sharedKey => 'studenteModel';
+
   DatiPersonaliStudente? _datiPersonali;
   StatusStudente? _status;
   RiepilogoEsamiStudente? _riepilogoEsami;
@@ -15,20 +17,25 @@ class StudenteModel extends Codable {
   StatusStudente? get status => _status;
   RiepilogoEsamiStudente? get riepilogoEsami => _riepilogoEsami;
 
+  bool get isValid =>
+      datiPersonali != null && status != null && riepilogoEsami != null;
+
   @override
   void decode(String data) {
-    final jsonData = json.decode(data) as Map<String, String>;
-    final datiPersonali = jsonData['datiPersonali'];
-    final status = jsonData['status'];
-    final riepilogoEsami = jsonData['riepilogoEsami'];
+    final jsonData = json.decode(data) as Map<String, dynamic>;
+
+    final datiPersonali = jsonData['datiPersonali'] as Map<String, dynamic>?;
+    final status = jsonData['status'] as Map<String, dynamic>?;
+    final riepilogoEsami = jsonData['riepilogoEsami'] as Map<String, dynamic>?;
     if (datiPersonali != null) {
-      _datiPersonali = DatiPersonaliStudente()..decode(datiPersonali);
+      _datiPersonali = DatiPersonaliStudente()
+        ..fromJson(datiPersonali);
     }
     if (status != null) {
-      _status = StatusStudente()..decode(status);
+      _status = StatusStudente()..fromJson(status);
     }
     if (riepilogoEsami != null) {
-      _riepilogoEsami = RiepilogoEsamiStudente()..decode(riepilogoEsami);
+      _riepilogoEsami = RiepilogoEsamiStudente()..fromJson(riepilogoEsami);
     }
   }
 
@@ -38,6 +45,11 @@ class StudenteModel extends Codable {
         'status': _status?.toJson(),
         'riepilogoEsami': _riepilogoEsami?.toJson(),
       };
+
+  @override
+  void fromJson(Map<String, dynamic> json) {
+    
+  }
 
   void fromHtmlBody({
     required Document document,

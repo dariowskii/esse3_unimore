@@ -1,16 +1,16 @@
-import 'dart:convert';
-
 import 'package:Esse3/constants.dart';
+import 'package:Esse3/models/studente_model.dart';
 import 'package:flutter/material.dart';
 
 class DrawerHeaderHome extends StatelessWidget {
-  const DrawerHeaderHome({Key? key, required this.user})
-      : assert(user != null),
-        super(key: key);
+  const DrawerHeaderHome({Key? key, required this.studenteModel})
+      : super(key: key);
 
-  final Map<String, dynamic> user;
+  final StudenteModel studenteModel;
   @override
   Widget build(BuildContext context) {
+    final hasProfilePic = studenteModel.datiPersonali?.profilePicture != null;
+    final hasTextAvatar = studenteModel.datiPersonali?.textAvatar != null;
     return Row(
       children: [
         Container(
@@ -22,19 +22,23 @@ class DrawerHeaderHome extends StatelessWidget {
           child: CircleAvatar(
             backgroundColor: Constants.mainColor.withOpacity(0.9),
             radius: 30,
-            backgroundImage: user['profile_pic'] == 'no'
-                ? null
-                : MemoryImage(base64Decode(user['profile_pic'] as String)),
-            child: user['profile_pic'] == 'no'
-                ? Text(
-                    user['text_avatar'] as String,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w100,
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
+            backgroundImage: hasProfilePic
+                ? MemoryImage(
+                    studenteModel.datiPersonali!.profilePictureBytes!,
                   )
-                : const SizedBox.shrink(),
+                : null,
+            child: hasProfilePic
+                ? const SizedBox.shrink()
+                : hasTextAvatar
+                    ? Text(
+                        studenteModel.datiPersonali!.textAvatar,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w100,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      )
+                    : null,
           ),
         ),
         const SizedBox(width: 15),
@@ -44,7 +48,7 @@ class DrawerHeaderHome extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '${user['nome']}',
+                studenteModel.datiPersonali?.nomeCompleto ?? 'null',
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white,
@@ -54,7 +58,7 @@ class DrawerHeaderHome extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                'Matr. ${user['matricola']}',
+                'Matr. ${studenteModel.datiPersonali?.matricola ?? 'null'}',
                 style: const TextStyle(color: Colors.white),
               )
             ],

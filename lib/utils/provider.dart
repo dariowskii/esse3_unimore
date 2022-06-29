@@ -248,6 +248,9 @@ class Provider {
 
   static Future<StudenteModel?> getHomeInfo() async {
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    if (authCredential == null) {
+      return null;
+    }
 
     if (_shibSessionCookie.isEmpty) {
       await getSession(authCredential.username, authCredential.password!);
@@ -305,13 +308,21 @@ class Provider {
         profilePicture: profilePicture,
       );
 
-    return studente;
+    if (studente.isValid) {
+      await SharedWrapper.shared.setStudenteModel(studente);
+      return studente;
+    }
+
+    return null;
   }
 
   /// Serve a scaricare le informazioni del libretto universitario per [LibrettoScreen].
   static Future<Map<String, dynamic>> getLibretto() async {
     final prefs = await SharedPreferences.getInstance();
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    if (authCredential == null) {
+      return {};
+    }
 
     if (_shibSessionCookie.isEmpty) {
       await getSession(authCredential.username, authCredential.password!);
@@ -446,6 +457,9 @@ class Provider {
   static Future<Map<String, dynamic>> getTasse() async {
     final prefs = await SharedPreferences.getInstance();
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    if (authCredential == null) {
+      return {};
+    }
 
     if (_shibSessionCookie.isEmpty) {
       await getSession(authCredential.username, authCredential.password!);
@@ -554,6 +568,9 @@ class Provider {
   static Future<Map<String, dynamic>> getAppelli() async {
     final prefs = await SharedPreferences.getInstance();
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    if (authCredential == null) {
+      return {};
+    }
 
     if (_shibSessionCookie.isEmpty) {
       await getSession(authCredential.username, authCredential.password!);
@@ -652,6 +669,9 @@ class Provider {
   static Future<Map<String, dynamic>> getInfoAppello(String urlInfo) async {
     final prefs = await SharedPreferences.getInstance();
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    if (authCredential == null) {
+      return {};
+    }
 
     if (_shibSessionCookie.isEmpty) {
       await getSession(authCredential.username, authCredential.password!);
@@ -761,6 +781,9 @@ class Provider {
   static Future<Map<String, dynamic>> getAppelliPrenotati() async {
     final prefs = await SharedPreferences.getInstance();
     final authCredential = await SharedWrapper.shared.getUserCreditentials();
+    if (authCredential == null) {
+      return {};
+    }
 
     if (_shibSessionCookie.isEmpty) {
       await getSession(authCredential.username, authCredential.password!);

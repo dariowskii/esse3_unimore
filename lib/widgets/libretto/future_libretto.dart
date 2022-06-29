@@ -10,9 +10,7 @@ class FutureLibretto extends StatelessWidget {
 
   const FutureLibretto(
       {Key? key, required this.futureLibretto, required this.onPressed})
-      : assert(futureLibretto != null),
-        assert(onPressed != null),
-        super(key: key);
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(

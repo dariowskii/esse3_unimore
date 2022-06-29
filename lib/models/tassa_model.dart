@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class TassaModel {
   final String titolo;
   final String descrizione;

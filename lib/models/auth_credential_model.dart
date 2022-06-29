@@ -30,4 +30,10 @@ class AuthCredential extends Codable {
         'username': _username,
         'password': _password,
       };
+
+  @override
+  void fromJson(Map<String, dynamic> json) {
+    _username = json['username'] as String;
+    _password = json['password'] as String;
+  }
 }

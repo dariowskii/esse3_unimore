@@ -7,4 +7,6 @@ abstract class Codable {
   void decode(String data);
 
   Map<String, dynamic> toJson();
+
+  void fromJson(Map<String, dynamic> json);
 }

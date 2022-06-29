@@ -3,7 +3,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class GraficoLibretto extends StatelessWidget {
-  static const List<Color> _gradientColorsDark = [Constants.mainColorLighter];
+  static const List<Color> _gradientColorsDark = [
+    Constants.mainColor,
+    Constants.mainColorLighter
+  ];
   static const List<Color> _gradientColorsLight = [
     Color(0xff23b6e6),
     Color(0xff02d39a),
@@ -15,8 +18,7 @@ class GraficoLibretto extends StatelessWidget {
     Key? key,
     this.darkModeOn = false,
     required this.puntiGrafico,
-  })  : assert(puntiGrafico != null),
-        super(key: key);
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -25,6 +27,8 @@ class GraficoLibretto extends StatelessWidget {
         LineChartData(
           gridData: FlGridData(
             show: true,
+            verticalInterval: 1,
+            horizontalInterval: 1,
             drawVerticalLine: true,
             getDrawingHorizontalLine: (value) {
               return FlLine(
@@ -44,14 +48,23 @@ class GraficoLibretto extends StatelessWidget {
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: false,
-                reservedSize: 15,
-                getTitlesWidget: (_, __) => const Text(""),
+              ),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
               ),
             ),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                reservedSize: 15,
+                interval: 6,
+                reservedSize: 18,
                 getTitlesWidget: (value, meta) {
                   var val = '';
 
@@ -91,12 +104,14 @@ class GraficoLibretto extends StatelessWidget {
               spots: puntiGrafico.map((punto) {
                 final index = puntiGrafico.indexOf(punto);
                 return FlSpot(
-                    index.toDouble(), double.parse(punto['voto'].toString()));
+                  index.toDouble(),
+                  double.parse(punto['voto'].toString()),
+                );
               }).toList(),
               isCurved: true,
               gradient: LinearGradient(
-                  colors:
-                      darkModeOn ? _gradientColorsDark : _gradientColorsLight),
+                colors: darkModeOn ? _gradientColorsDark : _gradientColorsLight,
+              ),
               barWidth: 3,
               isStrokeCapRound: true,
               dotData: FlDotData(
@@ -105,13 +120,14 @@ class GraficoLibretto extends StatelessWidget {
               belowBarData: BarAreaData(
                 show: true,
                 gradient: LinearGradient(
-                    colors: darkModeOn
-                        ? _gradientColorsDark
-                            .map((color) => color.withOpacity(0.3))
-                            .toList()
-                        : _gradientColorsLight
-                            .map((color) => color.withOpacity(0.3))
-                            .toList()),
+                  colors: darkModeOn
+                      ? _gradientColorsDark
+                          .map((color) => color.withOpacity(0.3))
+                          .toList()
+                      : _gradientColorsLight
+                          .map((color) => color.withOpacity(0.3))
+                          .toList(),
+                ),
               ),
             ),
           ],

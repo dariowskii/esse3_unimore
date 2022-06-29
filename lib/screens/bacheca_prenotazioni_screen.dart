@@ -71,7 +71,9 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                 //In caso non ci siano appelli
                 if (appelliWrapper.appelliTotali <= 0) {
                   return RicaricaBachecaPrenotazioni(
-                      refreshBacheca: _refreshBacheca, svgAsset: _svgAsset);
+                    refreshBacheca: _refreshBacheca,
+                    svgAsset: _svgAsset,
+                  );
                 }
                 //In caso ci siano appelli...
                 return LiquidPullToRefresh(
@@ -81,50 +83,46 @@ class _BachecaPrenotazioniScreenState extends State<BachecaPrenotazioniScreen> {
                   onRefresh: _refreshBacheca,
                   showChildOpacityTransition: false,
                   child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: SizedBox(
-                          height: deviceHeight,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Bacheca prenotazioni',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 25),
-                              ),
-                              const Divider(),
-                              const SizedBox(height: 15),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                padding: isTablet
-                                    ? EdgeInsets.symmetric(
-                                        horizontal: deviceWidth / 6)
-                                    : null,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: appelliWrapper.appelliTotali,
-                                itemBuilder: (context, index) {
-                                  final appello = appelliWrapper.appelli[index];
-                                  return CardAppelloPrenotato(
-                                    appello: appello,
-                                    darkModeOn: darkModeOn,
-                                    isTablet: isTablet,
-                                  );
-                                },
-                              ),
-                            ],
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Bacheca prenotazioni',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
                           ),
-                        ),
-                      )),
-                );
-              } else {
-                return ReloadAppelli(
-                  deviceWidth: deviceWidth,
-                  deviceHeight: deviceHeight,
-                  onReload: _refreshBacheca,
+                          const Divider(),
+                          const SizedBox(height: 15),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            padding: isTablet
+                                ? EdgeInsets.symmetric(
+                                    horizontal: deviceWidth / 6,
+                                  )
+                                : null,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: appelliWrapper.appelliTotali,
+                            itemBuilder: (context, index) {
+                              final appello = appelliWrapper.appelli[index];
+                              return CardAppelloPrenotato(
+                                appello: appello,
+                                darkModeOn: darkModeOn,
+                                isTablet: isTablet,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               }
+
               //In caso di altri errori...
               return ReloadAppelli(
                 deviceWidth: deviceWidth,

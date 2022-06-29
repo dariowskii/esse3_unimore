@@ -41,6 +41,16 @@ class RiepilogoEsamiStudente extends Codable {
         'progressoPercCfu': _progressoPercCfu,
       };
 
+  @override
+  void fromJson(Map<String, dynamic> json) {
+    _esamiRegistrati = json['esamiRegistrati'] as String;
+    _mediaAritmentica = json['mediaAritmentica'] as String;
+    _mediaPonderata = json['mediaPonderata'] as String;
+    _cfuConseguiti = json['cfuConseguiti'] as String;
+    _cfuTotali = json['cfuTotali'] as String;
+    _progressoPercCfu = json['progressoPercCfu'] as String;
+  }
+
   void fromHtmlElement({required Element riepilogo}) {
     final info = riepilogo
         .querySelector('dl.record-riga')

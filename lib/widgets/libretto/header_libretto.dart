@@ -7,8 +7,7 @@ class HeaderLibretto extends StatelessWidget {
     Key? key,
     this.darkModeOn = false,
     required this.puntiGrafico,
-  })  : assert(puntiGrafico != null),
-        super(key: key);
+  }) : super(key: key);
 
   final bool darkModeOn;
   final List puntiGrafico;

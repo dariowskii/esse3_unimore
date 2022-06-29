@@ -3,10 +3,9 @@ import 'package:Esse3/models/auth_credential_model.dart';
 import 'package:Esse3/screens/home_screen.dart';
 import 'package:Esse3/utils/provider.dart';
 import 'package:Esse3/widgets/login/login_button.dart';
+import 'package:Esse3/widgets/login/login_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'login_text_field.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -103,11 +102,11 @@ class _LoginFormState extends State<LoginForm> {
       setState(() {
         _isLoading = !_isLoading;
       });
-      // TODO: Fix this
+
       await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => HomeScreen(user: null),
+          builder: (_) => HomeScreen(studenteModel: studentModel),
         ),
       );
     } else if (!(responseSession['success'] as bool)) {
@@ -209,6 +208,14 @@ class _LoginFormState extends State<LoginForm> {
               child: Column(
                 children: const [
                   SizedBox(height: 20),
+                  Text(
+                    '(potrebbe richiedere qualche secondo)',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   LinearProgressIndicator(
                     backgroundColor: Colors.transparent,
                     valueColor:

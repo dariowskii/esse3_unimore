@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class AltreInfoAppelloModel {
   AltreInfoAppelloModel({
     required this.tipoEsame,

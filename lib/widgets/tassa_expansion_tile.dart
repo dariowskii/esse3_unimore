@@ -20,6 +20,7 @@ class TassaExpansionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (tassa.stato) {
+      case null:
       case StatoPagamento.nonPagato:
         _statoPagamento = "NON PAGATO";
         _themeColor = Colors.redAccent;
@@ -61,45 +62,50 @@ class TassaExpansionTile extends StatelessWidget {
         children: [
           RichText(
             text: TextSpan(
-                text: 'Descrizione: ',
-                style: Constants.fontBold
-                    .copyWith(color: _textColor, fontFamily: 'SF Pro'),
-                children: [
-                  TextSpan(
-                      text: tassa.descrizione,
-                      style: Constants.font14
-                          .copyWith(fontWeight: FontWeight.normal))
-                ]),
+              text: 'Descrizione: ',
+              style: Constants.fontBold
+                  .copyWith(color: _textColor, fontFamily: 'SF Pro'),
+              children: [
+                TextSpan(
+                  text: tassa.descrizione,
+                  style:
+                      Constants.font14.copyWith(fontWeight: FontWeight.normal),
+                )
+              ],
+            ),
           ),
           const SizedBox(height: 15),
           RichText(
             text: TextSpan(
-                text: 'Importo: ',
-                style: Constants.font18
-                    .copyWith(color: _textColor, fontFamily: 'SF Pro'),
-                children: [
-                  TextSpan(text: tassa.importo, style: Constants.fontBold18)
-                ]),
+              text: 'Importo: ',
+              style: Constants.font18
+                  .copyWith(color: _textColor, fontFamily: 'SF Pro'),
+              children: [
+                TextSpan(text: tassa.importo, style: Constants.fontBold18)
+              ],
+            ),
           ),
           const SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: 'Scadenza: ',
-                style: Constants.font18
-                    .copyWith(color: _textColor, fontFamily: 'SF Pro'),
-                children: [
-                  TextSpan(text: tassa.scadenza, style: Constants.fontBold18)
-                ]),
+              text: 'Scadenza: ',
+              style: Constants.font18
+                  .copyWith(color: _textColor, fontFamily: 'SF Pro'),
+              children: [
+                TextSpan(text: tassa.scadenza, style: Constants.fontBold18)
+              ],
+            ),
           ),
           const SizedBox(height: 5),
           RichText(
             text: TextSpan(
-                text: 'Stato: ',
-                style: Constants.font18
-                    .copyWith(color: _textColor, fontFamily: 'SF Pro'),
-                children: [
-                  TextSpan(text: _statoPagamento, style: Constants.fontBold18)
-                ]),
+              text: 'Stato: ',
+              style: Constants.font18
+                  .copyWith(color: _textColor, fontFamily: 'SF Pro'),
+              children: [
+                TextSpan(text: _statoPagamento, style: Constants.fontBold18)
+              ],
+            ),
           ),
           if (tassa.stato == StatoPagamento.nonPagato)
             _PromemoriaTassa(tassa: tassa),
@@ -132,15 +138,18 @@ class _PromemoriaTassa extends StatelessWidget {
               title: 'Pagare ${tassa.titolo} entro il ${tassa.scadenza}!',
               description: 'Non dimenticarti di pagare la tassa!',
               location: 'Esse3',
-              startDate: DateTime.parse(tassa.scadenza.substring(6) +
-                      tassa.scadenza.substring(3, 5) +
-                      tassa.scadenza.substring(0, 2))
+              startDate: DateTime.parse(
+                tassa.scadenza.substring(6) +
+                    tassa.scadenza.substring(3, 5) +
+                    tassa.scadenza.substring(0, 2),
+              )
                   .subtract(const Duration(days: 7))
                   .add(const Duration(hours: 10)),
-              endDate: DateTime.parse(tassa.scadenza.substring(6) +
-                      tassa.scadenza.substring(3, 5) +
-                      tassa.scadenza.substring(0, 2))
-                  .subtract(const Duration(days: 6)),
+              endDate: DateTime.parse(
+                tassa.scadenza.substring(6) +
+                    tassa.scadenza.substring(3, 5) +
+                    tassa.scadenza.substring(0, 2),
+              ).subtract(const Duration(days: 6)),
             );
             Add2Calendar.addEvent2Cal(event);
           },

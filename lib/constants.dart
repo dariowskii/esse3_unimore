@@ -17,6 +17,9 @@ class Constants {
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Constants.mainColorLighter,
     ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: mainColor,
+    ),
     // textTheme: const TextTheme(),
   );
   // Light Theme
@@ -28,6 +31,9 @@ class Constants {
     disabledColor: buttonDisabled,
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Constants.mainColor,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: mainColor,
     ),
     // textTheme: const TextTheme(),
   );
@@ -105,10 +111,12 @@ class Constants {
     );
   }
 
-  static void showAdaptiveDialog(BuildContext context,
-      {required bool success,
-      required String successText,
-      required String errorText}) {
+  static void showAdaptiveDialog(
+    BuildContext context, {
+    required bool success,
+    required String successText,
+    required String errorText,
+  }) {
     final content = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -164,10 +172,12 @@ class Constants {
     );
   }
 
-  static Widget getAskingModalBottomSheet(BuildContext context,
-      {required Function() onAccepted,
-      required String title,
-      required String text}) {
+  static Widget getAskingModalBottomSheet(
+    BuildContext context, {
+    required Function() onAccepted,
+    required String title,
+    required String text,
+  }) {
     return SizedBox(
       height: 180,
       child: Column(

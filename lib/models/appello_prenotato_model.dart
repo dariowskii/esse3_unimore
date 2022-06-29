@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class AppelloPrenotatoModel {
   AppelloPrenotatoModel({
     required this.nomeMateria,
@@ -33,8 +31,8 @@ class AppelloPrenotatoModel {
   Map<String, dynamic> get hiddensCancellazione {
     final map = <String, dynamic>{};
 
-    final buffer = linkCancellazione!.replaceFirst(
-        'auth/studente/Appelli/ConfermaCancellaAppello.do?', '');
+    final buffer = linkCancellazione!
+        .replaceFirst('auth/studente/Appelli/ConfermaCancellaAppello.do?', '');
     final list = buffer.split('&');
 
     for (final String element in list) {
