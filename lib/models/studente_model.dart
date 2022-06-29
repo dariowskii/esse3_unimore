@@ -34,9 +34,9 @@ class StudenteModel extends Codable {
 
   @override
   Map<String, dynamic> toJson() => {
-        'datiPersonali': _datiPersonali?.encode(),
-        'status': _status?.encode(),
-        'riepilogoEsami': _riepilogoEsami?.encode(),
+        'datiPersonali': _datiPersonali?.toJson(),
+        'status': _status?.toJson(),
+        'riepilogoEsami': _riepilogoEsami?.toJson(),
       };
 
   void fromHtmlBody({

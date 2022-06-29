@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:Esse3/constants.dart';
 import 'package:Esse3/utils/interfaces/codable.dart';
 import 'package:html/dom.dart';
+import 'package:Esse3/extensions/string_extension.dart';
 
 class StatusStudente extends Codable {
   String? _annoAccademico;
@@ -69,8 +71,100 @@ class StatusStudente extends Codable {
     if (annoInfo != null) {
       final info =
           annoInfo.children.where((element) => element.localName == 'b');
-      // TODO: finire parsing
-      
+      if (info.isNotEmpty) {
+        _annoAccademico = info.first.innerHtml.replaceAll('<br>', '').trim();
+        _annoRegolamento =
+            info.elementAt(1).innerHtml.replaceAll('<br>', '').trim();
+        _statoCarriera = info.elementAt(2).innerHtml.camelCase();
+      }
     }
+    final corsoInfo = status.querySelector('#gu-textStatusStudenteCorsoFac');
+    if (corsoInfo != null) {
+      _corso = corsoInfo
+          .querySelector('#gu-textStatusStudenteCorsoFac-text-link2')
+          ?.innerHtml;
+      _dipartimento = corsoInfo
+          .querySelector('#gu-textStatusStudenteCorsoFac-text-link4')
+          ?.innerHtml;
+      final percorso = corsoInfo
+          .querySelector('#gu-textStatusStudenteCorsoFac-text-link6')
+          ?.innerHtml
+          .replaceAll(Constants.emptyHtmlSpecialChar, '');
+
+      if (percorso != null) {
+        final regex = RegExp('[a-zA-Z0-9]{1,}');
+        _percorso =
+            regex.allMatches(percorso).elementAt(0).group(0)?.camelCase();
+      }
+      final info =
+          corsoInfo.children.where((element) => element.localName == 'b');
+      if (info.isNotEmpty) {
+        _classe = info.last.innerHtml.replaceAll('<br>', '').trim();
+      }
+    }
+
+    final statusIscrizione =
+        status.querySelector('#gu-boxStatusStudenteIscriz1')?.children.first;
+    if (statusIscrizione != null) {
+      final info = statusIscrizione.children
+          .where((element) => element.localName == 'b');
+      if (info.isNotEmpty) {
+        final durata =
+            info.first.innerHtml.replaceAll(Constants.emptyHtmlSpecialChar, '');
+        final regex = RegExp('[a-zA-Z0-9]{1,}');
+        var durataCompose = '';
+        for (final match in regex.allMatches(durata)) {
+          final word = match.group(0);
+          if (word != null) {
+            if (durataCompose.isEmpty) {
+              durataCompose += word;
+            } else {
+              durataCompose += ' $word';
+            }
+          }
+        }
+        _durataCorso = durataCompose;
+
+        final annoDiCorso = statusIscrizione.children
+            .where((element) => element.localName == 'b')
+            .elementAt(1)
+            .innerHtml
+            .replaceAll('\n', '')
+            .trim();
+        final regexAnno = RegExp('[a-zA-Z0-9°()]{2,}');
+        var annoCompose = '';
+        for (final match in regexAnno.allMatches(annoDiCorso)) {
+          final word = match.group(0);
+          if (word != null) {
+            if (annoCompose.isEmpty) {
+              annoCompose += word;
+            } else {
+              annoCompose += ' $word';
+            }
+          }
+        }
+        _annoCorso = annoCompose;
+      }
+    }
+
+    final statusIscrizione2 =
+        status.querySelector('#gu-boxStatusStudenteIscriz2')?.children.first;
+    if (statusIscrizione2 != null) {
+      final info = statusIscrizione2.children
+          .where((element) => element.localName == 'b');
+      if (info.isNotEmpty) {
+        final ordinamento =
+            info.first.innerHtml.replaceAll(Constants.emptyHtmlSpecialChar, '');
+        final regex = RegExp('[0-9]{4}');
+        _ordinamento = regex.allMatches(ordinamento).elementAt(0).group(0);
+        _normativa = info.elementAt(1).innerHtml;
+      }
+    }
+
+    _dataImmatricolazione = status
+        .querySelector('#gu-textStatusStudenteImma')
+        ?.children
+        .first
+        .innerHtml;
   }
 }

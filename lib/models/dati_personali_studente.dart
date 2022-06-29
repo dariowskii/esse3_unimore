@@ -53,8 +53,8 @@ class DatiPersonaliStudente extends Codable {
   Map<String, dynamic> toJson() => {
         'nomeCompleto': _nomeCompleto,
         'matricola': _matricola,
-        'residenza': _residenza?.encode(),
-        'domicilio': _domicilio?.encode(),
+        'residenza': _residenza?.toJson(),
+        'domicilio': _domicilio?.toJson(),
         'emailPersonale': _emailPersonale,
         'emailAteneo': _emailAteneo,
         'profilePicture': _profilePicture,
