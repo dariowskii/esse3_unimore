@@ -19,10 +19,10 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   //Controllo se l'utente è loggato
   final prefs = await SharedPreferences.getInstance();
-  final version = prefs.getBool('1.3.0') ?? false;
+  final version = prefs.getBool(Constants.version) ?? false;
   if (!version) {
     await prefs.clear();
-    await prefs.setBool('1.3.0', true);
+    await prefs.setBool(Constants.version, true);
   }
   final status = prefs.getBool('isLoggedIn') ?? false;
   runApp(Esse3(logged: status));

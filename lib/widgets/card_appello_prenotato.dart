@@ -105,11 +105,11 @@ class CardAppelloPrenotato extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              _CancellaEsameButton(
-                darkModeOn: darkModeOn,
-                appello: appello,
-              ),
-              const SizedBox(width: 10),
+              // _CancellaEsameButton(
+              //   darkModeOn: darkModeOn,
+              //   appello: appello,
+              // ),
+              // const SizedBox(width: 10),
               _PromemoriaAppello(
                 darkModeOn: darkModeOn,
                 nomeEsame: appello.nomeMateria,

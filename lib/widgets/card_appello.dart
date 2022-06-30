@@ -229,11 +229,11 @@ class __RichiediAltreInfoState extends State<_RichiediAltreInfo> {
                 const SizedBox(height: 15),
                 Row(
                   children: [
-                    _PrenotaEsameButton(
-                      altreInfoWrapper: altreInfoWrapper,
-                      prenotaEsame: widget.prenotaEsame,
-                    ),
-                    const SizedBox(width: 10),
+                    // _PrenotaEsameButton(
+                    //   altreInfoWrapper: altreInfoWrapper,
+                    //   prenotaEsame: widget.prenotaEsame,
+                    // ),
+                    // const SizedBox(width: 10),
                     Flexible(
                       child: _BottonePromemoriaAppello(
                         appello: widget.appello,

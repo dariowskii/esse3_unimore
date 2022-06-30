@@ -17,7 +17,8 @@ class DrawerHome extends StatelessWidget {
   final StudenteModel? studenteModel;
   final Future<StudenteModel?>? userFuture;
 
-  const DrawerHome({Key? key, required this.studenteModel, required this.userFuture})
+  const DrawerHome(
+      {Key? key, required this.studenteModel, required this.userFuture})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,7 @@ class DrawerHome extends StatelessWidget {
                     Provider.cleanSession();
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.clear();
-                    await prefs.setBool('1.3.0', true);
+                    await prefs.setBool(Constants.version, true);
                     await Navigator.pushReplacementNamed(
                         context, LoginScreen.id);
                   },

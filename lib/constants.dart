@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Classe contenente le costanti di stile dell'applicazione.
 class Constants {
+  static const String version = '1.4.2';
   // Variabili
   static const double tabletWidth = 650;
   static const double refreshDisplacement = 30;
