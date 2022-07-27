@@ -91,7 +91,7 @@ class DatiPersonaliStudente extends Codable {
     String? profilePicture,
   }) {
     final nomeCognomeElement = element.children
-        .firstWhere((element) => element.innerHtml.contains('Nome Cognome'))
+        .firstWhere((element) => element.innerHtml.contains('Nominativo'))
         .nextElementSibling;
     _nomeCompleto = _buildNomeCognome(element: nomeCognomeElement);
     _matricola = matricola;
