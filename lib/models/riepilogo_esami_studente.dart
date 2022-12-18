@@ -59,23 +59,31 @@ class RiepilogoEsamiStudente extends Codable {
     if (info != null && info.isNotEmpty) {
       final esamiRegistrati = info.first.innerHtml;
       final regex = RegExp('[0-9]{1,}');
+      final regexMedia = RegExp('[0-9.]{1,}');
+
       _esamiRegistrati = regex.allMatches(esamiRegistrati).first.group(0);
 
-      final mediaAritmetica = info
-          .elementAt(1)
-          .innerHtml
-          .replaceAll('/30${Constants.emptyHtmlSpecialChar}', '');
-      final regexMedia = RegExp('[0-9.]{1,}');
-      _mediaAritmetica =
-          regexMedia.allMatches(mediaAritmetica).first.group(0);
+      // Se l'utente non ha ancora superato nessun esame, non ci sono medie
+      if (_esamiRegistrati != "0") {
+        final mediaAritmetica = info
+            .elementAt(1)
+            .innerHtml
+            .replaceAll('/30${Constants.emptyHtmlSpecialChar}', '');
+        _mediaAritmetica =
+            regexMedia.allMatches(mediaAritmetica).first.group(0);
 
-      final mediaPonderata = info
-          .elementAt(2)
-          .innerHtml
-          .replaceAll('/30${Constants.emptyHtmlSpecialChar}', '');
-      _mediaPonderata = regexMedia.allMatches(mediaPonderata).first.group(0);
+        final mediaPonderata = info
+            .elementAt(2)
+            .innerHtml
+            .replaceAll('/30${Constants.emptyHtmlSpecialChar}', '');
+        _mediaPonderata = regexMedia.allMatches(mediaPonderata).first.group(0);
+      } else {
+        _mediaAritmetica = "0";
+        _mediaPonderata = "0";
+      }
+
       final cfuConseguiti = info
-          .elementAt(3)
+          .elementAt((_esamiRegistrati == "0") ? 1 : 3)
           .innerHtml
           .replaceAll(Constants.emptyHtmlSpecialChar, '');
       final cfuMatches = regexMedia.allMatches(cfuConseguiti);
@@ -83,7 +91,7 @@ class RiepilogoEsamiStudente extends Codable {
       _cfuTotali = cfuMatches.elementAt(1).group(0);
 
       final progressoPercCfu = info
-          .elementAt(4)
+          .elementAt((_esamiRegistrati == "0") ? 2 : 4)
           .innerHtml
           .replaceAll(Constants.emptyHtmlSpecialChar, '');
       _progressoPercCfu =
