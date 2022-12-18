@@ -6,14 +6,14 @@ import 'package:html/dom.dart';
 
 class RiepilogoEsamiStudente extends Codable {
   String? _esamiRegistrati;
-  String? _mediaAritmentica;
+  String? _mediaAritmetica;
   String? _mediaPonderata;
   String? _cfuConseguiti;
   String? _cfuTotali;
   String? _progressoPercCfu;
 
   String? get esamiRegistrati => _esamiRegistrati;
-  String? get mediaAritmentica => _mediaAritmentica;
+  String? get mediaAritmetica => _mediaAritmetica;
   String? get mediaPonderata => _mediaPonderata;
   String? get cfuConseguiti => _cfuConseguiti;
   String? get cfuTotali => _cfuTotali;
@@ -24,7 +24,7 @@ class RiepilogoEsamiStudente extends Codable {
     final jsonData =
         Map<String, String>.from(json.decode(data) as Map<String, dynamic>);
     _esamiRegistrati = jsonData['esamiRegistrati'];
-    _mediaAritmentica = jsonData['mediaAritmentica'];
+    _mediaAritmetica = jsonData['mediaAritmetica'];
     _mediaPonderata = jsonData['mediaPonderata'];
     _cfuConseguiti = jsonData['cfuConseguiti'];
     _cfuTotali = jsonData['cfuTotali'];
@@ -34,7 +34,7 @@ class RiepilogoEsamiStudente extends Codable {
   @override
   Map<String, dynamic> toJson() => {
         'esamiRegistrati': _esamiRegistrati,
-        'mediaAritmentica': _mediaAritmentica,
+        'mediaAritmetica': _mediaAritmetica,
         'mediaPonderata': _mediaPonderata,
         'cfuConseguiti': _cfuConseguiti,
         'cfuTotali': _cfuTotali,
@@ -44,7 +44,7 @@ class RiepilogoEsamiStudente extends Codable {
   @override
   void fromJson(Map<String, dynamic> json) {
     _esamiRegistrati = json['esamiRegistrati'] as String;
-    _mediaAritmentica = json['mediaAritmentica'] as String;
+    _mediaAritmetica = json['mediaAritmetica'] as String;
     _mediaPonderata = json['mediaPonderata'] as String;
     _cfuConseguiti = json['cfuConseguiti'] as String;
     _cfuTotali = json['cfuTotali'] as String;
@@ -61,13 +61,13 @@ class RiepilogoEsamiStudente extends Codable {
       final regex = RegExp('[0-9]{1,}');
       _esamiRegistrati = regex.allMatches(esamiRegistrati).first.group(0);
 
-      final mediaAritmentica = info
+      final mediaAritmetica = info
           .elementAt(1)
           .innerHtml
           .replaceAll('/30${Constants.emptyHtmlSpecialChar}', '');
       final regexMedia = RegExp('[0-9.]{1,}');
-      _mediaAritmentica =
-          regexMedia.allMatches(mediaAritmentica).first.group(0);
+      _mediaAritmetica =
+          regexMedia.allMatches(mediaAritmetica).first.group(0);
 
       final mediaPonderata = info
           .elementAt(2)
